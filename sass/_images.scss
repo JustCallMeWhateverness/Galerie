@@ -1,0 +1,46 @@
+// Images in the main element
+main {
+  img {
+    object-fit: cover;
+    aspect-ratio: 16/9;
+
+    @media (min-width: 576px) {
+      aspect-ratio: 20/9;
+    }
+
+    @media (min-width: 768px) {
+      aspect-ratio: 30/9;
+    }
+  }
+
+  img:not(img[src*="products"]) {
+    object-position: top left;
+  }
+
+  .card {
+    img {
+      aspect-ratio: 20/9;
+      transition: filter 0.4s;
+
+      &.bw {
+        filter: grayscale(100%)
+      }
+    }
+
+    &:hover img {
+      filter: saturate(1.5);
+    }
+
+    &:hover img.bw {
+      filter: grayscale(100%) sepia(20%);
+    }
+  }
+
+  article.product-details img {
+    aspect-ratio: 20/9;
+  }
+
+  img.bw {
+    filter: grayscale(100%) sepia(20%);
+  }
+}

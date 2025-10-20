@@ -1,0 +1,21 @@
+// Override bootstrap variables
+$font-family-sans-serif: 'Noto Sans';
+$font-size-base: 1.1rem;
+$line-height-base: 1.4;
+$navbar-dark-color: rgba(white, .8) !default;
+$navbar-dark-hover-color: rgba(white, .9) !default;
+$primary: rgb(14, 108, 21);
+$enable-negative-margins: true;
+
+// Import bootstrap
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+// Override some Bootstrap defaults
+.navbar-brand {
+  font-family: 'Chewy';
+  font-size: 30px;
+}
+
+.container {
+  max-width: 970px;
+}
