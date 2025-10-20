@@ -1,35 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useLocation } from 'react-router-dom';
+import Header from "./partials/Header";
+import Main from './partials/Main';
+import Footer from './partials/Footer';
+import BootstrapBreakpoints from './parts/BootstrapBreakpoints';
 
-function App() {
-  const [count, setCount] = useState(0)
+// turn off when not needed for debugging
+const showBootstrapBreakpoints = true;
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+export default function App() {
 
-export default App
+  // scroll to top when the route changes
+  useLocation();
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
+  return <>
+    <Header />
+    <Main />
+    <Footer />
+    {showBootstrapBreakpoints ? <BootstrapBreakpoints /> : null}
+  </>;
+};

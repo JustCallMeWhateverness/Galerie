@@ -1,0 +1,41 @@
+// Positioning of buttons in cards
+// (at the bottom of the column)
+.card {
+  .col:has(button) {
+    position: relative;
+    padding-bottom: 40px;
+  }
+
+  button {
+    position: absolute;
+    bottom: 1px;
+    width: calc(100% - 1.2rem);
+  }
+}
+
+// use green color when hovering light buttons
+.btn-light:hover {
+  background-color: #0c5c12;
+  color: white;
+}
+
+// simulate hover color on button when hovering card
+// (since the whole card is clickable)
+.card:hover .btn-primary {
+  background-color: #0c5c12;
+}
+
+// Form-switch make bigger + witdh of text overlay
+.form-switch input {
+  width: calc(100% + 2.5em) !important;
+  height: 34.5px;
+  cursor: pointer;
+}
+
+.form-switch-text {
+  cursor: pointer;
+  width: calc(100% - 3rem);
+  margin-top: 7px;
+  transition: color 0.2s;
+  height: 30px;
+}
