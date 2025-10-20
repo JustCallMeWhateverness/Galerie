@@ -1,3 +1,14 @@
+# Ignore the database being run
+# since SQLite might change it during runtime
+# + sessions will be stored in it in some examples
+# if the backend/_db.sqlite3 is missing the backend will
+# create it from db_template/_db.sqlite3
+backend/_db.sqlite3
+
+# Do not git control build related .NET folders
+backend/obj
+backend/bin
+
 # Logs
 logs
 *.log
