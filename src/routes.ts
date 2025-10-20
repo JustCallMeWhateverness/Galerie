@@ -7,13 +7,15 @@ import NotFoundPage from './pages/NotFoundPage.tsx';
 import OurVisionPage from './pages/OurVisionPage.tsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.tsx';
 import ProductsPage from './pages/ProductsPage.tsx';
+import AuthModal from './modals/AuthModal.tsx';
 
 export default [
   AboutPage,
   NotFoundPage,
   OurVisionPage,
   ProductDetailsPage,
-  ProductsPage
+  ProductsPage,
+  AuthModal
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))
