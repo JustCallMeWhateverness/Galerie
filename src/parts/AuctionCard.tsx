@@ -1,6 +1,7 @@
-// import { time } from 'console';
-import { Card } from 'react-bootstrap';
 
+import { Card } from 'react-bootstrap';
+import FilledHeart from '../filled-heart.svg'
+import OutlineHeart from '../outline-heart.svg'
 interface AuctionCard {
   id: number,
   title: string,
@@ -41,14 +42,6 @@ export default function AuctionCard({ id, title, currentBid, endTime, favorited 
       remainingTimeMessage = `${remainingSeconds} seconds`
   }
 
-
-
-
-  // check different units
-
-
-
-
   return <Card className="mb-4">
     <Card.Img />
     <Card.ImgOverlay className='text-center'>
@@ -60,12 +53,15 @@ export default function AuctionCard({ id, title, currentBid, endTime, favorited 
       </Card.Text>
     </Card.ImgOverlay>
     <Card.Body>
-
       <Card.Text>
+        Current bid: {currentBid} SEK
+        <span className='float-end'>
 
+          <img
+            src={favorited ? FilledHeart : OutlineHeart} alt={favorited ? "Filled heart" : "Outline of heart"} />
+        </span>
       </Card.Text>
     </Card.Body>
-
   </Card>
 
 }
