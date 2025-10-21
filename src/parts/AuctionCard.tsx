@@ -1,7 +1,5 @@
 
 import { Card } from 'react-bootstrap';
-import FilledHeart from '../filled-heart.svg'
-import OutlineHeart from '../outline-heart.svg'
 interface AuctionCard {
   id: number,
   title: string,
@@ -56,9 +54,8 @@ export default function AuctionCard({ id, title, currentBid, endTime, favorited 
       <Card.Text>
         Current bid: {currentBid} SEK
         <span className='float-end'>
-
-          <img
-            src={favorited ? FilledHeart : OutlineHeart} alt={favorited ? "Filled heart" : "Outline of heart"} />
+          {/* bi-suit-heart must be at the end for the correct logo to be shown */}
+          <i className={'bi bi-suit-heart' + (favorited ? '-fill' : '')}></i>
         </span>
       </Card.Text>
     </Card.Body>
