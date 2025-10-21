@@ -1,51 +1,47 @@
 import { Row, Col } from "react-bootstrap";
-import { Carousel } from "react-bootstrap";
-import ExampleCarouselImage from "../parts/ExampleCarouselImage";
+import CarouselComponent from "../parts/CarouselComponent";
 
 HomePage.route = {
-  path: "/",
+  path: "/home",
   menuLabel: "Home",
   index: 1,
 };
 
 export default function HomePage() {
+  const items = [
+    {
+      src: "/images/products/1.jpg",
+      label: "First image label",
+      caption: "This is the caption text for the first image.",
+      alt: "A close-up of product number one",
+    },
+    {
+      src: "/images/products/2.jpg",
+      label: "Second image label",
+      caption: "This is the second image caption.",
+      alt: "Product number two displayed on a table",
+    },
+    {
+      src: "/images/products/3.jpg",
+      label: "Third image label",
+      caption: "Final product in the carousel.",
+      alt: "Product number three with packaging",
+    },
+  ];
+
   return (
     <>
       <Row>
         <Col>
-          {" "}
-          <Carousel fade>
-            <Carousel.Item>
-              <ExampleCarouselImage text="First slide" />
-              <Carousel.Caption>
-                <h3>First slide label</h3>
-                <p>
-                  Nulla vitae elit libero, a pharetra augue mollis interdum.
-                </p>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <ExampleCarouselImage text="Second slide" />
-              <Carousel.Caption>
-                <h3>Second slide label</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <ExampleCarouselImage text="Third slide" />
-              <Carousel.Caption>
-                <h3>Third slide label</h3>
-                <p>
-                  Praesent commodo cursus magna, vel scelerisque nisl
-                  consectetur.
-                </p>
-              </Carousel.Caption>
-            </Carousel.Item>
-          </Carousel>
+          <CarouselComponent items={items} />
         </Col>
       </Row>
+
       <Row>
-        <Col md={6}></Col>
+        <Col md={6}>
+          <h1>Home Page</h1>
+          <p>Here we will display various sorted auctions.</p>
+        </Col>
       </Row>
     </>
   );
