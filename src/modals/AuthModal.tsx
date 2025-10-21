@@ -24,7 +24,7 @@ export default function AuthModal() {
       setShowRegister(false);
       setShowForgotPassword(false);
     } else {
-      navigate('/');
+      navigate('/home');
     }
   };
 

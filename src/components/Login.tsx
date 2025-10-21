@@ -37,7 +37,7 @@ export default function Login({
       const data = await response.json();
       console.log("Login successful:", data);
       setUser(data);
-      navigate("/");
+      navigate("/home");
     } else {
       console.error("Login failed");
     }
