@@ -16,24 +16,27 @@
     "test:run": "vitest run"
   },
   "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-rapide": "^1.0.35",
     "bcryptjs": "^3.0.2",
     "better-express-store": "^1.0.5",
     "better-sqlite3": "^11.10.0",
     "bootstrap": "^5.3.6",
+    "bootstrap-icons": "^1.13.1",
     "callsites": "^4.2.0",
     "chokidar": "^4.0.3",
     "express": "^5.1.0",
     "express-http-proxy": "^2.1.2",
     "express-session": "^1.18.1",
+    "react": "^19.1.1",
     "react-bootstrap": "^2.10.9",
+    "react-dom": "^19.1.1",
+    "react-rapide": "^1.0.35",
     "react-router-dom": "^7.5.0",
     "sass": "1.77.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
@@ -45,8 +48,6 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.3.0",
     "vitest": "^3.2.4"
   }
 }
