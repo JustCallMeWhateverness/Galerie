@@ -7,6 +7,7 @@ import ProductCard from '../parts/ProductCard';
 import productsLoader from '../utils/productsLoader';
 import { getHelpers } from '../utils/productPageHelpers';
 import { useNavigate } from "react-router-dom";
+import AuctionCard from '../parts/AuctionCard';
 
 ProductsPage.route = {
   path: '/',
@@ -45,7 +46,16 @@ export default function ProductsPage() {
     else { alert("Logout failed."); }
   }
 
+  // sample data for auctionCard
+  const sampleTime = new Date("2025-10-21T11:49:00")
+
+  const sampleAuctionCard = { id: 1, title: "Scarf", currentBid: 33, endTime: sampleTime, favorited: false }
+
   return <>
+    <Row>
+      <AuctionCard {...sampleAuctionCard} />
+    </Row>
+
     <Row>
       <Button variant="danger" type="button" onClick={handleLogout}>
         Logout
