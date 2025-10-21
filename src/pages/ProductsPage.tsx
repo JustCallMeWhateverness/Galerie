@@ -1,11 +1,12 @@
 import type { SortOption } from '../utils/productPageHelpers';
 import { useLoaderData } from 'react-router-dom';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Row, Col, Form, Button } from 'react-bootstrap';
 import { useStateContext } from '../utils/useStateObject';
 import Select from '../parts/Select';
 import ProductCard from '../parts/ProductCard';
 import productsLoader from '../utils/productsLoader';
 import { getHelpers } from '../utils/productPageHelpers';
+import { useNavigate } from "react-router-dom";
 
 ProductsPage.route = {
   path: '/',
@@ -36,8 +37,19 @@ export default function ProductsPage() {
   const { key: sortKey, order: sortOrder } =
     sortOptions.find(x => x.description === sortChoice) as SortOption;
 
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    const response = await fetch("/api/login", { method: "DELETE", credentials: "include" });
+    if (response.ok) { navigate("/account"); }
+    else { alert("Logout failed."); }
+  }
+
   return <>
     <Row>
+      <Button variant="danger" type="button" onClick={handleLogout}>
+        Logout
+      </Button>
       <Col>
         <h2 className="text-primary">Our products</h2>
         <p>

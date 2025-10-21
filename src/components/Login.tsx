@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Login({
@@ -14,6 +15,8 @@ export default function Login({
     email: '',
     password: ''
   });
+
+  const navigate = useNavigate();
 
   function setProperty(name: string, value: string) {
     setLoginData({ ...loginData, [name]: value });
@@ -31,6 +34,7 @@ export default function Login({
     if (response.ok) {
       const data = await response.json();
       console.log("Login successful:", data);
+      navigate("/");
     } else {
       console.error("Login failed");
     }
