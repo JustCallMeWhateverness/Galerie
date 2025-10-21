@@ -1,5 +1,5 @@
-import type Route from './interfaces/Route.ts';
-import { createElement } from 'react';
+import type Route from "./interfaces/Route.ts";
+import { createElement } from "react";
 
 // page components
 import AboutPage from './pages/AboutPage.tsx';
@@ -8,6 +8,7 @@ import OurVisionPage from './pages/OurVisionPage.tsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.tsx';
 import ProductsPage from './pages/ProductsPage.tsx';
 import AuthModal from './modals/AuthModal.tsx';
+import HomePage from "./pages/HomePage.tsx";
 
 export default [
   AboutPage,
@@ -15,9 +16,10 @@ export default [
   OurVisionPage,
   ProductDetailsPage,
   ProductsPage,
-  AuthModal
+  AuthModal,
+  HomePage,
 ]
   // map the route property of each page component to a Route
-  .map(x => (({ element: createElement(x), ...x.route }) as Route))
+  .map((x) => ({ element: createElement(x), ...x.route } as Route))
   // sort by index (and if an item has no index, sort as index 0)
   .sort((a, b) => (a.index || 0) - (b.index || 0));
