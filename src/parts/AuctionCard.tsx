@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { Card } from 'react-bootstrap';
 interface AuctionCard {
   id: number,
@@ -11,6 +12,7 @@ interface AuctionCard {
 
 export default function AuctionCard({ id, title, currentBid, endTime, favorited }: AuctionCard) {
 
+  const [isFavorited, setFavorited] = useState(favorited)
   const currentTime = new Date()
   let remainingTimeMessage = ""
   // Time Difference in Milliseconds
@@ -40,23 +42,30 @@ export default function AuctionCard({ id, title, currentBid, endTime, favorited 
       remainingTimeMessage = `${remainingSeconds} seconds`
   }
 
+  function onFavorite() {
+    setFavorited((isFavorited) => (!isFavorited))
+    console.log('klick')
+  }
+
   return <Card className="mb-4">
     <Card.Img />
     <Card.ImgOverlay className='text-center'>
       <Card.Title>
         {title}
+        <span className='float-end' role='button' onClick={onFavorite}>
+          {/* bi-suit-heart must be at the end for the correct logo to be shown */}
+          <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
+        </span>
       </Card.Title>
       <Card.Text>
         Time left: {remainingTimeMessage}
+
       </Card.Text>
     </Card.ImgOverlay>
     <Card.Body>
       <Card.Text>
         Current bid: {currentBid} SEK
-        <span className='float-end'>
-          {/* bi-suit-heart must be at the end for the correct logo to be shown */}
-          <i className={'bi bi-suit-heart' + (favorited ? '-fill' : '')}></i>
-        </span>
+
       </Card.Text>
     </Card.Body>
   </Card>
