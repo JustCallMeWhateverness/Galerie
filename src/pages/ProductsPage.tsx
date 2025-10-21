@@ -47,13 +47,23 @@ export default function ProductsPage() {
   }
 
   // sample data for auctionCard
-  const sampleTime = new Date("2025-10-21T11:49:00")
 
-  const sampleAuctionCard = { id: 1, title: "Scarf", currentBid: 33, endTime: sampleTime, favorited: false }
+  const sampleAuctions = [
+
+    { id: 1, title: "Scarf", currentBid: 33, endTime: new Date("2025-10-21T11:49:00"), favorited: false },
+    { id: 2, title: "Mug", currentBid: 30, endTime: new Date("2025-11-01T11:49:00"), favorited: false },
+    { id: 3, title: "Art", currentBid: 50, endTime: new Date("2025-11-21T11:49:00"), favorited: false }
+  ]
+
+
 
   return <>
     <Row>
-      <AuctionCard {...sampleAuctionCard} />
+      {sampleAuctions.map((auction) => (
+        <Col key={auction.id} xs={6} md={4}>
+          <AuctionCard {...auction} />
+        </Col>
+      ))}
     </Row>
 
     <Row>

@@ -44,26 +44,24 @@ export default function AuctionCard({ id, title, currentBid, endTime, favorited 
 
   function onFavorite() {
     setFavorited((isFavorited) => (!isFavorited))
-    console.log('klick')
   }
 
   return <Card className="mb-4">
-    <Card.Img />
+    <Card.Img style={{ minHeight: '200px', objectFit: 'cover' }} />
     <Card.ImgOverlay className='text-center'>
-      <Card.Title>
+      <span className='float-end' role='button' onClick={onFavorite}>
+        {/* bi-suit-heart must be at the end for the correct logo to be shown */}
+        <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
+      </span>
+      <Card.Title className='text-center'>
         {title}
-        <span className='float-end' role='button' onClick={onFavorite}>
-          {/* bi-suit-heart must be at the end for the correct logo to be shown */}
-          <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
-        </span>
       </Card.Title>
-      <Card.Text>
+      <Card.Text className='text-center'>
         Time left: {remainingTimeMessage}
-
       </Card.Text>
     </Card.ImgOverlay>
     <Card.Body>
-      <Card.Text>
+      <Card.Text className='text-center'>
         Current bid: {currentBid} SEK
 
       </Card.Text>
