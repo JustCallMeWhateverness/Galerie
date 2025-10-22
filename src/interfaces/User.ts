@@ -1,3 +1,5 @@
+import type Auction from './Auction';
+
 export default interface User {
   id: number;
   created: string;
@@ -7,4 +9,5 @@ export default interface User {
   role: string;
   password: string;
   phoneNumber: string;
+  likedAuctions?: Auction[];
 }

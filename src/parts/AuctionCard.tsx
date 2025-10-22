@@ -1,16 +1,9 @@
 
 import { useState } from 'react';
 import { Card } from 'react-bootstrap';
-interface AuctionCard {
-  id: number,
-  title: string,
-  currentBid: number,
-  endTime: Date,
-  favorited: boolean
+import type Auction from '../interfaces/Auction';
 
-}
-
-export default function AuctionCard({ id, title, currentBid, endTime, favorited }: AuctionCard) {
+export default function AuctionCard({ id, title, currentBid, endTime, favorited }: Auction) {
 
   const [isFavorited, setFavorited] = useState(favorited)
   const currentTime = new Date()
