@@ -9,6 +9,8 @@ import { getHelpers } from '../utils/productPageHelpers';
 import { useNavigate } from "react-router-dom";
 import AuctionCard from '../parts/AuctionCard';
 
+import { useAuth } from "../hooks/useAuth";
+
 ProductsPage.route = {
   path: '/',
   menuLabel: 'Products',
@@ -39,10 +41,14 @@ export default function ProductsPage() {
     sortOptions.find(x => x.description === sortChoice) as SortOption;
 
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   async function handleLogout() {
     const response = await fetch("/api/login", { method: "DELETE", credentials: "include" });
-    if (response.ok) { navigate("/account"); }
+    if (response.ok) {
+      setUser(null);
+      navigate("/account");
+    }
     else { alert("Logout failed."); }
   }
 
