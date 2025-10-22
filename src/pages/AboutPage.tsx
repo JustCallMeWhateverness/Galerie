@@ -1,5 +1,6 @@
 import { Row, Col } from 'react-bootstrap';
 import Image from '../parts/Image';
+import { useAuth } from "../hooks/useAuth";
 
 AboutPage.route = {
   path: '/about-us',
@@ -7,7 +8,14 @@ AboutPage.route = {
   index: 2
 };
 
+
 export default function AboutPage() {
+
+  const { user, loading } = useAuth();
+
+  if (loading) return <p>Loading...</p>;
+  if (!user) return <p className="text-danger"> You must be logged in to see this page</p>;
+
   return <>
     <Row>
       <Col>

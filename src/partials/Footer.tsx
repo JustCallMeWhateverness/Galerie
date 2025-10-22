@@ -26,7 +26,7 @@ export default function Footer() {
           </Link>
         </Col>
         <Col className="text-center py-3 text-bg-primary">
-          <Link to="/profile" className="d-flex flex-column align-items-center text-decoration-none text-black">
+          <Link to="/account" className="d-flex flex-column align-items-center text-decoration-none text-black">
             <i className="bi bi-person-fill fs-1"></i>
           </Link>
         </Col>
