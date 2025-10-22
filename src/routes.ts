@@ -2,13 +2,14 @@ import type Route from "./interfaces/Route.ts";
 import { createElement } from "react";
 
 // page components
-import AboutPage from './pages/AboutPage.tsx';
-import NotFoundPage from './pages/NotFoundPage.tsx';
-import OurVisionPage from './pages/OurVisionPage.tsx';
-import ProductDetailsPage from './pages/ProductDetailsPage.tsx';
-import ProductsPage from './pages/ProductsPage.tsx';
-import AuthModal from './modals/AuthModal.tsx';
+import AboutPage from "./pages/AboutPage.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
+import OurVisionPage from "./pages/OurVisionPage.tsx";
+import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
+import ProductsPage from "./pages/ProductsPage.tsx";
+import AuthModal from "./modals/AuthModal.tsx";
 import HomePage from "./pages/HomePage.tsx";
+import CreateAuction from "./pages/CreateAuction.tsx";
 
 export default [
   AboutPage,
@@ -18,6 +19,7 @@ export default [
   ProductsPage,
   AuthModal,
   HomePage,
+  CreateAuction,
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
