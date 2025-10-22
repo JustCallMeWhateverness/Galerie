@@ -367,9 +367,9 @@ export default function UserPage() {
       <div className="text-center mb-5 mx-auto" style={{ maxWidth: '600px' }}>
         <Button 
           variant="primary" 
-          className="w-100 py-3 fw-semibold"
+          className="py-3 fw-semibold"
           onClick={handleLogout}
-          style={{ backgroundColor: '#087990', borderColor: '#087990' }}
+          style={{ backgroundColor: '#087990', borderColor: '#087990', color: '#ffffff', width: '150px' }}
         >
           Log out
         </Button>
