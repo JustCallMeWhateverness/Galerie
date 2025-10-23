@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, InputGroup, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type SearchBarProps = {
   initialQuery?: string;
@@ -13,12 +13,18 @@ export default function SearchBar({
 }: SearchBarProps) {
   const [q, setQ] = useState<string>(initialQuery);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  function buildUrl(nextQ: string) {
+    const params = new URLSearchParams(location.search);
+    if (nextQ) params.set("q", nextQ);
+    else params.delete("q");
+    return `${location.pathname}${params.toString() ? `?${params}` : ""}`;
+  }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const query = q.trim();
-    if (!query) return;
-    navigate(`/search?q=${encodeURIComponent(query)}`);
+    navigate(buildUrl(q.trim()));
   }
 
   return (
@@ -27,9 +33,14 @@ export default function SearchBar({
         <Form.Control
           type="search"
           value={q}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setQ(e.target.value)
-          }
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQ(e.target.value)}
+          onInput={(e: React.FormEvent<HTMLInputElement>) => {
+            const value = (e.target as HTMLInputElement).value;
+            if (value === "") {
+              setQ("");
+              navigate(buildUrl(""));
+            }
+          }}
           placeholder={placeholder}
           aria-label="Search input"
         />
