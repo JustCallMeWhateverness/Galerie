@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Button, Dropdown, Form } from "react-bootstrap";
+import DatePickerInput from "../parts/DatePickerInput";
+// import DatePicker from "react-datepicker";
+// import StartTimePicker from "../parts/StartTimePicker";
 CreateAuction.route = {
   path: '/create',
   menuLabel: 'Create Auction',
@@ -22,6 +25,7 @@ export default function CreateAuction() {
     startTime: '',
     endTime: ''
   })
+  const [startDate, setStartDate] = useState<Date | null>(null);
   function setProperty(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     let { name, value } = event.target
     let processedValue: string | number | null | string[] = value
@@ -95,7 +99,7 @@ export default function CreateAuction() {
 
       <Form.Group>
         <Form.Label>
-          Start Bid
+          Starting Bid
         </Form.Label>
         <Form.Control></Form.Control>
       </Form.Group>
@@ -110,7 +114,12 @@ export default function CreateAuction() {
         <Form.Label>
           Start time
         </Form.Label>
-        <Form.Control></Form.Control>
+        <DatePickerInput
+          value={startDate}
+          onChange={setStartDate}
+          placeholder="Select start date"
+        />
+
       </Form.Group>
 
       <Form.Group>
