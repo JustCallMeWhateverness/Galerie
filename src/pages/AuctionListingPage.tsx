@@ -4,6 +4,7 @@ import { useState } from "react";
 import type Auction from "../interfaces/Auction";
 import InputPlaceBid from "../components/InputPlaceBid";
 import BidHistory from "../components/BidHistory";
+import type { Bid } from "../interfaces/Bid";
 
 AboutPage.route = {
   path: "/listing",
@@ -18,6 +19,13 @@ const sampleAuction = {
   endTime: new Date("2025-10-23T11:49:00"),
   favorited: false,
 };
+
+const sampleBids: Bid[] = [
+  { id: "4", amount: 220, bidder: "Jonas", createdAt: "2025-10-23T16:45:00Z" },
+  { id: "1", amount: 120, bidder: "Anna", createdAt: "2025-10-22T18:12:00Z" },
+  { id: "2", amount: 95, bidder: "Jonas", createdAt: "2025-10-22T16:45:00Z" },
+  { id: "3", amount: 80, createdAt: "2025-10-22T15:10:00Z" }, // anonymt
+];
 
 export default function AboutPage({
   id = sampleAuction.id,
@@ -83,7 +91,7 @@ export default function AboutPage({
 
         <div>
           {/* Get Bidhistory here */}
-          <BidHistory bids={[]} />
+          <BidHistory bids={sampleBids} />
         </div>
 
         <div
