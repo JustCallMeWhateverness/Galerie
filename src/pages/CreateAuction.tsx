@@ -26,6 +26,8 @@ export default function CreateAuction() {
     endTime: ''
   })
   const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
   function setProperty(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     let { name, value } = event.target
     let processedValue: string | number | null | string[] = value
@@ -126,7 +128,12 @@ export default function CreateAuction() {
         <Form.Label>
           End time
         </Form.Label>
-        <Form.Control></Form.Control>
+        <DatePickerInput
+          value={endDate}
+          onChange={setEndDate}
+          placeholder="Select end date"
+        />
+
       </Form.Group>
       <Button type='submit' className='mt-4 float-end'>Create Post</Button>
 
