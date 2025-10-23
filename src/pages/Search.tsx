@@ -162,7 +162,7 @@ export default function Search() {
 
       <Row xs={2} sm={2} md={3} lg={4} className="g-3">
         {tab === "auctions" &&
-          auctionsFiltered.map((a, i) => (
+          auctionsFiltered.map((a) => (
             <Col key={a.id ?? `auction-${a.id}`}>
               <AuctionCard
                 id={a.id}
