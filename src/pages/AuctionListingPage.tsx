@@ -56,35 +56,30 @@ export default function AboutPage({
       <Row>
         <Col>
           <Image src="/images/products/3.jpg" alt="Here is a product" />
-        </Col>
-      </Row>
-      <Row>
-        <Col
-          md={6}
-          className="d-flex justify-content-between align-items-center"
-        >
-          <h2 className="mb-0">{title}</h2>
-          <span role="button" onClick={onFavorite} className="me-3">
-            <i
-              className={`bi bi-suit-heart${isFavorited ? "-fill" : ""} fs-1`}
-            ></i>
-          </span>
-        </Col>
-      </Row>
 
-      <Row>
-        <Col md={6}>
-          {/*Current bid. start bid, timeleft.  */}
-          <p className="mb-1">Current bid: {currentBid} SEK</p>
-          <small className="text-muted">
-            Time left: {remainingTimeMessage}
-          </small>
+          <div className="d-flex justify-content-between align-items-center">
+            <h2 className="mb-0">{title}</h2>
+            <span role="button" onClick={onFavorite} className="me-3">
+              <i
+                className={`bi bi-suit-heart${isFavorited ? "-fill" : ""} fs-1`}
+              ></i>
+            </span>
+          </div>
+
+          <div>
+            {/*Current bid. start bid, timeleft.  */}
+            <p className="mb-1">Start Bid: </p> {/*  */}
+            <p>Current bid: {currentBid} SEK</p>
+            <small className="text-muted">
+              Time left: {remainingTimeMessage}
+            </small>
+          </div>
         </Col>
       </Row>
       {/* Add bid here */}
       {/* Get Bidhistory here */}
       {/* Get Item information here */}
-      {/* questions and comments here */}
+      {/* questions and comments here, This might be a TODO and its okey */}
     </>
   );
 }
