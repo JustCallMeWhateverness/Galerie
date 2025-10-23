@@ -11,6 +11,7 @@ import UserPage from './pages/UserPage.tsx';
 import AuthModal from './modals/AuthModal.tsx';
 import HomePage from "./pages/HomePage.tsx";
 import FavouritesPage from "./pages/FavouritesPage.tsx";
+import Search from "./pages/Search.tsx";
 import FilterPage from "./pages/FilterPage.tsx";
 
 export default [
@@ -23,6 +24,7 @@ export default [
   AuthModal,
   HomePage,
   FavouritesPage,
+  Search,
   FilterPage
 ]
   // map the route property of each page component to a Route
