@@ -3,6 +3,7 @@ import Image from "../parts/Image";
 import { useState } from "react";
 import type Auction from "../interfaces/Auction";
 import InputPlaceBid from "../components/InputPlaceBid";
+import BidHistory from "../components/BidHistory";
 
 AboutPage.route = {
   path: "/listing",
@@ -76,13 +77,50 @@ export default function AboutPage({
         </div>
 
         <div>
+          {/* Add bid here */}
           <InputPlaceBid />
         </div>
 
-        {/* Add bid here */}
-        {/* Get Bidhistory here */}
-        {/* Get Item information here */}
-        {/* questions and comments here, This might be a TODO and its okey */}
+        <div>
+          {/* Get Bidhistory here */}
+          <BidHistory bids={[]} />
+        </div>
+
+        <div
+          className="btn btn-primary w-100 py-2"
+          style={{ height: "auto" }}
+          aria-hidden="true"
+        >
+          &nbsp;
+        </div>
+
+        <div>
+          {/* Get Item information here */}
+          <p>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias
+            molestiae eligendi laudantium ipsam excepturi rerum eos nesciunt sit
+            repellendus, officiis veritatis reprehenderit tempora expedita error
+            tenetur facere, assumenda illo iure!
+          </p>
+        </div>
+
+        <div
+          className="btn btn-primary w-100 py-2"
+          style={{ height: "auto" }}
+          aria-hidden="true"
+        >
+          &nbsp;
+        </div>
+
+        <div>
+          {/* questions and comments here, This might be a TODO and its okey */}
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi,
+            exercitationem. Laboriosam, sequi? Accusantium odio exercitationem
+            ipsam impedit laboriosam dolor non esse alias vel cumque ipsa magni
+            iste quis, nemo expedita?
+          </p>
+        </div>
       </Col>
     </Row>
   );
