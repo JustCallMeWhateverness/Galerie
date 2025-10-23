@@ -1,7 +1,8 @@
 import { Row, Col } from "react-bootstrap";
 import Image from "../parts/Image";
 import { useState } from "react";
-import type { AuctionCard } from "../parts/AuctionCard";
+import type Auction from "../interfaces/Auction";
+import InputPlaceBid from "../components/InputPlaceBid";
 
 AboutPage.route = {
   path: "/listing",
@@ -23,7 +24,7 @@ export default function AboutPage({
   currentBid = sampleAuction.currentBid,
   endTime = sampleAuction.endTime,
   favorited = sampleAuction.favorited,
-}: AuctionCard = sampleAuction) {
+}: Auction = sampleAuction) {
   const [isFavorited, setFavorited] = useState(favorited);
   const currentTime = new Date();
   let remainingTimeMessage = "";
@@ -52,34 +53,37 @@ export default function AboutPage({
     setFavorited((isFavorited) => !isFavorited);
   }
   return (
-    <>
-      <Row>
-        <Col>
-          <Image src="/images/products/3.jpg" alt="Here is a product" />
+    <Row>
+      <Col>
+        <Image src="/images/products/3.jpg" alt="Here is a product" />
 
-          <div className="d-flex justify-content-between align-items-center">
-            <h2 className="mb-0">{title}</h2>
-            <span role="button" onClick={onFavorite} className="me-3">
-              <i
-                className={`bi bi-suit-heart${isFavorited ? "-fill" : ""} fs-1`}
-              ></i>
-            </span>
-          </div>
+        <div className="d-flex justify-content-between align-items-center">
+          <h2 className="mb-0">{title}</h2>
+          <span role="button" onClick={onFavorite} className="me-3">
+            <i
+              className={`bi bi-suit-heart${isFavorited ? "-fill" : ""} fs-1`}
+            ></i>
+          </span>
+        </div>
 
-          <div>
-            {/*Current bid. start bid, timeleft.  */}
-            <p className="mb-1">Start Bid: </p> {/*  */}
-            <p>Current bid: {currentBid} SEK</p>
-            <small className="text-muted">
-              Time left: {remainingTimeMessage}
-            </small>
-          </div>
-        </Col>
-      </Row>
-      {/* Add bid here */}
-      {/* Get Bidhistory here */}
-      {/* Get Item information here */}
-      {/* questions and comments here, This might be a TODO and its okey */}
-    </>
+        <div>
+          {/*Current bid. start bid, timeleft.  */}
+          <p className="mb-1">Start Bid: </p> {/*  */}
+          <p>Current bid: {currentBid} SEK</p>
+          <small className="text-muted">
+            Time left: {remainingTimeMessage}
+          </small>
+        </div>
+
+        <div>
+          <InputPlaceBid />
+        </div>
+
+        {/* Add bid here */}
+        {/* Get Bidhistory here */}
+        {/* Get Item information here */}
+        {/* questions and comments here, This might be a TODO and its okey */}
+      </Col>
+    </Row>
   );
 }
