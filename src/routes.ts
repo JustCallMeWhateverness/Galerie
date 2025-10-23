@@ -10,6 +10,7 @@ import ProductsPage from './pages/ProductsPage.tsx';
 import UserPage from './pages/UserPage.tsx';
 import AuthModal from './modals/AuthModal.tsx';
 import HomePage from "./pages/HomePage.tsx";
+import FavouritesPage from "./pages/FavouritesPage.tsx";
 
 export default [
   AboutPage,
@@ -20,6 +21,7 @@ export default [
   UserPage,
   AuthModal,
   HomePage,
+  FavouritesPage,
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
