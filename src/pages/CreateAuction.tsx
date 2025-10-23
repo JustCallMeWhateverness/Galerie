@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Col, Container, Dropdown, Form, InputGroup, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import DatePickerInput from "../parts/DatePickerInput";
 import { addDays } from "date-fns";
 
@@ -11,7 +11,7 @@ CreateAuction.route = {
 
 // sample data for rendering, will be replaced with database 
 const categories = [{ cId: 1, name: 'Ceramics' }, { cId: 2, name: 'Textiles' }, { cId: 3, name: 'Smithing' }]
-
+const minimumAuctionLengthDays = 3;
 const currency = "SEK"
 
 export default function CreateAuction() {
@@ -168,7 +168,7 @@ export default function CreateAuction() {
                     value={endDate}
                     onChange={setEndDate}
                     minimumDate={startDate || undefined}
-                    placeholder={startDate ? addDays(startDate, 3) : "Select end date"}
+                    placeholder={startDate ? addDays(startDate, minimumAuctionLengthDays) : "Select end date"}
                   />
 
                 </Form.Group>
