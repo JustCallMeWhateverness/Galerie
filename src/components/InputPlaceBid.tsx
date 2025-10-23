@@ -1,10 +1,31 @@
 import { Button, Form } from "react-bootstrap";
+import { useState } from "react";
 
 export default function InputPlaceBid() {
+  const [result, setResult] = useState("");
+  const [value, setValue] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setResult("Form has been submitted with with Input: " + value);
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setValue(e.target.value);
+    setResult("");
+  }
+
   return (
-    <Form className="mt-4">
+    <Form className="mt-4" onSubmit={handleSubmit}>
       <div className="position-relative mb-3">
-        <Form.Control type="number" placeholder="Enter your bid" />
+        {/* TODO: min value will depend on the current bid - maybe use step? */}
+        <Form.Control
+          type="number"
+          min="1"
+          placeholder="Enter your bid"
+          value={value}
+          onChange={handleChange}
+        />
 
         <span
           className="position-absolute text-muted"
@@ -24,6 +45,7 @@ export default function InputPlaceBid() {
       <Button type="submit" variant="primary" className="w-100">
         Place bid
       </Button>
+      <h4>{result}</h4> {/*TODO: Remove when not needed for testing*/}
     </Form>
   );
 }
