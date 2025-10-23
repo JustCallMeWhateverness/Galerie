@@ -16,7 +16,7 @@ export default function DatePickerInput({
   if (placeholder instanceof Date) {
     placeholder = placeholder.toLocaleString('sv-SE')
   }
-  // const hello = placeholder.toString()
+
   return (
     <DatePicker
       selected={value}
@@ -24,10 +24,12 @@ export default function DatePickerInput({
       dateFormat="yyyy-MM-dd HH:mm"
       timeFormat="HH:mm"
       placeholderText={placeholder}
-      className="border rounded px-3 py-2 w-full"
+      className="form-control"
       showTimeSelect
       timeIntervals={60}
       minDate={minimumDate}
+      wrapperClassName="d-block"
+      withPortal
     />
   );
 };
