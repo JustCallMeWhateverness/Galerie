@@ -12,7 +12,7 @@ CreateAuction.route = {
 // sample data for rendering, will be replaced with database 
 const categories = [{ cId: 1, name: 'Ceramics' }, { cId: 2, name: 'Textiles' }, { cId: 3, name: 'Smithing' }]
 
-const currency = "SEKf"
+const currency = "SEK"
 
 export default function CreateAuction() {
 
