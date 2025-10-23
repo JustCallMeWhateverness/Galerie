@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Dropdown, Form } from "react-bootstrap";
 import DatePickerInput from "../parts/DatePickerInput";
+import { addDays } from "date-fns";
 // import DatePicker from "react-datepicker";
 // import StartTimePicker from "../parts/StartTimePicker";
 CreateAuction.route = {
@@ -25,7 +26,7 @@ export default function CreateAuction() {
     startTime: '',
     endTime: ''
   })
-  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   function setProperty(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -90,11 +91,9 @@ export default function CreateAuction() {
 
       <Form.Group>
         <Form.Label>
-          Freight
+          Freight cost
         </Form.Label>
-        <Form.Control>
-
-
+        <Form.Control type="number">
         </Form.Control>
       </Form.Group>
 
@@ -103,13 +102,13 @@ export default function CreateAuction() {
         <Form.Label>
           Starting Bid
         </Form.Label>
-        <Form.Control></Form.Control>
+        <Form.Control type="number"></Form.Control>
       </Form.Group>
       <Form.Group>
         <Form.Label>
           Add image
         </Form.Label>
-        <Form.Control></Form.Control>
+        <Form.Control type="file"></Form.Control>
       </Form.Group>
 
       <Form.Group>
@@ -119,6 +118,7 @@ export default function CreateAuction() {
         <DatePickerInput
           value={startDate}
           onChange={setStartDate}
+          minimumDate={new Date()}
           placeholder="Select start date"
         />
 
@@ -131,7 +131,8 @@ export default function CreateAuction() {
         <DatePickerInput
           value={endDate}
           onChange={setEndDate}
-          placeholder="Select end date"
+          minimumDate={startDate || undefined}
+          placeholder={startDate ? addDays(startDate, 3) : "Select"}
         />
 
       </Form.Group>
