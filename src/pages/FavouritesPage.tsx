@@ -1,4 +1,4 @@
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { useAuth } from "../hooks/useAuth";
 import LikedAuctionsSection from '../components/LikedAuctionsSection';
 import LikedArtistsSection from '../components/LikedArtistsSection';
