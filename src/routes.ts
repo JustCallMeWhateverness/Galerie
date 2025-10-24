@@ -1,7 +1,7 @@
 import type Route from "./interfaces/Route.ts";
 import { createElement } from "react";
 
-// page components
+// Page components
 import AboutPage from './pages/AboutPage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import OurVisionPage from './pages/OurVisionPage.tsx';
@@ -12,6 +12,7 @@ import AuthModal from './modals/AuthModal.tsx';
 import HomePage from "./pages/HomePage.tsx";
 import FavouritesPage from "./pages/FavouritesPage.tsx";
 import Search from "./pages/Search.tsx";
+import ArtistView from "./pages/ArtistView.tsx";  // Individual artist profile page
 
 export default [
   AboutPage,
@@ -24,8 +25,9 @@ export default [
   HomePage,
   FavouritesPage,
   Search,
+  ArtistView,  // Individual artist profile page - displays artist details and ongoing auctions
 ]
-  // map the route property of each page component to a Route
+  // Map the route property of each page component to a Route object
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
-  // sort by index (and if an item has no index, sort as index 0)
+  // Sort by index (items without index default to 0)
   .sort((a, b) => (a.index || 0) - (b.index || 0));
