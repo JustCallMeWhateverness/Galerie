@@ -95,8 +95,8 @@ export default function FilterPage() {
             step={1}
             className="mb-4"
           />
-          <Button variant="primary" className="w-100 mb-4">Apply Filters</Button>
-          <Button variant="secondary" onClick={clear} className="w-100 mb-4">Clear All Filters</Button>
+          <Button variant="primary" className="w-100 mb-4">Apply</Button>
+          <Button variant="secondary" onClick={clear} className="w-100 mb-4">Clear All</Button>
         </Col>
       </Row>
     </>
