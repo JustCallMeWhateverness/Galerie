@@ -1,5 +1,5 @@
 export type Info = {
-  title: string;
+  title?: string;
   size: string;
   description: string;
   artist: string;
@@ -12,14 +12,23 @@ export function GetInformation({ info }: { info: Info }) {
 
   //TODO: Fetch real info from backend.
   return (
-    <>
-      <h4>Hello</h4>
-      <p>{title}</p>
-      <p>{size}</p>
+    <section className="mt-2">
       <p>{description}</p>
-      <p>{artist}</p>
-      <p>{pickupLocation}</p>
-      <p>{freight}</p>
-    </>
+
+      <div className="mt-3">
+        <p className="mb-1">
+          <strong>Size:</strong> {size}
+        </p>
+        <p className="mb-1">
+          <strong>Artist:</strong> {artist}
+        </p>
+        <p className="mb-1">
+          <strong>Pickup Location:</strong> {pickupLocation}
+        </p>
+        <p className="mb-1">
+          <strong>Freight:</strong> {freight}
+        </p>
+      </div>
+    </section>
   );
 }
