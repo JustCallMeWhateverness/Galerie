@@ -4,7 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { type ExtendedArtist } from '../parts/ArtistCard';
 import type Auction from '../interfaces/Auction';
 import AuctionCard from '../parts/AuctionCard';
-import { useAuth } from '../hooks/useAuth';
 
 /**
  * ArtistView Component - Individual artist profile page
@@ -20,8 +19,6 @@ function ArtistView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
-  // Get user authentication info (including liked artists)
-  const { user } = useAuth();
   
   // State management
   const [artist, setArtist] = useState<ExtendedArtist | null>(null);
@@ -151,28 +148,6 @@ function ArtistView() {
   // Main render - artist profile and auctions
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
-      {/* CSS to hide current bid and heart button, keep only image, title and time left */}
-      <style>{`
-        .auction-card-simplified .card-body {
-          display: none !important;
-        }
-        .auction-card-simplified .bi-suit-heart,
-        .auction-card-simplified .bi-suit-heart-fill {
-          display: none !important;
-        }
-        .auction-card-simplified .card-imgoverlay {
-          position: static !important;
-          background: none !important;
-          padding: 0 !important;
-          margin-top: 10px !important;
-        }
-        .auction-card-simplified .card-imgoverlay .card-title,
-        .auction-card-simplified .card-imgoverlay .card-text {
-          position: static !important;
-          color: #000 !important;
-          text-shadow: none !important;
-        }
-      `}</style>
       {/* Artist Profile Card - Main container for artist information (copied from UserPage) */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
         <div className="d-flex flex-column flex-md-row align-items-start">
@@ -227,35 +202,14 @@ function ArtistView() {
         </div>
       </div>
 
-      {/* Liked Artists Section - Using team component with consistent styling */}
-      {user?.likedArtists && user.likedArtists.length > 0 && (
-        <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px', border: '1px solid #e9ecef' }}>
-          <h6 className="fw-bold text-dark mb-3">Your Liked Artists</h6>
-          <div className="row">
-            {user.likedArtists.map((artist) => (
-              <div key={artist.id} className="col-md-6 col-lg-3 mb-4">
-                <AuctionCard 
-                  id={artist.id} 
-                  title={`${artist.firstName} ${artist.lastName}`}
-                  currentBid={0}
-                  endTime={new Date()}
-                  favorited={artist.favorited}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Ongoing Auctions Section - Using AuctionCard with hidden elements */}
+      {/* Ongoing Auctions Section - Using AuctionCard with normal styling */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
         <h6 className="fw-bold text-dark mb-3">Ongoing auctions</h6>
         <div className="row">
           {auctions.map((auction) => (
             <div key={auction.id} className="col-md-6 col-lg-3 mb-4">
-              <div className="auction-card-simplified">
-                <AuctionCard {...auction} />
-              </div>
+              <AuctionCard {...auction} />
             </div>
           ))}
         </div>

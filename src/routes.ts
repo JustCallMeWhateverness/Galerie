@@ -12,7 +12,7 @@ import AuthModal from './modals/AuthModal.tsx';
 import HomePage from "./pages/HomePage.tsx";
 import FavouritesPage from "./pages/FavouritesPage.tsx";
 import Search from "./pages/Search.tsx";
-import ArtistView from "./pages/ArtistView.tsx";  // Individual artist profile page
+import ArtistView from "./pages/ArtistView.tsx";
 import CreateAuction from "./pages/CreateAuction.tsx";
 import FilterPage from "./pages/FilterPage.tsx";
 import AuctionListingPage from "./pages/AuctionListingPage.tsx";
@@ -28,7 +28,7 @@ export default [
   HomePage,
   FavouritesPage,
   Search,
-  ArtistView,  // Individual artist profile page - displays artist details and ongoing auctions
+  ArtistView,
   CreateAuction,
   FilterPage,
   AuctionListingPage,
