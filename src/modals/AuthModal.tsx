@@ -12,7 +12,7 @@ AuthModal.route = {
   index: 3,
 };
 
-export default function AuthModal() {
+export default function AuthModal({ customTitle }: { customTitle?: string }) {
   const { user, loading } = useAuth();
   const [showLogin, setShowLogin] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
@@ -45,6 +45,7 @@ export default function AuthModal() {
 
   // Determine modal title
   const getTitle = () => {
+    if (showLogin && customTitle) return customTitle;
     if (showLogin) return 'Login';
     if (showRegister) return 'Register';
     if (showForgotPassword) return 'Forgot Password';

@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
+import { useAuth } from "../hooks/useAuth";
 import DatePickerInput from "../parts/DatePickerInput";
 import { addDays } from "date-fns";
+import AuthModal from "../modals/AuthModal";
+
 
 CreateAuction.route = {
   path: '/create',
   menuLabel: 'Create Auction',
   index: 7
 };
+
 
 // sample data for rendering, will be replaced with database 
 const categories = [{ cId: 1, name: 'Ceramics' }, { cId: 2, name: 'Textiles' }, { cId: 3, name: 'Smithing' }]
@@ -16,6 +20,7 @@ const currency = "SEK"
 
 export default function CreateAuction() {
 
+  const { user, loading } = useAuth();
   const [auction, setAuction] = useState({
     title: '',
     description: '',
@@ -37,7 +42,17 @@ export default function CreateAuction() {
     setAuction({ ...auction, [name]: processedValue })
   }
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
+  if (!user) {
+    return (
+      <AuthModal
+        customTitle="Log in to create an auction"
+      />
+    );
+  }
   return <>
     <Container>
       <Row>

@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
 import type User from '../interfaces/User';
+import AuthModal from '../modals/AuthModal';
+
 
 // Route configuration for the UserPage component
 UserPage.route = {
@@ -17,10 +21,10 @@ UserPage.route = {
  */
 export default function UserPage() {
   const navigate = useNavigate();
-  
+
   // State management for user data and UI interactions
-  const [user, setUser] = useState<User | null>(null); // Current user data
-  const [isLoading, setIsLoading] = useState(true); // Loading state for API calls
+  const { user, loading } = useAuth();
+  const [isSaving, setIsSaving] = useState(false); // Loading state for API calls
   const [isEditing, setIsEditing] = useState(false); // Edit mode toggle
   const [editForm, setEditForm] = useState<User>({ // Form data for editing
     id: 0,
@@ -39,40 +43,20 @@ export default function UserPage() {
    * Fetches current user data from the API
    * Redirects to login page if user is not authenticated
    */
-  const fetchUserData = useCallback(async () => {
-    try {
-      const response = await fetch('/api/login');
-      const result = await response.json();
-      
-      if (response.ok && !result.error) {
-        // User is authenticated, set user data and form
-        setUser(result);
-        setEditForm({
-          id: result.id,
-          created: result.created,
-          email: result.email,
-          firstName: result.firstName,
-          lastName: result.lastName,
-          role: result.role || 'user',
-          password: result.password || '',
-          phoneNumber: result.phoneNumber || ''
-        });
-      } else {
-        // User not authenticated, redirect to login
-        navigate('/login');
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      navigate('/login');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [navigate]);
-
-  // Load user data on component mount
   useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
+    if (user) {
+      setEditForm({
+        id: user.id,
+        created: user.created,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role || 'user',
+        password: user.password || '',
+        phoneNumber: user.phoneNumber || ''
+      });
+    }
+  }, [user]);
 
   /**
    * Handles input changes in edit form
@@ -93,7 +77,7 @@ export default function UserPage() {
   const handleSave = async () => {
     if (!user) return;
 
-    setIsLoading(true);
+    setIsSaving(true);
     setErrors([]);
 
     try {
@@ -109,7 +93,6 @@ export default function UserPage() {
 
       if (response.ok) {
         // Update local user state with new data
-        setUser({ ...user, ...editForm });
         setIsEditing(false);
         setSuccessMessage('Profile updated successfully!');
         // Clear success message after 3 seconds
@@ -120,7 +103,7 @@ export default function UserPage() {
     } catch {
       setErrors(['Network error. Please try again.']);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -161,7 +144,7 @@ export default function UserPage() {
   };
 
   // Loading state - show spinner while fetching data
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
         <div className="spinner-border text-primary" role="status">
@@ -174,11 +157,7 @@ export default function UserPage() {
   // No user data - show login prompt
   if (!user) {
     return (
-      <div className="text-center mt-5">
-        <Alert variant="warning">
-          Please log in to view your profile.
-        </Alert>
-      </div>
+      <AuthModal customTitle="Log in to view your profile" />
     );
   }
 
@@ -189,7 +168,7 @@ export default function UserPage() {
         <div className="d-flex flex-column flex-md-row align-items-start">
           {/* Profile Picture Section - Avatar placeholder */}
           <div className="me-md-4 mb-3 mb-md-0 text-center text-md-start">
-            <div 
+            <div
               className="rounded-3 bg-light d-flex align-items-center justify-content-center mx-auto mx-md-0"
               style={{ width: '120px', height: '120px', border: '1px solid #e9ecef' }}
             >
@@ -213,7 +192,7 @@ export default function UserPage() {
                     style={{ padding: '0' }}
                   />
                 </Form.Group>
-                
+
                 <Form.Group className="mb-2">
                   <Form.Control
                     type="text"
@@ -261,16 +240,16 @@ export default function UserPage() {
 
                 {/* Action buttons for save/cancel */}
                 <div className="d-flex gap-2 mt-3">
-                  <Button 
-                    variant="primary" 
+                  <Button
+                    variant="primary"
                     size="sm"
                     onClick={handleSave}
-                    disabled={isLoading}
+                    disabled={isSaving}
                   >
-                    {isLoading ? 'Saving...' : 'Save'}
+                    {isSaving ? 'Saving...' : 'Save'}
                   </Button>
-                  <Button 
-                    variant="outline-secondary" 
+                  <Button
+                    variant="outline-secondary"
                     size="sm"
                     onClick={handleCancel}
                   >
@@ -291,16 +270,16 @@ export default function UserPage() {
                 <div className="text-dark mb-1">{user.email}</div>
                 {/* Registration date */}
                 <div className="text-dark small">
-                  Reg. {user.created ? new Date(user.created).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  Reg. {user.created ? new Date(user.created).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
                   }) : 'N/A'}
                 </div>
-                
+
                 {/* Edit button to enter edit mode */}
-                <Button 
-                  variant="outline-secondary" 
+                <Button
+                  variant="outline-secondary"
                   size="sm"
                   className="mt-3"
                   onClick={() => setIsEditing(true)}
@@ -335,26 +314,26 @@ export default function UserPage() {
       {/* Navigation Menu Section - User action menu with chevron arrows */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px', border: '1px solid #e9ecef' }}>
         <h6 className="fw-bold text-dark mb-3">Menu</h6>
-        
+
         <div className="list-group list-group-flush">
           {/* Active bids menu item */}
           <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
             <span className="text-dark">Active bids</span>
             <i className="bi bi-chevron-right text-muted"></i>
           </div>
-          
+
           {/* My purchases menu item */}
           <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
             <span className="text-dark">My purchases</span>
             <i className="bi bi-chevron-right text-muted"></i>
           </div>
-          
+
           {/* My sales menu item */}
           <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
             <span className="text-dark">My sales</span>
             <i className="bi bi-chevron-right text-muted"></i>
           </div>
-          
+
           {/* Messages menu item */}
           <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center">
             <span className="text-dark">Messages</span>
@@ -365,8 +344,8 @@ export default function UserPage() {
 
       {/* Logout Button - Full width button with custom color */}
       <div className="text-center mb-5 mx-auto" style={{ maxWidth: '600px' }}>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           className="py-3 fw-semibold"
           onClick={handleLogout}
           style={{ backgroundColor: '#087990', borderColor: '#087990', color: '#ffffff', width: '150px' }}

@@ -1,7 +1,9 @@
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import { useAuth } from "../hooks/useAuth";
 import LikedAuctionsSection from '../components/LikedAuctionsSection';
 import LikedArtistsSection from '../components/LikedArtistsSection';
+import AuthModal from '../modals/AuthModal';
+
 
 FavouritesPage.route = {
   path: "/favourites",
@@ -11,10 +13,22 @@ FavouritesPage.route = {
 
 export default function FavouritesPage() {
 
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!user) {
+    return (
+      <AuthModal
+        customTitle="Log in to view your favourites"
+      />
+    );
+  }
 
   return <>
-    <Row>
+    <Row className="justify-content-center align-items-center">
       <Col>
         <h2>Your Favourites</h2>
         <LikedAuctionsSection likedAuctions={user?.likedAuctions ?? []} />
