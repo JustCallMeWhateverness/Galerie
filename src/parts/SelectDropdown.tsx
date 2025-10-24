@@ -28,7 +28,7 @@ export default function SelectDropdown({
       <Dropdown show={show} onToggle={(next) => setShow(!!next)}>
         <Dropdown.Toggle
           id={`${id}-toggle`}
-          className="border-secondary bg-light border rounded-3 text-start px-3 py-2"
+          className=" w-100 border-secondary bg-light border rounded-3 text-start px-3 py-2"
           as="button"
         >
           {toggleText}

@@ -3,48 +3,44 @@ import { Dropdown, Form, Button, Badge } from "react-bootstrap";
 import type MultiSelectDropdownProps from "../interfaces/MultiSelectDropdown";
 
 export default function MultiSelectDropdown({
-  label,
+  title,
   values,
   options,
   onChange,
-  showApply = false,
   className,
 }: MultiSelectDropdownProps) {
   const id = useId();
   const [show, setShow] = useState(false);
-  const [temp, setTemp] = useState<string[]>(values);
 
-  const active = showApply ? temp : values;
-  const picked = useMemo(() => new Set(active), [active]);
+  const picked = useMemo(() => new Set(values), [values]);
+  const count = values.length;
 
   const toggle = (val: string) => {
-    const base = showApply ? temp : values;
     const next = picked.has(val)
-      ? base.filter(v => v !== val)
-      : [...base, val];
-    showApply ? setTemp(next) : onChange(next);
+      ? values.filter(v => v !== val)
+      : [...values, val];
+    onChange(next);
   };
 
-  const clear = () => (showApply ? setTemp([]) : onChange([]));
-  const apply = () => {
-    onChange(temp);
-    setShow(false);
-  };
+  const clear = () => onChange([]);
 
-  const count = active.length;
   const toggleText = (
     <>
-      {label}
+      {title}
       {count > 0 && <Badge bg="secondary" className="ms-2">{count}</Badge>}
     </>
   );
 
   return (
     <div className={className}>
-      <Dropdown show={show} onToggle={(next) => { setShow(!!next); if (next) setTemp(values); }}>
+      <Dropdown
+        show={show}
+        onToggle={(next) => setShow(!!next)}
+        autoClose="outside"
+      >
         <Dropdown.Toggle
           id={`${id}-toggle`}
-          className=" border-secondary bg-light border rounded-3 text-start px-3 py-2"
+          className="w-100 border-secondary bg-light border rounded-3 text-start px-3 py-2"
           as="button"
         >
           {toggleText}
@@ -61,20 +57,16 @@ export default function MultiSelectDropdown({
                 checked={picked.has(opt.value)}
                 onChange={() => toggle(opt.value)}
                 className="mb-1"
+                onMouseDown={(e) => e.stopPropagation()}
               />
             ))}
 
             <div className="d-flex gap-2 mt-2">
               <Button size="sm" variant="outline-secondary" onClick={clear}>Clear</Button>
-
-              <Button size="sm" variant="secondary" className="ms-auto" onClick={apply}>
-                Apply
-              </Button>
-
             </div>
           </Form>
         </Dropdown.Menu>
       </Dropdown>
-    </div>
+    </div >
   );
 }

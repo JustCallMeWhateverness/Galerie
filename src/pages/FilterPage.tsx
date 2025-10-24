@@ -2,7 +2,8 @@ import { useState } from "react";
 import SelectDropdown from "../parts/SelectDropdown";
 import type { Option } from "../interfaces/SelectDropdown";
 import MultiSelectDropdown from "../parts/MultiSelectDropdown";
-import { Row, Col } from "react-bootstrap";
+import RangeDropdown from "../parts/RangeDropdown";
+import { Row, Col, Button } from "react-bootstrap";
 
 FilterPage.route = {
   path: "/filter",
@@ -48,35 +49,54 @@ export default function FilterPage() {
   const [selected, setSelected] = useState<string>("");
   const [cats, setCats] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
+  const [distance, setDistance] = useState<number | null>(null);
+  const clear = () => {
+    setSelected("");
+    setCats([]);
+    setColors([]);
+    setDistance(null);
+  };
 
   return (
     <>
-      <Row>
-        <Col md={4} className="mt-4">
+      <Row >
+        <Col xs={12} md={4} className="mt-4">
           <SelectDropdown
             title="Sort By"
             value={selected}
             changeHandler={setSelected}
             options={sortOptions}
+            className="mb-4"
           />
-        </Col>
 
-        <Col md={4} className="mt-4">
           <MultiSelectDropdown
-            label="Categories"
+            title="Categories"
             values={cats}
             onChange={setCats}
-            options={categoryOptions} title={""}
+            options={categoryOptions}
+            className="mb-4"
           />
-        </Col>
-        <Col md={4} className="mt-4">
+
 
           <MultiSelectDropdown
-            label="Colors"
+            title="Colors"
             values={colors}
             onChange={setColors}
-            options={colorOptions} title={""}
+            options={colorOptions}
+            className="mb-4"
           />
+
+          <RangeDropdown
+            label="Distance"
+            value={distance}
+            onChange={setDistance}
+            min={0}
+            max={100}
+            step={1}
+            className="mb-4"
+          />
+          <Button variant="primary" className="w-100 mb-4">Apply Filters</Button>
+          <Button variant="secondary" onClick={clear} className="w-100 mb-4">Clear All Filters</Button>
         </Col>
       </Row>
     </>
