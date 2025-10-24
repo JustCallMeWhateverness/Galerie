@@ -15,6 +15,7 @@ import Search from "./pages/Search.tsx";
 import ArtistView from "./pages/ArtistView.tsx";  // Individual artist profile page
 import CreateAuction from "./pages/CreateAuction.tsx";
 import FilterPage from "./pages/FilterPage.tsx";
+import AuctionListingPage from "./pages/AuctionListingPage.tsx";
 
 export default [
   AboutPage,
@@ -29,7 +30,8 @@ export default [
   Search,
   ArtistView,  // Individual artist profile page - displays artist details and ongoing auctions
   CreateAuction,
-  FilterPage
+  FilterPage,
+  AuctionListingPage,
 ]
   // Map the route property of each page component to a Route object
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
