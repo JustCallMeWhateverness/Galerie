@@ -28,7 +28,7 @@ export default [
   FavouritesPage,
   Search,
   CreateAuction,
-  FilterPage
+  FilterPage,
   AuctionListingPage,
 ]
   // map the route property of each page component to a Route
