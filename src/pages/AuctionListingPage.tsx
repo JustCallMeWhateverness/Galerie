@@ -5,6 +5,8 @@ import type Auction from "../interfaces/Auction";
 import InputPlaceBid from "../components/InputPlaceBid";
 import BidHistory from "../components/BidHistory";
 import type { Bid } from "../interfaces/Bid";
+import type { Info } from "../components/GetInformation";
+import { GetInformation } from "../components/GetInformation";
 
 AboutPage.route = {
   path: "/listing",
@@ -26,6 +28,14 @@ const sampleBids: Bid[] = [
   { id: "2", amount: 95, bidder: "Jonas", createdAt: "2025-10-22T16:45:00Z" },
   { id: "3", amount: 80, createdAt: "2025-10-22T15:10:00Z" }, // anonymt
 ];
+const sampleInfo: Info = {
+  title: "Scarf",
+  size: "Large",
+  description: "A warm and cozy scarf perfect for winter days.",
+  artist: "Claire Wilson",
+  pickupLocation: "Stockholm",
+  freight: "500 SEK",
+};
 
 export default function AboutPage({
   id = sampleAuction.id,
@@ -104,12 +114,7 @@ export default function AboutPage({
 
         <div>
           {/* Get Item information here */}
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias
-            molestiae eligendi laudantium ipsam excepturi rerum eos nesciunt sit
-            repellendus, officiis veritatis reprehenderit tempora expedita error
-            tenetur facere, assumenda illo iure!
-          </p>
+          <GetInformation info={sampleInfo} />
         </div>
 
         <div
