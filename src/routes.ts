@@ -13,6 +13,7 @@ import HomePage from "./pages/HomePage.tsx";
 import FavouritesPage from "./pages/FavouritesPage.tsx";
 import Search from "./pages/Search.tsx";
 import CreateAuction from "./pages/CreateAuction.tsx";
+import FilterPage from "./pages/FilterPage.tsx";
 
 export default [
   AboutPage,
@@ -26,6 +27,7 @@ export default [
   FavouritesPage,
   Search,
   CreateAuction,
+  FilterPage
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
