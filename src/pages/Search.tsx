@@ -20,7 +20,7 @@ type Tab = "auctions" | "artists";
 Search.route = {
   path: "/auctions",
   menuLabel: "Search",
-  index: 1,
+  index: 2,
 };
 
 function useQuery() {
