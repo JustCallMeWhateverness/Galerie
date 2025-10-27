@@ -15,14 +15,19 @@ $enable-negative-margins: true;
 //import icon
 @import '../node_modules/bootstrap-icons/font/bootstrap-icons.css';
 
+.site-main {
+  padding-top: clamp(65px, 5vw + 45px, 96px);
+  padding-bottom: 70px;
+}
+
 .body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
 // Override some Bootstrap defaults
 .navbar-brand {
-  font-family: 'Tangerine';
-  font-size: 50px;
+  font-family: 'Passions Conflict', cursive;
+  font-size: clamp(3rem, 6vw, 5rem);
 }
 
 

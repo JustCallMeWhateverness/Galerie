@@ -10,7 +10,7 @@ export default function Logout() {
     const response = await fetch("/api/login", { method: "DELETE", credentials: "include" });
     if (response.ok) {
       setUser(null);
-      navigate("/home");
+      navigate("/");
     }
     else { alert("Logout failed."); }
   }

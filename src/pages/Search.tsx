@@ -104,7 +104,7 @@ export default function Search() {
   return (
     <>
       <Row>
-        <Col md={12} className="mt-4 mx-auto">
+        <Col md={12} className="mx-auto">
           <SearchBar initialQuery={q} placeholder={`Search ${tab}...`} />
         </Col>
       </Row>

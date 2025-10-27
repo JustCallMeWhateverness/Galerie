@@ -6,7 +6,7 @@ export default function Footer() {
     <Container fluid>
       <Row>
         <Col className="text-center py-3">
-          <Link to="/home" className="d-flex flex-column align-items-center text-decoration-none text-black"  >
+          <Link to="/" className="d-flex flex-column align-items-center text-decoration-none text-black"  >
             <i className="bi bi-house-door-fill fs-1"></i>
           </Link>
         </Col>

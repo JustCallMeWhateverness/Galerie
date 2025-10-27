@@ -12,7 +12,7 @@ AuthModal.route = {
   index: 3,
 };
 
-export default function AuthModal({ customTitle }: { customTitle?: string }) {
+export default function AuthModal({ customTitle }: { customTitle?: string; }) {
   const { user, loading } = useAuth();
   const [showLogin, setShowLogin] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
@@ -39,7 +39,7 @@ export default function AuthModal({ customTitle }: { customTitle?: string }) {
       setShowRegister(false);
       setShowForgotPassword(false);
     } else {
-      navigate('/home');
+      navigate('/');
     }
   };
 

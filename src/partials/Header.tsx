@@ -13,8 +13,8 @@ export default function Header() {
         fixed="top"
         className="justify-content-center shadow-sm rounded-1"
       >
-        <Navbar.Brand as={Link} to="/home" className=" fw-bold text-center">
-          Auction App
+        <Navbar.Brand as={Link} to="/" className=" text-center">
+          Galerie
         </Navbar.Brand>
       </Navbar>
     </header>

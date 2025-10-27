@@ -11,7 +11,7 @@ export default function App() {
   return (
     <>
       <Header />
-      <main style={{ paddingTop: "65px", paddingBottom: "70px" }}>
+      <main className="site-main">
         <Main />
       </main>
       <Footer />
