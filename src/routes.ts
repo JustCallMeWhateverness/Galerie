@@ -25,7 +25,5 @@ export default [
   FilterPage,
   AuctionListingPage,
 ]
-  // Map the route property of each page component to a Route object
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
-  // Sort by index (items without index default to 0)
   .sort((a, b) => (a.index || 0) - (b.index || 0));
