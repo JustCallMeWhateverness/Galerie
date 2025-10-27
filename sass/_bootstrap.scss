@@ -21,8 +21,8 @@ $enable-negative-margins: true;
 
 // Override some Bootstrap defaults
 .navbar-brand {
-  font-family: 'Tangerine';
-  font-size: 50px;
+  font-family: 'Passions Conflict', cursive;
+  font-size: clamp(3rem, 6vw, 5rem);
 }
 
 
