@@ -3,7 +3,7 @@ import CarouselComponent from "../parts/CarouselComponent";
 import AuctionCard from "../parts/AuctionCard";
 
 HomePage.route = {
-  path: "/home",
+  path: "/",
 };
 
 export default function HomePage() {
