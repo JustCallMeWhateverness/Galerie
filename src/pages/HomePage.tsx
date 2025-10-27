@@ -33,7 +33,7 @@ export default function HomePage() {
       id: 1,
       title: "Scarf",
       currentBid: 33,
-      endTime: new Date("2025-10-21T11:49:00"),
+      endTime: new Date("2025-10-31T11:49:00"),
       favorited: false,
     },
     {
@@ -51,31 +51,31 @@ export default function HomePage() {
       favorited: false,
     },
     {
-      id: 3,
+      id: 4,
       title: "Jewelry from the Louvre",
       currentBid: 50,
       endTime: new Date("2025-11-21T11:49:00"),
       favorited: false,
     },
     {
-      id: 3,
+      id: 5,
       title: "Mona Lisa",
       currentBid: 50,
-      endTime: new Date("2025-11-21T11:49:00"),
+      endTime: new Date("2025-10-30T11:49:00"),
       favorited: false,
     },
     {
-      id: 3,
+      id: 6,
       title: "Sculpture",
       currentBid: 50,
-      endTime: new Date("2025-11-21T11:49:00"),
+      endTime: new Date("2025-11-01T11:49:00"),
       favorited: false,
     },
     {
-      id: 3,
+      id: 7,
       title: "Painting",
       currentBid: 50,
-      endTime: new Date("2025-11-21T11:49:00"),
+      endTime: new Date("2025-12-21T11:49:00"),
       favorited: false,
     },
   ];
@@ -101,6 +101,38 @@ export default function HomePage() {
               <AuctionCard {...auction} />
             </Col>
           ))}
+        </Row>
+      </div>
+
+      <h4>Last Chance</h4>
+      <div>
+        <Row className="flex-nowrap overflow-auto">
+          {[...sampleAuctions]
+            .sort(
+              (a, b) =>
+                new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
+            )
+            .map((auction) => (
+              <Col key={auction.id} xs={6} md={6}>
+                <AuctionCard {...auction} />
+              </Col>
+            ))}
+        </Row>
+      </div>
+
+      <h4>New Auctions</h4>
+      <div>
+        <Row className="flex-nowrap overflow-auto">
+          {[...sampleAuctions]
+            .sort(
+              (a, b) =>
+                new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
+            )
+            .map((auction) => (
+              <Col key={auction.id} xs={6} md={6}>
+                <AuctionCard {...auction} />
+              </Col>
+            ))}
         </Row>
       </div>
     </>
