@@ -61,7 +61,7 @@ export default function AuctionCard({ id, title, currentBid, endTime, favorited 
         </Card.Body>
       </Card>
       {showAuthModal && (
-        <AuthModal customTitle="Log in to view your favourites" />
+        <AuthModal customTitle="Log in to favourite auctions" />
       )}
     </>
   );
