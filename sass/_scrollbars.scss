@@ -1,0 +1,16 @@
+/* For browsers that support `scrollbar-*` properties */
+@supports (scrollbar-color: auto) {
+  .scroll {
+    scrollbar-color: #b09c81 white;
+  }
+}
+
+/* For browsers that support `::-webkit-scrollbar-*` pseudo-elements */
+@supports selector(::-webkit-scrollbar) {
+  .scroll::-webkit-scrollbar {
+    background: #b09c81;
+  }
+  .scroll::-webkit-scrollbar-thumb {
+    background: rgb(156, 93, 93);
+  }
+}
