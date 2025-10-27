@@ -18,8 +18,7 @@ function ArtistView() {
   // Get artist ID from URL parameters
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  
+
   // State management
   const [artist, setArtist] = useState<ExtendedArtist | null>(null);
   const [auctions, setAuctions] = useState<Auction[]>([]);
@@ -115,9 +114,6 @@ function ArtistView() {
     fetchArtistAuctions();
   }, [id, fetchArtistData, fetchArtistAuctions]);
 
-
-
-
   // Loading state - show spinner while fetching data
   if (isLoading) {
     return (
@@ -201,7 +197,6 @@ function ArtistView() {
           </div>
         </div>
       </div>
-
 
       {/* Ongoing Auctions Section - Using AuctionCard with normal styling */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
