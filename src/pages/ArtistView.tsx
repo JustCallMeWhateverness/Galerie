@@ -7,7 +7,6 @@ import AuctionCard from '../parts/AuctionCard';
 
 /**
  * ArtistView Component - Individual artist profile page
- * 
  * Route: /artist-view/:id
  * 
  * TODO: Replace mock data with real API calls when backend is ready
