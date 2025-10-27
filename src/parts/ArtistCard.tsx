@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Card } from "react-bootstrap";
 
+/**
+ * Base Artist type - Used for simple artist displays across the application
+ * 
+ * Contains essential artist information for cards and lists
+ * Used by ArtistCard component and other team components
+ */
 export type Artist = {
   id: number;
   firstName: string;
@@ -8,10 +14,23 @@ export type Artist = {
   rating?: number | null;
   profession?: string;
   favorited: boolean;
-
 };
 
-export default function ArtistCard({ id, firstName, lastName, rating, profession, favorited }: Artist) {
+/**
+ * Extended Artist type - Used for detailed artist profile pages
+ * 
+ * Extends the base Artist type with additional fields for detailed views
+ * Contains contact information, registration details, and avatar
+ * Specifically created for ArtistView page integration
+ */
+export type ExtendedArtist = Artist & {
+  location?: string;           // Artist's location/address
+  email?: string;             // Artist's contact email
+  registrationDate?: string;   // When the artist joined the platform
+  avatar?: string;            // Path to artist's profile image
+};
+
+export default function ArtistCard({ firstName, lastName, rating, profession, favorited }: Artist) {
   const [isFavorited, setFavorited] = useState(favorited);
   const ratingNum =
     typeof rating === "number" ? rating :
