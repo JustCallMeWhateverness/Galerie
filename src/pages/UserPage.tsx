@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 import type User from '../interfaces/User';
 import AuthModal from '../modals/AuthModal';
+import Logout from '../components/Logout';
 
 
 // Route configuration for the UserPage component
@@ -20,7 +20,6 @@ UserPage.route = {
  * Features: Profile display, inline editing, menu navigation, logout functionality
  */
 export default function UserPage() {
-  const navigate = useNavigate();
 
   // State management for user data and UI interactions
   const { user, loading } = useAuth();
@@ -128,20 +127,6 @@ export default function UserPage() {
     setErrors([]);
   };
 
-  /**
-   * Handles user logout
-   * Calls logout API and redirects to login page
-   */
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/login', {
-        method: 'DELETE',
-      });
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
 
   // Loading state - show spinner while fetching data
   if (loading) {
@@ -287,8 +272,13 @@ export default function UserPage() {
                 >
                   Edit
                 </Button>
+                <div className="mt-3 float-end">
+                  <Logout />
+                </div>
               </div>
+
             )}
+
           </div>
         </div>
       </div>
@@ -340,18 +330,6 @@ export default function UserPage() {
             <i className="bi bi-chevron-right text-muted"></i>
           </div>
         </div>
-      </div>
-
-      {/* Logout Button - Full width button with custom color */}
-      <div className="text-center mb-5 mx-auto" style={{ maxWidth: '600px' }}>
-        <Button
-          variant="primary"
-          className="py-3 fw-semibold"
-          onClick={handleLogout}
-          style={{ backgroundColor: '#087990', borderColor: '#087990', color: '#ffffff', width: '150px' }}
-        >
-          Log out
-        </Button>
       </div>
     </div>
   );
