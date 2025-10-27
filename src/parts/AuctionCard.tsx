@@ -1,12 +1,20 @@
 import { Card } from 'react-bootstrap';
 import { useFavorite } from '../hooks/useFavorite';
+import { useAuth } from '../hooks/useAuth';
 import type Auction from '../interfaces/Auction';
 
 import AuthModal from '../modals/AuthModal';
 
-export default function AuctionCard({ id, title, currentBid, endTime, favorited }: Auction) {
+export default function AuctionCard(props: Auction) {
 
-  const { isFavorited, showAuthModal, onFavorite } = useFavorite(favorited);
+  const { id, title, currentBid, endTime } = props;
+
+
+  const { user } = useAuth();
+
+  const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
+
+  const { isFavorited, showAuthModal, onFavorite } = useFavorite(isFavoritedByUser, props);
 
   const currentTime = new Date()
   let remainingTimeMessage = ""
