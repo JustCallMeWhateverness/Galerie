@@ -214,8 +214,7 @@ function ArtistView() {
 
 export default ArtistView;
 
-// Route configuration
-(ArtistView as unknown as React.ComponentType & { route: { path: string; index: number } }).route = {
+ArtistView.route = {
   path: '/artist-view/:id',
   index: 0
 };
