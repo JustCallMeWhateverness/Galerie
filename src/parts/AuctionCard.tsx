@@ -1,25 +1,18 @@
-import { useState } from 'react';
 import { Card } from 'react-bootstrap';
+import { useFavorite } from '../hooks/useFavorite';
 import { useAuth } from '../hooks/useAuth';
 import type Auction from '../interfaces/Auction';
+
 import AuthModal from '../modals/AuthModal';
 import { getRemainingTimeMessage } from '../utils/timeHelpers';
 
-export default function AuctionCard({ id, title, currentBid, endTime, favorited }: Auction) {
+export default function AuctionCard(props: Auction) {
 
-  const [isFavorited, setFavorited] = useState(favorited);
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { id, title, currentBid, endTime } = props;
   const { user } = useAuth();
+  const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
+  const { isFavorited, showAuthModal, onFavorite } = useFavorite(isFavoritedByUser, props);
   const remainingTimeMessage = getRemainingTimeMessage(endTime);
-
-  function onFavorite() {
-    if (!user) {
-      setShowAuthModal(true);
-    }
-    else {
-      setFavorited((isFavorited) => (!isFavorited));
-    }
-  }
 
   return (
     <>
@@ -44,7 +37,7 @@ export default function AuctionCard({ id, title, currentBid, endTime, favorited 
         </Card.Body>
       </Card>
       {showAuthModal && (
-        <AuthModal customTitle="Log in to view your favourites" />
+        <AuthModal customTitle="Log in to favourite auctions" />
       )}
     </>
   );
