@@ -1,64 +1,18 @@
-import { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { useFavorite } from '../hooks/useFavorite';
 import { useAuth } from '../hooks/useAuth';
 import type Auction from '../interfaces/Auction';
+
 import AuthModal from '../modals/AuthModal';
 import { getRemainingTimeMessage } from '../utils/timeHelpers';
 
 export default function AuctionCard(props: Auction) {
 
   const { id, title, currentBid, endTime } = props;
-
-
   const { user } = useAuth();
-
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
-
   const { isFavorited, showAuthModal, onFavorite } = useFavorite(isFavoritedByUser, props);
-
-  const currentTime = new Date()
-  let remainingTimeMessage = ""
-  // Time Difference in Milliseconds
-  const timeDifferenceMilli: number = endTime.getTime() - currentTime.getTime()
-
-  if (timeDifferenceMilli < 0) {
-    remainingTimeMessage = "Auction has finished"
-  }
-  else {
-
-    const remainingSeconds = Math.floor(timeDifferenceMilli / 1000)
-    const remainingMinutes = Math.floor(remainingSeconds / 60)
-    const remainingHours = Math.floor(remainingMinutes / 60)
-    const remainingDays = Math.floor(remainingHours / 24)
-
-    // Only display the largest time unit remaining
-    if (remainingDays > 0) {
-      remainingTimeMessage = `${remainingDays} days`
-    }
-    else if (remainingHours > 0) {
-      remainingTimeMessage = `${remainingHours} hours`
-    }
-    else if (remainingMinutes > 0) {
-      remainingTimeMessage = `${remainingMinutes} minutes`
-    }
-    else
-      remainingTimeMessage = `${remainingSeconds} seconds`
-  }
-
-  const [isFavorited, setFavorited] = useState(favorited);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const { user } = useAuth();
   const remainingTimeMessage = getRemainingTimeMessage(endTime);
-
-  function onFavorite() {
-    if (!user) {
-      setShowAuthModal(true);
-    }
-    else {
-      setFavorited((isFavorited) => (!isFavorited));
-    }
-  }
 
   return (
     <>
