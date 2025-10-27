@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { useFavorite } from '../hooks/useFavorite';
 import { useAuth } from '../hooks/useAuth';
 import type Auction from '../interfaces/Auction';
-
 import AuthModal from '../modals/AuthModal';
+import { getRemainingTimeMessage } from '../utils/timeHelpers';
 
 export default function AuctionCard(props: Auction) {
 
@@ -45,6 +46,19 @@ export default function AuctionCard(props: Auction) {
       remainingTimeMessage = `${remainingSeconds} seconds`
   }
 
+  const [isFavorited, setFavorited] = useState(favorited);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { user } = useAuth();
+  const remainingTimeMessage = getRemainingTimeMessage(endTime);
+
+  function onFavorite() {
+    if (!user) {
+      setShowAuthModal(true);
+    }
+    else {
+      setFavorited((isFavorited) => (!isFavorited));
+    }
+  }
 
   return (
     <>
