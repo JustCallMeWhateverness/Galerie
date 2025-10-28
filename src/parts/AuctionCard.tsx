@@ -11,7 +11,7 @@ export default function AuctionCard(props: Auction) {
   const { id, title, currentBid, endTime } = props;
   const { user } = useAuth();
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
-  const { isFavorited, showAuthModal, onFavorite } = useFavorite(isFavoritedByUser, props);
+  const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, props);
   const remainingTimeMessage = getRemainingTimeMessage(endTime);
 
   return (
@@ -37,7 +37,11 @@ export default function AuctionCard(props: Auction) {
         </Card.Body>
       </Card>
       {showAuthModal && (
-        <AuthModal customTitle="Log in to favourite auctions" />
+        <AuthModal
+          customTitle="Log in to favourite auctions"
+          show={showAuthModal}
+          onHide={() => setShowAuthModal(false)}
+        />
       )}
     </>
   );

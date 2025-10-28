@@ -1,10 +1,10 @@
 import { Modal, Col } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import Login from '../components/Login';
 import Register from '../components/Register';
 import ForgotPassword from '../components/ForgotPassword';
-import { useAuth } from '../hooks/useAuth';
 
 AuthModal.route = {
   path: "/account",
@@ -12,7 +12,14 @@ AuthModal.route = {
   index: 3,
 };
 
-export default function AuthModal({ customTitle }: { customTitle?: string; }) {
+export default function AuthModal({ customTitle,
+  show = true,
+  onHide
+}: {
+  customTitle?: string;
+  show?: boolean;
+  onHide?: () => void;
+}) {
   const { user, loading } = useAuth();
   const [showLogin, setShowLogin] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
@@ -38,6 +45,8 @@ export default function AuthModal({ customTitle }: { customTitle?: string; }) {
       setShowLogin(true);
       setShowRegister(false);
       setShowForgotPassword(false);
+    } else if (onHide) {
+      onHide();
     } else {
       navigate('/');
     }
@@ -53,7 +62,7 @@ export default function AuthModal({ customTitle }: { customTitle?: string; }) {
   };
 
   return (
-    <Modal show={true} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>{getTitle()}</Modal.Title>
       </Modal.Header>
