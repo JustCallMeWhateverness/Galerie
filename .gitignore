@@ -1,35 +1,142 @@
-# Ignore the database being run
-# since SQLite might change it during runtime
-# + sessions will be stored in it in some examples
-# if the backend/_db.sqlite3 is missing the backend will
-# create it from db_template/_db.sqlite3
-backend/_db.sqlite3
+# Mac
+.DS_Store
 
-# Do not git control build related .NET folders
-backend/obj
-backend/bin
+# ============================================
+# .NET / C# (backend)
+# ============================================
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / Rider
+.vs/
+.vscode/
+.idea/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.iml
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+
+# Orchard Core specific
+# Ignore runtime App_Data (gets restored from seed)
+backend/App_Data/
+
+# But keep the seed data committed to git
+!backend/App_Data.seed/
+
+# Ignore ImageSharp cache and other wwwroot runtime files
+backend/wwwroot/Default/
+
+# Other Orchard ignores
+App_Data_Sites/
+Localization/
+*.db-shm
+*.db-wal
+
+# ASP.NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Signing keys
+signing-key.json
+*.pfx
+*.p12
+
+# ============================================
+# Node / JavaScript / TypeScript (frontend)
+# ============================================
+
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Production build
+dist/
+build/
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Testing
+coverage/
+*.lcov
+.nyc_output
 
-# Editor directories and files
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# Vite
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# ============================================
+# OS & Editors
+# ============================================
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ============================================
+# IDEs
+# ============================================
+
+# VSCode
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+!.vscode/settings.json
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
