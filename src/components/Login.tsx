@@ -13,7 +13,7 @@ export default function Login({
 }) {
 
   const [loginData, setLoginData] = useState({
-    email: '',
+    usernameOrEmail: '',
     password: ''
   });
 
@@ -26,7 +26,7 @@ export default function Login({
   async function handleLogin(event: React.FormEvent) {
     event.preventDefault();
 
-    const response = await fetch("/api/login", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -39,7 +39,8 @@ export default function Login({
       setUser(data);
       navigate("/");
     } else {
-      console.error("Login failed");
+      const error = await response.json();
+      console.error("Login failed", error);
     }
   }
 
@@ -48,13 +49,13 @@ export default function Login({
       <Button variant="outline-secondary" type="button" onClick={onSwitchToRegister} className="mb-2">
         No account yet? Register
       </Button>
-      <Form.Group controlId="formEmail">
-        <Form.Label >Email address</Form.Label>
+      <Form.Group controlId="formUsernameOrEmail">
+        <Form.Label>Username or Email</Form.Label>
         <Form.Control required
-          type="email"
-          placeholder="Enter email"
-          value={loginData.email}
-          onChange={(e) => setProperty("email", e.target.value)}
+          type="text"
+          placeholder="Enter username or email"
+          value={loginData.usernameOrEmail}
+          onChange={(e) => setProperty("usernameOrEmail", e.target.value)}
         />
       </Form.Group>
       <Form.Group controlId="formPassword">
