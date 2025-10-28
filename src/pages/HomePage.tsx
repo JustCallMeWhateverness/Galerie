@@ -1,4 +1,4 @@
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import CarouselComponent from "../parts/CarouselComponent";
 import AuctionCard from "../parts/AuctionCard";
 
@@ -94,19 +94,19 @@ export default function HomePage() {
       </Row>
 
       <h4>Popular Auctions</h4>
-      <div>
-        <Row className="flex-nowrap overflow-auto">
+      <Container className="mb-4">
+        <Row className="flex-nowrap overflow-auto scroll">
           {sampleAuctions.map((auction) => (
             <Col key={auction.id} xs={6} md={6}>
               <AuctionCard {...auction} />
             </Col>
           ))}
         </Row>
-      </div>
+      </Container>
 
       <h4>Last Chance</h4>
-      <div>
-        <Row className="flex-nowrap overflow-auto">
+      <Container className="mb-4">
+        <Row className="flex-nowrap overflow-auto scroll">
           {[...sampleAuctions]
             .sort(
               (a, b) =>
@@ -118,11 +118,11 @@ export default function HomePage() {
               </Col>
             ))}
         </Row>
-      </div>
+      </Container>
 
       <h4>New Auctions</h4>
-      <div>
-        <Row className="flex-nowrap overflow-auto">
+      <Container className="mb-4">
+        <Row className="flex-nowrap overflow-auto scroll">
           {[...sampleAuctions]
             .sort(
               (a, b) =>
@@ -134,7 +134,7 @@ export default function HomePage() {
               </Col>
             ))}
         </Row>
-      </div>
+      </Container>
     </>
   );
 }
