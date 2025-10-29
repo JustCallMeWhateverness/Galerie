@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 
 export default function Login({
   onSwitchToRegister,
-  onSwitchToForgotPassword
+  onSwitchToForgotPassword,
 }: {
   onSwitchToRegister: () => void;
   onSwitchToForgotPassword: () => void;
@@ -17,7 +16,6 @@ export default function Login({
     password: ''
   });
 
-  const navigate = useNavigate();
   const { setUser } = useAuth();
 
   function setProperty(name: string, value: string) {
@@ -37,7 +35,6 @@ export default function Login({
       const data = await response.json();
       console.log("Login successful:", data);
       setUser(data);
-      navigate("/");
     } else {
       const error = await response.json();
       console.error("Login failed", error);
