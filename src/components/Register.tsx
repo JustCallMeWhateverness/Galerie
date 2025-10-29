@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import ErrorToast from '../parts/ErrorToast';
+import flattenErrorMessages from '../utils/flattenErrorMessages';
 
 export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
 
@@ -34,19 +35,7 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
     } else {
       const content = await response.json()
 
-      if (typeof content.details === 'string') {
-        setErrorMessage(content.details)
-      }
-      else if (typeof content.details === 'object') {
-        const messages = Object.values(content.details)
-          .flat()
-          .filter(message => typeof message === 'string')
-          .join(' ')
-        setErrorMessage(messages)
-      }
-      else {
-        setErrorMessage(content.error || "An error occured")
-      }
+      setErrorMessage(flattenErrorMessages(content))
 
       setShowToast(true)
 
