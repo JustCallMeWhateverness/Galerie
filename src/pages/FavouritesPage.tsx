@@ -32,7 +32,7 @@ export default function FavouritesPage() {
       <Col>
         <h2>Your Favourites</h2>
         <LikedAuctionsSection likedAuctions={user?.likedAuctions ?? []} />
-        <LikedArtistsSection likedArtists={user?.likedAuctions ?? []} />
+        <LikedArtistsSection likedArtists={user?.likedArtists ?? []} />
       </Col>
     </Row>
   </>;
