@@ -12,16 +12,16 @@ import AuthModal from "../modals/AuthModal";
  * Specifically created for ArtistView page integration
  */
 export type ExtendedArtist = Artist & {
-  location?: string;           // Artist's location/address
-  email?: string;             // Artist's contact email
-  registrationDate?: string;   // When the artist joined the platform
-  avatar?: string;            // Path to artist's profile image
+  location?: string;
+  email?: string;
+  registrationDate?: string;
+  avatar?: string;
 };
 
 export default function ArtistCard(props: Artist) {
   const { id, firstName, lastName, profession } = props;
   const { user } = useAuth();
-  const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
+  const isFavoritedByUser = !!user?.likedArtists?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, undefined, props);
 
   const ratingNum =

@@ -1,19 +1,19 @@
 import { Row, Col } from 'react-bootstrap';
-import AuctionCard from '../parts/AuctionCard';
-import type Auction from '../interfaces/Auction';
+import ArtistCard from '../parts/ArtistCard';
+import type Artist from '../interfaces/Artist';
 
 interface Props {
-  auctions: Auction[];
+  artists: Artist[];
 }
 
-export default function LikedArtistsList({ auctions }: Props) {
-  if (auctions.length === 0) return <p>You haven't liked any artists yet.</p>;
+export default function LikedArtistsList({ artists }: Props) {
+  if (artists.length === 0) return <p>You haven't liked any artists yet.</p>;
 
   return (
     <Row>
-      {auctions.map(auction => (
-        <Col key={auction.id} xs={6} md={4}>
-          <AuctionCard {...auction} />
+      {artists.map(artist => (
+        <Col key={artist.id} xs={6} md={4}>
+          <ArtistCard {...artist} />
         </Col>
       ))}
     </Row>

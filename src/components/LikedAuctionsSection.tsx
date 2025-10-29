@@ -1,9 +1,9 @@
 import { Row, Col } from 'react-bootstrap';
 import LikedAuctionsList from './LikedAuctionsList';
-import type AuctionCard from '../interfaces/Auction';
+import type Auction from '../interfaces/Auction';
 
 interface Props {
-  likedAuctions: AuctionCard[];
+  likedAuctions: Auction[];
 }
 
 export default function LikedAuctionsSection({ likedAuctions }: Props) {

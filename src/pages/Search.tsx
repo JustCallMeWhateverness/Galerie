@@ -3,7 +3,8 @@ import { Row, Col, Spinner, Alert, ButtonGroup, Button } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import AuctionCard from "../parts/AuctionCard";
-import ArtistCard, { type Artist } from "../parts/ArtistCard";
+import ArtistCard from "../parts/ArtistCard";
+import type Artist from "../interfaces/Artist";
 
 type AuctionDTO = {
   id: number;
@@ -39,7 +40,17 @@ export default function Search() {
   const tab = useQueryParam("tab", "auctions") as Tab;
 
   const [auctions, setAuctions] = useState<AuctionDTO[]>([]);
-  const [artists, setArtists] = useState<Artist[]>([]);
+  const [artists, setArtists] = useState<Artist[]>([
+    {
+      id: 1,
+      firstName: "Test",
+      lastName: "Artist",
+      profession: "Painter",
+      rating: 4.5,
+      favorited: false,
+      // Add any other required Artist fields here
+    }
+  ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
