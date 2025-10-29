@@ -1,9 +1,9 @@
 import { Row, Col } from 'react-bootstrap';
 import LikedArtistsList from './LikedArtistsList';
-import type AuctionCard from '../interfaces/Auction';
+import type Artist from '../interfaces/Artist';
 
 interface Props {
-  likedArtists: AuctionCard[];
+  likedArtists: Artist[];
 }
 
 export default function LikedArtistsSection({ likedArtists }: Props) {
@@ -11,7 +11,7 @@ export default function LikedArtistsSection({ likedArtists }: Props) {
     <Row className="mt-4 text-center">
       <Col>
         <h4>Your Liked Artists</h4>
-        <LikedArtistsList auctions={likedArtists} />
+        <LikedArtistsList artists={likedArtists} />
       </Col>
     </Row>
   );
