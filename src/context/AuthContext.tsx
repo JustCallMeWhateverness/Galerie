@@ -24,11 +24,17 @@ export function AuthProvider({ children }: { children: any }) {
           method: "GET",
           credentials: "include",
         });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         if (response.ok && !data.error) {
           console.log("Fetched user:", data);
           setUser(data);
         }
+      } catch (error) {
+        console.log("Could not fetch user (backend may not be running):", error);
+        // Continue without user - this is okay for viewing the page
       } finally {
         setLoading(false);
       }
