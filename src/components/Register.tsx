@@ -4,9 +4,10 @@ import { Form, Button } from 'react-bootstrap';
 export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
 
   const [registerData, setRegisterData] = useState({
+    username: '',
     firstName: '',
     lastName: '',
-    phoneNumber: '',
+    phone: '',
     email: '',
     password: ''
   });
@@ -15,7 +16,7 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
   }
   async function handleRegister(event: React.FormEvent) {
     event.preventDefault();
-    const response = await fetch('/api/users', {
+    const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -25,12 +26,22 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
     if (response.ok) {
       onSwitchToLogin();
     } else {
-      console.error('Registration failed');
+      const error = await response.json();
+      console.error('Registration failed', error);
     }
   }
 
   return (
     <Form onSubmit={handleRegister}>
+      <Form.Group controlId="formUsername">
+        <Form.Label>Username</Form.Label>
+        <Form.Control required
+          type="text"
+          placeholder="Enter username"
+          value={registerData.username}
+          onChange={(e) => setProperty('username', e.target.value)}
+        />
+      </Form.Group>
       <Form.Group controlId="formFirstName">
         <Form.Label>First Name</Form.Label>
         <Form.Control required
@@ -54,8 +65,8 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
         <Form.Control required
           type="text"
           placeholder="Enter phone number"
-          value={registerData.phoneNumber}
-          onChange={(e) => setProperty('phoneNumber', e.target.value)}
+          value={registerData.phone}
+          onChange={(e) => setProperty('phone', e.target.value)}
         />
       </Form.Group>
       <Form.Group controlId="formEmail">

@@ -7,7 +7,7 @@ export default function Logout() {
   const navigate = useNavigate();
 
   async function handleLogout() {
-    const response = await fetch("/api/login", { method: "DELETE", credentials: "include" });
+    const response = await fetch("/api/Auth/login", { method: "DELETE", credentials: "include" });
     if (response.ok) {
       setUser(null);
       navigate("/");
