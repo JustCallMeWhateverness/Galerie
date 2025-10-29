@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import ErrorToast from '../parts/ErrorToast';
 
 export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
 
@@ -11,6 +12,11 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
     email: '',
     password: ''
   });
+
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showToast, setShowToast] = useState(false)
+
   function setProperty(name: string, value: string) {
     setRegisterData({ ...registerData, [name]: value });
   }
@@ -26,13 +32,37 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
     if (response.ok) {
       onSwitchToLogin();
     } else {
-      const error = await response.json();
-      console.error('Registration failed', error);
+      const content = await response.json()
+
+      if (typeof content.details === 'string') {
+        setErrorMessage(content.details)
+      }
+      else if (typeof content.details === 'object') {
+        const messages = Object.values(content.details)
+          .flat()
+          .filter(message => typeof message === 'string')
+          .join(' ')
+        setErrorMessage(messages)
+      }
+      else {
+        setErrorMessage(content.error || "An error occured")
+      }
+
+      setShowToast(true)
+
     }
   }
 
   return (
     <Form onSubmit={handleRegister}>
+      {
+        errorMessage && <ErrorToast
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          title="Registration problem"
+          message={errorMessage}
+        />
+      }
       <Form.Group controlId="formUsername">
         <Form.Label>Username</Form.Label>
         <Form.Control required

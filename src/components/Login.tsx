@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Form, Button, Alert, Toast, ToastContainer } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
+import ErrorToast from "../parts/ErrorToast";
 
 
 export default function Login({
@@ -16,9 +17,10 @@ export default function Login({
     password: ''
   });
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { setUser } = useAuth();
-  const [show, setShow] = useState(false)
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showToast, setShowToast] = useState(false)
 
   function setProperty(name: string, value: string) {
     setLoginData({ ...loginData, [name]: value });
@@ -39,7 +41,7 @@ export default function Login({
       console.log("Login successful:", data);
       setUser(data);
     } else {
-      setShow(true)
+      setShowToast(true)
       setErrorMessage('Login failed')
     }
   }
@@ -47,22 +49,12 @@ export default function Login({
   return (
     <Form onSubmit={handleLogin}>
       {
-        errorMessage && <ToastContainer
-          position="top-end" className="position-absolute" >
-          <Toast
-            onClose={() => setShow(false)}
-            show={show}
-            autohide
-            delay={3000}
-            animation={true}
-            className="z-3"
-          >
-            <Toast.Header className="me-auto" >Login Problem</Toast.Header>
-            <Toast.Body>
-              {errorMessage}
-            </Toast.Body>
-          </Toast>
-        </ToastContainer>
+        errorMessage && <ErrorToast
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          title="Login problem"
+          message={errorMessage}
+        />
       }
       <Button variant="outline-secondary" type="button" onClick={onSwitchToRegister} className="mb-2">
         No account yet? Register
