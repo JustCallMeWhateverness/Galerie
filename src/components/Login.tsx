@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Alert, Toast, ToastContainer } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 
 
@@ -16,7 +16,9 @@ export default function Login({
     password: ''
   });
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { setUser } = useAuth();
+  const [show, setShow] = useState(false)
 
   function setProperty(name: string, value: string) {
     setLoginData({ ...loginData, [name]: value });
@@ -33,16 +35,35 @@ export default function Login({
     });
     if (response.ok) {
       const data = await response.json();
+      setErrorMessage(null)
       console.log("Login successful:", data);
       setUser(data);
     } else {
-      const error = await response.json();
-      console.error("Login failed", error);
+      setShow(true)
+      setErrorMessage('Login failed')
     }
   }
 
   return (
     <Form onSubmit={handleLogin}>
+      {
+        errorMessage && <ToastContainer
+          position="top-end" className="position-absolute" >
+          <Toast
+            onClose={() => setShow(false)}
+            show={show}
+            autohide
+            delay={3000}
+            animation={true}
+            className="z-3"
+          >
+            <Toast.Header className="me-auto" >Login Problem</Toast.Header>
+            <Toast.Body>
+              {errorMessage}
+            </Toast.Body>
+          </Toast>
+        </ToastContainer>
+      }
       <Button variant="outline-secondary" type="button" onClick={onSwitchToRegister} className="mb-2">
         No account yet? Register
       </Button>
