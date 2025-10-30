@@ -1,21 +1,25 @@
-import { Navbar } from 'react-bootstrap';
+import { Container, Navbar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 export default function Header() {
 
 
   return (
-    <header>
+    <header className='sticky-top z-3'>
 
       <Navbar
         bg="primary"
         data-bs-theme="light"
-        fixed="top"
-        className="justify-content-center shadow-sm rounded-1"
+        className='shadow-sm'
+
       >
-        <Navbar.Brand as={Link} to="/" className=" text-center">
-          Galerie
-        </Navbar.Brand>
+        <Container fluid className='justify-content-center'>
+          <Navbar.Brand as={Link} to="/">
+            Galerie
+          </Navbar.Brand>
+        </Container>
+
+
       </Navbar>
     </header>
   );

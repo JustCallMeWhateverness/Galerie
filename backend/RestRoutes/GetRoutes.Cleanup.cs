@@ -4,7 +4,10 @@ using System.Text.Json;
 
 public static partial class GetRoutes
 {
-    private static Dictionary<string, object> CleanObject(Dictionary<string, JsonElement> obj, string contentType)
+    private static Dictionary<string, object> CleanObject(
+        Dictionary<string, JsonElement> obj,
+        string contentType,
+        Dictionary<string, JsonElement>? usersDictionary = null)
     {
         var clean = new Dictionary<string, object>();
 
@@ -23,7 +26,7 @@ public static partial class GetRoutes
             {
                 foreach (var kvp in typeDict)
                 {
-                    var (value, isIdReference) = ExtractFieldValueWithContext(kvp.Value);
+                    var (value, isIdReference) = ExtractFieldValueWithContext(kvp.Value, usersDictionary);
                     if (value != null)
                     {
                         var fieldName = ToCamelCase(kvp.Key);
@@ -40,10 +43,46 @@ public static partial class GetRoutes
             }
         }
 
+        // Handle BagPart (many-to-many with extra fields)
+        if (obj.TryGetValue("BagPart", out var bagPart) && bagPart.ValueKind == JsonValueKind.Object)
+        {
+            var bagDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(bagPart.GetRawText());
+            if (bagDict != null && bagDict.TryGetValue("ContentItems", out var contentItems) &&
+                contentItems.ValueKind == JsonValueKind.Array)
+            {
+                var itemsList = new List<object>();
+                foreach (var item in contentItems.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.Object)
+                    {
+                        var itemDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(item.GetRawText());
+                        if (itemDict != null && itemDict.TryGetValue("ContentType", out var itemTypeElement))
+                        {
+                            var itemType = itemTypeElement.GetString();
+                            if (itemType != null)
+                            {
+                                var cleanedItem = CleanObject(itemDict, itemType, usersDictionary);
+                                // Include contentType for roundtripping
+                                cleanedItem["contentType"] = itemType;
+                                itemsList.Add(cleanedItem);
+                            }
+                        }
+                    }
+                }
+
+                if (itemsList.Count > 0)
+                {
+                    clean["items"] = itemsList;
+                }
+            }
+        }
+
         return clean;
     }
 
-    private static (object? value, bool isIdReference) ExtractFieldValueWithContext(JsonElement element)
+    private static (object? value, bool isIdReference) ExtractFieldValueWithContext(
+        JsonElement element,
+        Dictionary<string, JsonElement>? usersDictionary = null)
     {
         // Handle Text fields: { "Text": "value" } → "value"
         if (element.ValueKind == JsonValueKind.Object)
@@ -72,6 +111,83 @@ public static partial class GetRoutes
                     return (null, false);
                 }
 
+                // Check for UserPickerField (UserIds + UserNames arrays)
+                if ((dict.ContainsKey("UserIds") || dict.ContainsKey("userIds")) &&
+                    (dict.ContainsKey("UserNames") || dict.ContainsKey("userNames")))
+                {
+                    var userIdsKey = dict.ContainsKey("UserIds") ? "UserIds" : "userIds";
+                    var userNamesKey = dict.ContainsKey("UserNames") ? "UserNames" : "userNames";
+
+                    var userIds = dict[userIdsKey];
+                    var userNames = dict[userNamesKey];
+
+                    if (userIds.ValueKind == JsonValueKind.Array && userNames.ValueKind == JsonValueKind.Array)
+                    {
+                        var idsList = userIds.EnumerateArray()
+                            .Where(x => x.ValueKind == JsonValueKind.String)
+                            .Select(x => x.GetString())
+                            .Where(x => x != null)
+                            .ToList();
+
+                        var namesList = userNames.EnumerateArray()
+                            .Where(x => x.ValueKind == JsonValueKind.String)
+                            .Select(x => x.GetString())
+                            .Where(x => x != null)
+                            .ToList();
+
+                        // Zip the IDs and usernames together into an array of objects
+                        var users = new List<Dictionary<string, object>>();
+                        for (int i = 0; i < Math.Min(idsList.Count, namesList.Count); i++)
+                        {
+                            var user = new Dictionary<string, object>
+                            {
+                                ["id"] = idsList[i]!,
+                                ["username"] = namesList[i]!
+                            };
+
+                            // Enrich with data from usersDictionary if available
+                            if (usersDictionary != null && usersDictionary.TryGetValue(idsList[i]!, out var userData))
+                            {
+                                if (userData.TryGetProperty("Email", out var email) && email.ValueKind == JsonValueKind.String)
+                                {
+                                    var emailStr = email.GetString();
+                                    if (emailStr != null) user["email"] = emailStr;
+                                }
+
+                                if (userData.TryGetProperty("PhoneNumber", out var phone) && phone.ValueKind == JsonValueKind.String)
+                                {
+                                    var phoneStr = phone.GetString();
+                                    if (phoneStr != null) user["phone"] = phoneStr;
+                                }
+
+                                // Spread Properties object (contains firstName, lastName, etc.)
+                                if (userData.TryGetProperty("Properties", out var props) && props.ValueKind == JsonValueKind.Object)
+                                {
+                                    foreach (var prop in props.EnumerateObject())
+                                    {
+                                        // Convert property name to camelCase (FirstName -> firstName)
+                                        var propName = char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
+                                        if (prop.Value.ValueKind == JsonValueKind.String)
+                                        {
+                                            var propValue = prop.Value.GetString();
+                                            if (propValue != null) user[propName] = propValue;
+                                        }
+                                        else if (prop.Value.ValueKind != JsonValueKind.Null)
+                                        {
+                                            // Handle non-string property values
+                                            user[propName] = JsonSerializer.Deserialize<object>(prop.Value.GetRawText());
+                                        }
+                                    }
+                                }
+                            }
+
+                            users.Add(user);
+                        }
+
+                        return (users, false);
+                    }
+                }
+
                 // Check for ContentItemIds array (non-populated relations)
                 if (dict.ContainsKey("ContentItemIds"))
                 {
@@ -88,14 +204,14 @@ public static partial class GetRoutes
                             }
                         }
                         // Single ID: return as string with isIdReference=true (appends "Id" to field name)
-                        // Multiple IDs: return as array with isIdReference=false (keeps field name as-is)
+                        // Multiple IDs: return as array with isIdReference=true (appends "Id" to field name)
                         if (idsList.Count == 1)
                         {
                             return (idsList[0], true);
                         }
                         else if (idsList.Count > 1)
                         {
-                            return (idsList.ToArray(), false);
+                            return (idsList.ToArray(), true);
                         }
                         return (null, false); // Empty array
                     }
@@ -121,7 +237,7 @@ public static partial class GetRoutes
                                     {
                                         itemType = ct.GetString();
                                     }
-                                    itemsList.Add(CleanObject(itemDict, itemType ?? ""));
+                                    itemsList.Add(CleanObject(itemDict, itemType ?? "", usersDictionary));
                                 }
                             }
                         }
@@ -141,7 +257,7 @@ public static partial class GetRoutes
                         var valuesList = new List<object>();
                         foreach (var val in values.EnumerateArray())
                         {
-                            var extractedValue = ExtractFieldValue(val);
+                            var extractedValue = ExtractFieldValue(val, usersDictionary);
                             if (extractedValue != null)
                             {
                                 valuesList.Add(extractedValue);
@@ -155,7 +271,7 @@ public static partial class GetRoutes
                 var cleaned = new Dictionary<string, object>();
                 foreach (var kvp in dict)
                 {
-                    var value = ExtractFieldValue(kvp.Value);
+                    var value = ExtractFieldValue(kvp.Value, usersDictionary);
                     if (value != null)
                     {
                         cleaned[ToCamelCase(kvp.Key)] = value;
@@ -176,7 +292,7 @@ public static partial class GetRoutes
             var list = new List<object>();
             foreach (var item in element.EnumerateArray())
             {
-                var value = ExtractFieldValue(item);
+                var value = ExtractFieldValue(item, usersDictionary);
                 if (value != null)
                 {
                     list.Add(value);
@@ -200,7 +316,9 @@ public static partial class GetRoutes
         return (null, false);
     }
 
-    private static object? ExtractFieldValue(JsonElement element)
+    private static object? ExtractFieldValue(
+        JsonElement element,
+        Dictionary<string, JsonElement>? usersDictionary = null)
     {
         // Handle Text fields: { "Text": "value" } → "value"
         if (element.ValueKind == JsonValueKind.Object)
@@ -262,7 +380,7 @@ public static partial class GetRoutes
                                     {
                                         itemType = ct.GetString();
                                     }
-                                    itemsList.Add(CleanObject(itemDict, itemType ?? ""));
+                                    itemsList.Add(CleanObject(itemDict, itemType ?? "", usersDictionary));
                                 }
                             }
                         }
@@ -275,7 +393,7 @@ public static partial class GetRoutes
                 var cleaned = new Dictionary<string, object>();
                 foreach (var kvp in dict)
                 {
-                    var value = ExtractFieldValue(kvp.Value);
+                    var value = ExtractFieldValue(kvp.Value, usersDictionary);
                     if (value != null)
                     {
                         cleaned[ToCamelCase(kvp.Key)] = value;
@@ -296,7 +414,7 @@ public static partial class GetRoutes
             var list = new List<object>();
             foreach (var item in element.EnumerateArray())
             {
-                var value = ExtractFieldValue(item);
+                var value = ExtractFieldValue(item, usersDictionary);
                 if (value != null)
                 {
                     list.Add(value);

@@ -2,7 +2,8 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
-  return <footer className='bg-primary fixed-bottom rounded-1 shadow-sm'>
+  return <footer className='bg-primary rounded-1 shadow-sm sticky-bottom'>
+    {/* return <footer className='bg-primary fixed-bottom rounded-1 shadow-sm'> */}
     <Container fluid>
       <Row>
         <Col className="text-center py-3">
