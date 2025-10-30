@@ -14,11 +14,13 @@ AuthModal.route = {
 
 export default function AuthModal({ customTitle,
   show = true,
-  onHide
+  onHide,
+  redirectPath,
 }: {
   customTitle?: string;
   show?: boolean;
   onHide?: () => void;
+  redirectPath?: string;
 }) {
   const { user, loading } = useAuth();
   const [showLogin, setShowLogin] = useState(true);
@@ -29,13 +31,15 @@ export default function AuthModal({ customTitle,
   // Redirect based on user role
   useEffect(() => {
     if (user) {
-      if (user.role === "admin") {
-        navigate("/admin");
+      if (redirectPath) {
+        navigate(redirectPath, { replace: true });
+      } else if (user.role === "admin") {
+        navigate("/admin", { replace: true });
       } else {
-        navigate("/user");
+        navigate("/user", { replace: true });
       }
     }
-  }, [user]);
+  }, [user, redirectPath, navigate]);
 
   if (loading) return <p>Loading...</p>;
 
