@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
+import ErrorToast from "../parts/ErrorToast";
 
 
 export default function Login({
@@ -18,6 +19,9 @@ export default function Login({
 
   const { setUser } = useAuth();
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showToast, setShowToast] = useState(false)
+
   function setProperty(name: string, value: string) {
     setLoginData({ ...loginData, [name]: value });
   }
@@ -33,20 +37,34 @@ export default function Login({
     });
     if (response.ok) {
       const data = await response.json();
+      setErrorMessage(null)
       console.log("Login successful:", data);
       setUser(data);
-    } else {
-      const error = await response.json();
-      console.error("Login failed", error);
+    }
+    else if (response.status === 401) {
+      setShowToast(true)
+      setErrorMessage("Incorrect credentials")
+    }
+    else {
+      setShowToast(true)
+      setErrorMessage("Login failed")
     }
   }
 
   return (
     <Form onSubmit={handleLogin}>
-      <Button variant="outline-secondary" type="button" onClick={onSwitchToRegister} className="mb-2">
+      {
+        errorMessage && <ErrorToast
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          title="Login problem"
+          message={errorMessage}
+        />
+      }
+      <Button variant="outline-secondary" type="button" onClick={onSwitchToRegister} className="mb-3">
         No account yet? Register
       </Button>
-      <Form.Group controlId="formUsernameOrEmail">
+      <Form.Group controlId="formUsernameOrEmail" className="mb-3">
         <Form.Label>Username or Email</Form.Label>
         <Form.Control required
           type="text"
@@ -55,7 +73,7 @@ export default function Login({
           onChange={(e) => setProperty("usernameOrEmail", e.target.value)}
         />
       </Form.Group>
-      <Form.Group controlId="formPassword">
+      <Form.Group controlId="formPassword" className="mb-1">
         <Form.Label>Password</Form.Label>
         <Form.Control required
           type="password"
