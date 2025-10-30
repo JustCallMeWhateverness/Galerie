@@ -40,9 +40,14 @@ export default function Login({
       setErrorMessage(null)
       console.log("Login successful:", data);
       setUser(data);
-    } else {
+    }
+    else if (response.status === 401) {
       setShowToast(true)
-      setErrorMessage('Login failed')
+      setErrorMessage("Incorrect credentials")
+    }
+    else {
+      setShowToast(true)
+      setErrorMessage("Login failed")
     }
   }
 
@@ -56,10 +61,10 @@ export default function Login({
           message={errorMessage}
         />
       }
-      <Button variant="outline-secondary" type="button" onClick={onSwitchToRegister} className="mb-2">
+      <Button variant="outline-secondary" type="button" onClick={onSwitchToRegister} className="mb-3">
         No account yet? Register
       </Button>
-      <Form.Group controlId="formUsernameOrEmail">
+      <Form.Group controlId="formUsernameOrEmail" className="mb-3">
         <Form.Label>Username or Email</Form.Label>
         <Form.Control required
           type="text"
@@ -68,7 +73,7 @@ export default function Login({
           onChange={(e) => setProperty("usernameOrEmail", e.target.value)}
         />
       </Form.Group>
-      <Form.Group controlId="formPassword">
+      <Form.Group controlId="formPassword" className="mb-1">
         <Form.Label>Password</Form.Label>
         <Form.Control required
           type="password"
