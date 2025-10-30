@@ -3,7 +3,6 @@ namespace RestRoutes;
 using OrchardCore.ContentManagement;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using Newtonsoft.Json.Linq;
 
 public static class PostRoutes
 {
@@ -13,8 +12,6 @@ public static class PostRoutes
         "contentItemId",
         "title",
         "displayText",
-        "owner",
-        "author",
         "createdUtc",
         "modifiedUtc",
         "publishedUtc",
@@ -79,20 +76,77 @@ public static class PostRoutes
                     var pascalKey = ToPascalCase(kvp.Key);
                     var value = kvp.Value;
 
+                    // Handle "items" field - this should become BagPart
+                    if (kvp.Key == "items" && value is JsonElement itemsElement && itemsElement.ValueKind == JsonValueKind.Array)
+                    {
+                        var bagItems = new List<object>();
+                        foreach (var item in itemsElement.EnumerateArray())
+                        {
+                            if (item.ValueKind == JsonValueKind.Object)
+                            {
+                                // Get contentType first
+                                string? itemType = null;
+                                if (item.TryGetProperty("contentType", out var ctProp) && ctProp.ValueKind == JsonValueKind.String)
+                                {
+                                    itemType = ctProp.GetString();
+                                }
+
+                                if (!string.IsNullOrEmpty(itemType))
+                                {
+                                    var bagItem = CreateBagPartItem(item, itemType);
+                                    bagItems.Add(bagItem);
+                                }
+                            }
+                        }
+
+                        if (bagItems.Count > 0)
+                        {
+                            contentItem.Content["BagPart"] = new Dictionary<string, object>
+                            {
+                                ["ContentItems"] = bagItems
+                            };
+                        }
+                        continue;
+                    }
+
                     // Handle fields ending with "Id" - these are content item references
                     if (kvp.Key.EndsWith("Id", StringComparison.OrdinalIgnoreCase) &&
                         kvp.Key.Length > 2)
                     {
                         // Transform "ownerId" → "Owner" with ContentItemIds
                         var fieldName = pascalKey.Substring(0, pascalKey.Length - 2); // Remove "Id"
-                        var idValue = value is JsonElement jsonEl && jsonEl.ValueKind == JsonValueKind.String
-                            ? jsonEl.GetString()
-                            : value.ToString();
 
-                        // Assign as a List<string> to avoid wrapping
-                        if (idValue != null)
+                        // Handle both single IDs (string) and multiple IDs (array)
+                        if (value is JsonElement jsonEl)
                         {
-                            contentItem.Content[contentType][fieldName]["ContentItemIds"] = new List<string> { idValue };
+                            if (jsonEl.ValueKind == JsonValueKind.String)
+                            {
+                                var idValue = jsonEl.GetString();
+                                if (idValue != null)
+                                {
+                                    contentItem.Content[contentType][fieldName]["ContentItemIds"] = new List<string> { idValue };
+                                }
+                            }
+                            else if (jsonEl.ValueKind == JsonValueKind.Array)
+                            {
+                                var idList = new List<string>();
+                                foreach (var item in jsonEl.EnumerateArray())
+                                {
+                                    if (item.ValueKind == JsonValueKind.String)
+                                    {
+                                        var idValue = item.GetString();
+                                        if (idValue != null) idList.Add(idValue);
+                                    }
+                                }
+                                if (idList.Count > 0)
+                                {
+                                    contentItem.Content[contentType][fieldName]["ContentItemIds"] = idList;
+                                }
+                            }
+                        }
+                        else if (value is string strValue)
+                        {
+                            contentItem.Content[contentType][fieldName]["ContentItemIds"] = new List<string> { strValue };
                         }
                     }
                     else if (value is JsonElement jsonElement)
@@ -112,38 +166,104 @@ public static class PostRoutes
                         }
                         else if (jsonElement.ValueKind == JsonValueKind.Object)
                         {
-                            // Handle objects - convert keys to PascalCase
-                            var obj = new JObject();
-                            foreach (var prop in jsonElement.EnumerateObject())
+                            // Check if this is a MediaField (has "paths" and "mediaTexts" properties)
+                            if (jsonElement.TryGetProperty("paths", out var pathsProp) && pathsProp.ValueKind == JsonValueKind.Array &&
+                                jsonElement.TryGetProperty("mediaTexts", out var mediaTextsProp) && mediaTextsProp.ValueKind == JsonValueKind.Array)
                             {
-                                obj[ToPascalCase(prop.Name)] = ConvertJsonElementToPascal(prop.Value);
-                            }
-                            contentItem.Content[contentType][pascalKey] = obj;
-                        }
-                        else if (jsonElement.ValueKind == JsonValueKind.Array)
-                        {
-                            // Handle arrays - could be ContentItemIds or Values
-                            var arrayData = new List<string>();
-                            foreach (var item in jsonElement.EnumerateArray())
-                            {
-                                if (item.ValueKind == JsonValueKind.String)
+                                // Handle MediaField - use List<string> instead of JArray for System.Text.Json compatibility
+                                var paths = new List<string>();
+                                foreach (var path in pathsProp.EnumerateArray())
                                 {
-                                    var str = item.GetString();
-                                    if (str != null) arrayData.Add(str);
+                                    if (path.ValueKind == JsonValueKind.String)
+                                    {
+                                        var pathStr = path.GetString();
+                                        if (pathStr != null) paths.Add(pathStr);
+                                    }
                                 }
-                            }
 
-                            // Detect if array contains ContentItemIds (26-char alphanumeric strings)
-                            var isContentItemIds = arrayData.Count > 0 &&
-                                arrayData.All(id => id.Length > 20 && id.All(c => char.IsLetterOrDigit(c)));
+                                var mediaTexts = new List<string>();
+                                foreach (var text in mediaTextsProp.EnumerateArray())
+                                {
+                                    if (text.ValueKind == JsonValueKind.String)
+                                    {
+                                        var textStr = text.GetString();
+                                        if (textStr != null) mediaTexts.Add(textStr);
+                                    }
+                                }
 
-                            if (isContentItemIds)
-                            {
-                                contentItem.Content[contentType][pascalKey]["ContentItemIds"] = arrayData;
+                                // Assign arrays directly - ContentItem.Content uses System.Text.Json, so use List instead of JArray
+                                contentItem.Content[contentType][pascalKey]["Paths"] = paths;
+                                contentItem.Content[contentType][pascalKey]["MediaTexts"] = mediaTexts;
                             }
                             else
                             {
-                                contentItem.Content[contentType][pascalKey]["Values"] = arrayData;
+                                // Handle other objects - convert keys to PascalCase
+                                var obj = new Dictionary<string, object>();
+                                foreach (var prop in jsonElement.EnumerateObject())
+                                {
+                                    obj[ToPascalCase(prop.Name)] = ConvertJsonElementToPascal(prop.Value);
+                                }
+                                contentItem.Content[contentType][pascalKey] = obj;
+                            }
+                        }
+                        else if (jsonElement.ValueKind == JsonValueKind.Array)
+                        {
+                            // Check if this is a UserPickerField (array of objects with "id" and "username")
+                            var firstElement = jsonElement.EnumerateArray().FirstOrDefault();
+                            if (firstElement.ValueKind == JsonValueKind.Object &&
+                                firstElement.TryGetProperty("id", out _) &&
+                                firstElement.TryGetProperty("username", out _))
+                            {
+                                // Unzip the user objects into UserIds and UserNames arrays
+                                var userIds = new List<string>();
+                                var userNames = new List<string>();
+
+                                foreach (var userObj in jsonElement.EnumerateArray())
+                                {
+                                    if (userObj.ValueKind == JsonValueKind.Object)
+                                    {
+                                        if (userObj.TryGetProperty("id", out var idProp) && idProp.ValueKind == JsonValueKind.String)
+                                        {
+                                            var id = idProp.GetString();
+                                            if (id != null) userIds.Add(id);
+                                        }
+
+                                        if (userObj.TryGetProperty("username", out var usernameProp) && usernameProp.ValueKind == JsonValueKind.String)
+                                        {
+                                            var username = usernameProp.GetString();
+                                            if (username != null) userNames.Add(username);
+                                        }
+                                    }
+                                }
+
+                                contentItem.Content[contentType][pascalKey]["UserIds"] = userIds;
+                                contentItem.Content[contentType][pascalKey]["UserNames"] = userNames;
+                            }
+                            else
+                            {
+                                // Handle arrays - could be ContentItemIds or Values
+                                var arrayData = new List<string>();
+                                foreach (var item in jsonElement.EnumerateArray())
+                                {
+                                    if (item.ValueKind == JsonValueKind.String)
+                                    {
+                                        var str = item.GetString();
+                                        if (str != null) arrayData.Add(str);
+                                    }
+                                }
+
+                                // Detect if array contains ContentItemIds (26-char alphanumeric strings)
+                                var isContentItemIds = arrayData.Count > 0 &&
+                                    arrayData.All(id => id.Length > 20 && id.All(c => char.IsLetterOrDigit(c)));
+
+                                if (isContentItemIds)
+                                {
+                                    contentItem.Content[contentType][pascalKey]["ContentItemIds"] = arrayData;
+                                }
+                                else
+                                {
+                                    contentItem.Content[contentType][pascalKey]["Values"] = arrayData;
+                                }
                             }
                         }
                         else
@@ -157,8 +277,8 @@ public static class PostRoutes
                     }
                     else if (value is int or long or double or float or decimal)
                     {
-                        contentItem.Content[contentType][pascalKey] = new JObject {
-                            ["Value"] = JToken.FromObject(value)
+                        contentItem.Content[contentType][pascalKey] = new Dictionary<string, object> {
+                            ["Value"] = value
                         };
                     }
                 }
@@ -187,60 +307,60 @@ public static class PostRoutes
         return char.ToUpper(str[0]) + str.Substring(1);
     }
 
-    private static JToken ConvertJsonElement(JsonElement element)
+    private static Dictionary<string, object> ConvertJsonElement(JsonElement element)
     {
         if (element.ValueKind == JsonValueKind.String)
         {
-            return new JObject { ["Text"] = element.GetString() };
+            return new Dictionary<string, object> { ["Text"] = element.GetString()! };
         }
         else if (element.ValueKind == JsonValueKind.Number)
         {
-            return new JObject { ["Value"] = element.GetDouble() };
+            return new Dictionary<string, object> { ["Value"] = element.GetDouble() };
         }
         else if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
         {
-            return new JObject { ["Value"] = element.GetBoolean() };
+            return new Dictionary<string, object> { ["Value"] = element.GetBoolean() };
         }
         else if (element.ValueKind == JsonValueKind.Array)
         {
             // Wrap arrays in {"values": [...]} pattern for Orchard Core list fields
-            var arrayValues = new JArray();
+            var arrayValues = new List<object>();
             foreach (var item in element.EnumerateArray())
             {
-                // Convert each item to appropriate JToken
+                // Convert each item to appropriate type
                 if (item.ValueKind == JsonValueKind.String)
-                    arrayValues.Add(item.GetString());
+                    arrayValues.Add(item.GetString()!);
                 else if (item.ValueKind == JsonValueKind.Number)
                     arrayValues.Add(item.GetDouble());
                 else if (item.ValueKind == JsonValueKind.True || item.ValueKind == JsonValueKind.False)
                     arrayValues.Add(item.GetBoolean());
                 else
-                    arrayValues.Add(JToken.Parse(item.GetRawText()));
+                    arrayValues.Add(JsonSerializer.Deserialize<object>(item.GetRawText())!);
             }
-            return new JObject { ["values"] = arrayValues };
+            return new Dictionary<string, object> { ["values"] = arrayValues };
         }
 
         // For complex types, just wrap as-is
-        return new JObject { ["Text"] = element.ToString() };
+        return new Dictionary<string, object> { ["Text"] = element.ToString() };
     }
 
-    private static JToken ConvertJsonElementToPascal(JsonElement element)
+    private static object ConvertJsonElementToPascal(JsonElement element)
     {
         if (element.ValueKind == JsonValueKind.String)
         {
-            return JToken.FromObject(element.GetString()!);
+            return element.GetString()!;
         }
         else if (element.ValueKind == JsonValueKind.Number)
         {
-            return JToken.FromObject(element.GetDouble());
+            return element.GetDouble();
         }
         else if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
         {
-            return JToken.FromObject(element.GetBoolean());
+            return element.GetBoolean();
         }
         else if (element.ValueKind == JsonValueKind.Array)
         {
-            var arr = new JArray();
+            var arr = new List<object>();
             foreach (var item in element.EnumerateArray())
             {
                 arr.Add(ConvertJsonElementToPascal(item));
@@ -249,7 +369,7 @@ public static class PostRoutes
         }
         else if (element.ValueKind == JsonValueKind.Object)
         {
-            var obj = new JObject();
+            var obj = new Dictionary<string, object>();
             foreach (var prop in element.EnumerateObject())
             {
                 obj[ToPascalCase(prop.Name)] = ConvertJsonElementToPascal(prop.Value);
@@ -257,6 +377,80 @@ public static class PostRoutes
             return obj;
         }
 
-        return JToken.Parse(element.GetRawText());
+        return JsonSerializer.Deserialize<object>(element.GetRawText())!;
+    }
+
+    private static Dictionary<string, object> CreateBagPartItem(JsonElement itemElement, string contentType)
+    {
+        var bagItem = new Dictionary<string, object>
+        {
+            ["ContentType"] = contentType,
+            [contentType] = new Dictionary<string, object>()
+        };
+
+        var typeSection = (Dictionary<string, object>)bagItem[contentType];
+
+        foreach (var prop in itemElement.EnumerateObject())
+        {
+            // Skip reserved fields and contentType itself
+            if (prop.Name == "contentType" || prop.Name == "id" || prop.Name == "title")
+                continue;
+
+            var pascalKey = ToPascalCase(prop.Name);
+            var value = prop.Value;
+
+            // Handle fields ending with "Id" - these are content item references
+            if (prop.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase) && prop.Name.Length > 2)
+            {
+                var fieldName = pascalKey.Substring(0, pascalKey.Length - 2);
+                if (value.ValueKind == JsonValueKind.String)
+                {
+                    var idValue = value.GetString();
+                    if (idValue != null)
+                    {
+                        typeSection[fieldName] = new Dictionary<string, object>
+                        {
+                            ["ContentItemIds"] = new List<string> { idValue }
+                        };
+                    }
+                }
+            }
+            else if (value.ValueKind == JsonValueKind.String)
+            {
+                typeSection[pascalKey] = new Dictionary<string, object> { ["Text"] = value.GetString()! };
+            }
+            else if (value.ValueKind == JsonValueKind.Number)
+            {
+                typeSection[pascalKey] = new Dictionary<string, object> { ["Value"] = value.GetDouble() };
+            }
+            else if (value.ValueKind == JsonValueKind.True || value.ValueKind == JsonValueKind.False)
+            {
+                typeSection[pascalKey] = new Dictionary<string, object> { ["Value"] = value.GetBoolean() };
+            }
+            else if (value.ValueKind == JsonValueKind.Array)
+            {
+                var arrayData = new List<string>();
+                foreach (var item in value.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.String)
+                    {
+                        var str = item.GetString();
+                        if (str != null) arrayData.Add(str);
+                    }
+                }
+                typeSection[pascalKey] = new Dictionary<string, object> { ["Values"] = arrayData };
+            }
+            else if (value.ValueKind == JsonValueKind.Object)
+            {
+                var obj = new Dictionary<string, object>();
+                foreach (var nestedProp in value.EnumerateObject())
+                {
+                    obj[ToPascalCase(nestedProp.Name)] = ConvertJsonElementToPascal(nestedProp.Value);
+                }
+                typeSection[pascalKey] = obj;
+            }
+        }
+
+        return bagItem;
     }
 }

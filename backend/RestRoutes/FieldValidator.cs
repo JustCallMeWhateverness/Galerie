@@ -15,8 +15,16 @@ public static class FieldValidator
 
         if (cleanObjects.Any())
         {
-            // Use existing item to extract valid fields
-            return cleanObjects.First().Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+            // Collect ALL unique fields from ALL items (handles optional fields)
+            var allFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in cleanObjects)
+            {
+                foreach (var key in item.Keys)
+                {
+                    allFields.Add(key);
+                }
+            }
+            return allFields;
         }
 
         // No existing items - create a temporary one to get the schema
