@@ -2,6 +2,7 @@ import { Row, Col, Container } from "react-bootstrap";
 import CarouselComponent from "../parts/CarouselComponent";
 import AuctionCard from "../parts/AuctionCard";
 
+
 HomePage.route = {
   path: "/",
 };
@@ -34,56 +35,67 @@ export default function HomePage() {
       title: "Scarf",
       currentBid: 33,
       endTime: new Date("2025-10-31T11:49:00"),
+      startTime: new Date("2025-10-02T09:00:00"),
       favorited: false,
+      favouritesCount: 10,
     },
     {
       id: 2,
       title: "Mug",
       currentBid: 30,
       endTime: new Date("2025-11-01T11:49:00"),
+      startTime: new Date("2025-10-29T09:00:00"),
       favorited: false,
+      favouritesCount: 5,
     },
     {
       id: 3,
       title: "Art",
       currentBid: 50,
       endTime: new Date("2025-11-21T11:49:00"),
+      startTime: new Date("2025-11-15T09:00:00"),
       favorited: false,
+      favouritesCount: 20,
     },
     {
       id: 4,
       title: "Jewelry from the Louvre",
       currentBid: 50,
       endTime: new Date("2025-11-21T11:49:00"),
+      startTime: new Date("2025-10-27T09:00:00"),
       favorited: false,
+      favouritesCount: 150,
     },
     {
       id: 5,
       title: "Mona Lisa",
       currentBid: 50,
       endTime: new Date("2025-10-30T11:49:00"),
+      startTime: new Date("2025-10-20T09:00:00"),
       favorited: false,
+      favouritesCount: 300,
     },
     {
       id: 6,
       title: "Sculpture",
       currentBid: 50,
       endTime: new Date("2025-11-01T11:49:00"),
+      startTime: new Date("2025-10-25T09:00:00"),
       favorited: false,
+      favouritesCount: 34,
     },
     {
       id: 7,
       title: "Painting",
       currentBid: 50,
       endTime: new Date("2025-12-21T11:49:00"),
+      startTime: new Date("2025-12-15T09:00:00"),
       favorited: false,
+      favouritesCount: 0,
     },
   ];
 
   //TODO: Image carousel component with images of upcoming auctions - depends on Start Time from auctions.
-  //TODO: List popular auctions - depends on number of bids.
-  //TODO: List Last Chance auctions - depends on End Time from auctions.
-  //TODO: List New auctions - depends on Start Time from auctions.
 
   return (
     <>
@@ -96,11 +108,14 @@ export default function HomePage() {
       <h4>Popular Auctions</h4>
       <Container className="mb-4">
         <Row className="flex-nowrap overflow-auto scroll">
-          {sampleAuctions.map((auction) => (
-            <Col key={auction.id} xs={6} md={6}>
-              <AuctionCard {...auction} />
-            </Col>
-          ))}
+          {[...sampleAuctions]
+            .filter((auction) => auction.favouritesCount > 50)
+            .sort((a, b) => b.favouritesCount - a.favouritesCount)
+            .map((auction) => (
+              <Col key={auction.id} xs={6} md={6}>
+                <AuctionCard {...auction} />
+              </Col>
+            ))}
         </Row>
       </Container>
 
@@ -108,6 +123,11 @@ export default function HomePage() {
       <Container className="mb-4">
         <Row className="flex-nowrap overflow-auto scroll">
           {[...sampleAuctions]
+            .filter(
+              (auction) =>
+                auction.endTime.getTime() - Date.now() > 0 &&
+                auction.endTime.getTime() - Date.now() < 24 * 60 * 60 * 1000
+            )
             .sort(
               (a, b) =>
                 new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
@@ -124,6 +144,11 @@ export default function HomePage() {
       <Container className="mb-4">
         <Row className="flex-nowrap overflow-auto scroll">
           {[...sampleAuctions]
+            .filter((auction) => {
+              const days = 7;
+              return Date.now() - auction.startTime.getTime() < days * 24 * 60 * 60 * 1000
+                && Date.now() - auction.startTime.getTime() > 0;
+            })
             .sort(
               (a, b) =>
                 new Date(b.endTime).getTime() - new Date(a.endTime).getTime()

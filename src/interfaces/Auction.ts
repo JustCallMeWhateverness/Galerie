@@ -3,5 +3,6 @@ export default interface Auction {
   title: string,
   currentBid: number,
   endTime: Date,
+  startTime: Date,
   favorited: boolean
 }
