@@ -11,9 +11,9 @@ export default function App() {
   return (
     <>
       <Header />
-      <main className="site-main">
-        <Main />
-      </main>
+      {/* <main className="site-main"> */}
+      <Main />
+      {/* </main> */}
       <Footer />
     </>
   );

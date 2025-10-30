@@ -1,24 +1,19 @@
 // Override bootstrap variables
-$font-family-sans-serif: 'Noto Sans';
+$font-family-sans-serif: "Noto Sans";
 $font-size-base: 1.1rem;
 $line-height-base: 1.4;
-$navbar-dark-color: rgba(white, .8) !default;
-$navbar-dark-hover-color: rgba(white, .9) !default;
-$primary: #F2EEE9;
+$navbar-dark-color: rgba(white, 0.8) !default;
+$navbar-dark-hover-color: rgba(white, 0.9) !default;
+$primary: #f2eee9;
 $secondary: #087990;
 $enable-negative-margins: true;
 
 // color suggestions :taupe D8D3CC, light greige: edeceb, light beige: F2EEE9
 // Import bootstrap
-@import '../node_modules/bootstrap/scss/bootstrap.scss';
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
 
 //import icon
-@import '../node_modules/bootstrap-icons/font/bootstrap-icons.css';
-
-.site-main {
-  padding-top: clamp(65px, 5vw + 45px, 96px);
-  padding-bottom: 70px;
-}
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
 .body {
   font-family: Arial, Helvetica, sans-serif;
@@ -26,11 +21,10 @@ $enable-negative-margins: true;
 
 // Override some Bootstrap defaults
 .navbar-brand {
-  font-family: 'Passions Conflict', cursive;
+  font-family: "Passions Conflict", cursive;
   font-size: clamp(5.5rem, 8.5vw, 7.5rem);
   line-height: 1;
 }
-
 
 .container {
   max-width: 970px;
@@ -38,6 +32,6 @@ $enable-negative-margins: true;
 
 /* Måste också laddas efter bootstrap.css */
 .custom-checkbox .form-check-input:checked {
-  background-color: $secondary ;
+  background-color: $secondary;
   border-color: $secondary;
 }
