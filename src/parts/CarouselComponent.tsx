@@ -7,7 +7,6 @@ export type CarouselItem = {
   alt?: string;
   title: string;
   startTime?: Date;
-  endTime?: Date;
 };
 
 //TODO: Decide if indicators should be shown or if we create the dots ourselves as intended in the design
@@ -27,7 +26,7 @@ export default function CarouselComponent({
       {items.map((item, index) => (
         <Carousel.Item key={index}>
           <Image src={item.src} alt={item.alt || item.title || ""} />
-          {(item.title || item.startTime || item.endTime) && (
+          {(item.title || item.startTime) && (
             <Carousel.Caption>
               {item.title && <h3>{item.title}</h3>}
             </Carousel.Caption>
