@@ -15,32 +15,28 @@ export default function HomePage() {
       src: "/images/products/1.jpg",
       title: "Scarf",
       startTime: new Date("2025-12-02T09:00:00"),
-      endTime: new Date("2025-11-31T11:49:00"),
-
+      link: "/auctions/scarf"
     },
     {
       id: 2,
       src: "/images/products/2.jpg",
       title: "Mug",
       startTime: new Date("2025-12-29T09:00:00"),
-      endTime: new Date("2025-11-11T11:49:00"),
+      link: "/auctions/scarf"
     },
     {
       id: 3,
       src: "/images/products/3.jpg",
       title: "Art",
       startTime: new Date("2025-11-15T09:00:00"),
-      endTime: new Date("2025-11-21T11:49:00"),
-
-
+      link: "/auctions/art"
     },
     {
       id: 4,
       src: "/images/products/4.jpg",
       title: "Jewelry from the Louvre",
       startTime: new Date("2025-12-27T09:00:00"),
-      endTime: new Date("2025-11-21T11:49:00"),
-
+      link: "/auctions/jewelry"
     },
   ];
 
