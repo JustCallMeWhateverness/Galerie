@@ -3,9 +3,11 @@ import Image from "./Image";
 
 export type CarouselItem = {
   src: string;
-  label?: string;
-  caption?: string;
+  id: number;
   alt?: string;
+  title: string;
+  startTime?: Date;
+  endTime?: Date;
 };
 
 //TODO: Decide if indicators should be shown or if we create the dots ourselves as intended in the design
@@ -24,11 +26,10 @@ export default function CarouselComponent({
     <Carousel fade indicators={showIndicators} controls={showControls}>
       {items.map((item, index) => (
         <Carousel.Item key={index}>
-          <Image src={item.src} alt={item.alt || item.label || ""} />
-          {(item.label || item.caption) && (
+          <Image src={item.src} alt={item.alt || item.title || ""} />
+          {(item.title || item.startTime || item.endTime) && (
             <Carousel.Caption>
-              {item.label && <h3>{item.label}</h3>}
-              {item.caption && <p>{item.caption}</p>}
+              {item.title && <h3>{item.title}</h3>}
             </Carousel.Caption>
           )}
         </Carousel.Item>
