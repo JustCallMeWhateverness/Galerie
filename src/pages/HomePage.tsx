@@ -8,24 +8,35 @@ HomePage.route = {
 };
 
 export default function HomePage() {
-  const items = [
+  const today = new Date();
+  const sampleCarouselItems = [
     {
+      id: 1,
       src: "/images/products/1.jpg",
-      label: "First image label",
-      caption: "This is the caption text for the first image.",
-      alt: "A close-up of product number one",
+      title: "Scarf",
+      startTime: new Date("2025-12-02T09:00:00"),
+      link: "/auctions/scarf"
     },
     {
+      id: 2,
       src: "/images/products/2.jpg",
-      label: "Second image label",
-      caption: "This is the second image caption.",
-      alt: "Product number two displayed on a table",
+      title: "Mug",
+      startTime: new Date("2025-12-29T09:00:00"),
+      link: "/auctions/scarf"
     },
     {
+      id: 3,
       src: "/images/products/3.jpg",
-      label: "Third image label",
-      caption: "Final product in the carousel.",
-      alt: "Product number three with packaging",
+      title: "Art",
+      startTime: new Date("2025-11-15T09:00:00"),
+      link: "/auctions/art"
+    },
+    {
+      id: 4,
+      src: "/images/products/4.jpg",
+      title: "Jewelry from the Louvre",
+      startTime: new Date("2025-12-27T09:00:00"),
+      link: "/auctions/jewelry"
     },
   ];
 
@@ -95,13 +106,12 @@ export default function HomePage() {
     },
   ];
 
-  //TODO: Image carousel component with images of upcoming auctions - depends on Start Time from auctions.
 
   return (
     <>
       <Row>
         <Col>
-          <CarouselComponent items={items} />
+          <CarouselComponent items={sampleCarouselItems.filter(item => item.startTime > today)} />
         </Col>
       </Row>
 
