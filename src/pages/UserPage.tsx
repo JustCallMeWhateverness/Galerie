@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
 
 import type User from '../interfaces/User';
 import AuthModal from '../modals/AuthModal';
 import Logout from '../components/Logout';
+import { Link } from 'react-router-dom';
 
 
 // Route configuration for the UserPage component
@@ -306,28 +307,33 @@ export default function UserPage() {
         <h6 className="fw-bold text-dark mb-3">Menu</h6>
 
         <div className="list-group list-group-flush">
-          {/* Active bids menu item */}
-          <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
-            <span className="text-dark">Active bids</span>
-            <i className="bi bi-chevron-right text-muted"></i>
+
+          <div className="list-group-item border-0 px-0 py-3 border-bottom">
+            <Link to="/active-bids" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+              Active bids
+              <i className="bi bi-chevron-right text-muted"></i>
+            </Link>
           </div>
 
-          {/* My purchases menu item */}
-          <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
-            <span className="text-dark">My purchases</span>
-            <i className="bi bi-chevron-right text-muted"></i>
+          <div className="list-group-item border-0 px-0 py-3 border-bottom">
+            <Link to="/my-purchases" className="text-dark text-decoration-none d-flex justify-content-between align-items-center">
+              My purchases
+              <i className="bi bi-chevron-right text-muted"></i>
+            </Link>
           </div>
 
-          {/* My sales menu item */}
-          <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
-            <span className="text-dark">My sales</span>
-            <i className="bi bi-chevron-right text-muted"></i>
+          <div className="list-group-item border-0 px-0 py-3 border-bottom">
+            <Link to="/my-sales" className="text-dark text-decoration-none d-flex justify-content-between align-items-center">
+              My sales
+              <i className="bi bi-chevron-right text-muted"></i>
+            </Link>
           </div>
 
-          {/* Messages menu item */}
-          <div className="list-group-item border-0 px-0 py-3 d-flex justify-content-between align-items-center">
-            <span className="text-dark">Messages</span>
-            <i className="bi bi-chevron-right text-muted"></i>
+          <div className="list-group-item border-0 px-0 py-3 border-bottom">
+            <Link to="/messages" className="text-dark text-decoration-none d-flex justify-content-between align-items-center">
+              Messages
+              <i className="bi bi-chevron-right text-muted"></i>
+            </Link>
           </div>
         </div>
       </div>
