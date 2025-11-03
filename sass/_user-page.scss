@@ -2,14 +2,16 @@
   background: #fff;
   border-radius: 1rem;
   margin-bottom: 1.5rem;
-  padding: 1.5rem;
+  padding-bottom: 1.5rem;
+  padding-top: 1.5rem;
   max-width: 600px;
   border: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
 }
 
 .user-avatar-col {
   text-align: center;
-
 }
 
 .user-avatar {
