@@ -1,0 +1,33 @@
+// Layout
+#root {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+
+  header {
+    justify-content: center;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  footer {
+    margin-top: auto;
+  }
+}
+
+// Z-Index levels
+$z-header: 1030;
+$z-footer: 1020;
+$z-dropdown: 1025;
+
+header.sticky-top {
+  z-index: $z-header;
+}
+footer.sticky-bottom {
+  z-index: $z-footer;
+}
+.dropdown-menu.my-filter-scope {
+  z-index: $z-dropdown;
+}
