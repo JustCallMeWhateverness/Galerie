@@ -1,8 +1,8 @@
 export default interface Auction {
-  id: number,
+  id: string,
   title: string,
   currentBid: number,
   endTime: Date,
   startTime: Date,
-  favorited: boolean
+  favorited: boolean;
 }
