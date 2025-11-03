@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Button, Form, Alert, Col, Row } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 import type User from '../interfaces/User';
 import AuthModal from '../modals/AuthModal';
 import Logout from '../components/Logout';
 import EditProfileModal from '../modals/EditProfileModal';
+
+
 
 UserPage.route = {
   path: '/user/:id?',
@@ -189,20 +192,28 @@ export default function UserPage() {
           <h6 className="user-menu-title">Menu</h6>
           <div className="list-group list-group-flush user-menu-list">
             <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Col className="user-menu-label">Active bids</Col>
-              <Col xs="auto"><i className="bi bi-chevron-right user-menu-icon"></i></Col>
+              <Link to="/active-bids" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+                Active bids
+                <i className="bi bi-chevron-right text-muted"></i>
+              </Link>
             </Row>
             <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Col className="user-menu-label">My purchases</Col>
-              <Col xs="auto"><i className="bi bi-chevron-right user-menu-icon"></i></Col>
+              <Link to="/my-purchases" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+                My purchases
+                <i className="bi bi-chevron-right text-muted"></i>
+              </Link>
             </Row>
             <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Col className="user-menu-label">My sales</Col>
-              <Col xs="auto"><i className="bi bi-chevron-right user-menu-icon"></i></Col>
+              <Link to="/my-sales" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+                My sales
+                <i className="bi bi-chevron-right text-muted"></i>
+              </Link>
             </Row>
             <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Col className="user-menu-label">Messages</Col>
-              <Col xs="auto"><i className="bi bi-chevron-right user-menu-icon"></i></Col>
+              <Link to="/messages" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+                Messages
+                <i className="bi bi-chevron-right text-muted"></i>
+              </Link>
             </Row>
           </div>
         </Col>
