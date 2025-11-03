@@ -27,7 +27,8 @@ export default function EditProfileModal({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-2">
+            <Form.Label>First Name</Form.Label>
             <Form.Control
               type="text"
               name="firstName"
@@ -37,6 +38,7 @@ export default function EditProfileModal({
             />
           </Form.Group>
           <Form.Group className="mb-2">
+            <Form.Label>Last Name</Form.Label>
             <Form.Control
               type="text"
               name="lastName"
@@ -46,27 +48,43 @@ export default function EditProfileModal({
             />
           </Form.Group>
           <Form.Group className="mb-2">
+            <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
-              name="role"
-              value={editForm.role}
+              name="username"
+              value={editForm.username}
               onChange={onChange}
-              placeholder="Profession"
+              placeholder="Username"
             />
           </Form.Group>
           <Form.Group className="mb-2">
+            <Form.Label>Location</Form.Label>
             <Form.Control
               type="text"
+              name="location"
+              value={editForm.location}
+              onChange={onChange}
               placeholder="Location"
             />
           </Form.Group>
           <Form.Group className="mb-2">
+            <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
               name="email"
               value={editForm.email}
               onChange={onChange}
               placeholder="Email"
+            />
+          </Form.Group>
+          <Form.Group className="mb-2">
+            <Form.Label>Phone Number</Form.Label>
+            <Form.Control
+              type="text"
+              name="phoneNumber"
+              value={editForm.phoneNumber}
+              onChange={onChange}
+              placeholder="Phone Number"
             />
           </Form.Group>
         </Form>

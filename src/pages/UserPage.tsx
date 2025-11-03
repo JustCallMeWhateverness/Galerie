@@ -24,6 +24,8 @@ export default function UserPage() {
     email: '',
     firstName: '',
     lastName: '',
+    username: '',
+    location: '',
     role: '',
     password: '',
     phoneNumber: ''
@@ -39,6 +41,8 @@ export default function UserPage() {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        username: user.username,
+        location: user.location || '',
         role: user.role || 'user',
         password: user.password || '',
         phoneNumber: user.phoneNumber || ''
@@ -93,6 +97,8 @@ export default function UserPage() {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        username: user.username,
+        location: user.location || '',
         role: user.role || 'user',
         password: user.password || '',
         phoneNumber: user.phoneNumber || ''
@@ -122,24 +128,22 @@ export default function UserPage() {
 
   return (
     <div>
-      <Row className="user-profile-row align-content-center mx-auto">
-        <Col xs={5} md="auto" className="user-avatar-col">
+      <Row className="user-profile-row mx-auto">
+        <Col xs={5} className="user-avatar-col">
           <div className="user-avatar">
             <i className="bi bi-person-fill"></i>
           </div>
+
         </Col>
+
         <Col>
           <div>
             <h4 className="user-name">{user.firstName} {user.lastName}</h4>
+            <div className="username">{user.username}</div>
+            <div className="phone-number">{user.phoneNumber}</div>
             <div className="user-location">Location</div>
             <div className="user-email">{user.email}</div>
-            <div className="user-registered">
-              Reg. {user.created ? new Date(user.created).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              }) : 'N/A'}
-            </div>
+
             <Row className="mt-3">
               <Col xs="auto" className="d-flex justify-content-between">
                 <Button
