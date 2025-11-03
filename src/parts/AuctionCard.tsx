@@ -8,7 +8,7 @@ import { getRemainingTimeMessage } from '../utils/timeHelpers';
 
 export default function AuctionCard(props: Auction) {
 
-  const { id, title, currentBid, endTime } = props;
+  const { id, title, currentBid, endTime, startTime } = props;
   const { user } = useAuth();
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, props);
@@ -33,6 +33,9 @@ export default function AuctionCard(props: Auction) {
         <Card.Body>
           <Card.Text className='text-center'>
             Current bid: {currentBid} SEK
+          </Card.Text>
+          <Card.Text className='text-center'>
+            Start Date: {startTime.toLocaleDateString()}
           </Card.Text>
         </Card.Body>
       </Card>
