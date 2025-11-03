@@ -13,7 +13,7 @@ export default function Header() {
         className='shadow-sm'
 
       >
-        <Container fluid className='justify-content-center'>
+        <Container className='justify-content-center'>
           <Navbar.Brand as={Link} to="/">
             Galerie
           </Navbar.Brand>

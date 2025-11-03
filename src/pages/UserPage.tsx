@@ -147,7 +147,7 @@ export default function UserPage() {
   }
 
   return (
-    <div className="container-fluid px-3 px-md-4 py-4">
+    <div className="px-3 px-md-4 py-4">
       {/* User Profile Card - Main container for user information */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container" style={{ border: '1px solid #e9ecef' }}>
         <div className="d-flex flex-column flex-md-row align-items-start">

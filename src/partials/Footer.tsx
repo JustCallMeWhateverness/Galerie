@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function Footer() {
   return <footer className='bg-primary rounded-1 shadow-sm sticky-bottom'>
     {/* return <footer className='bg-primary fixed-bottom rounded-1 shadow-sm'> */}
-    <Container fluid>
+    <Container>
       <Row>
         <Col className="text-center py-3">
           <Link to="/" className="d-flex flex-column align-items-center text-decoration-none text-black"  >

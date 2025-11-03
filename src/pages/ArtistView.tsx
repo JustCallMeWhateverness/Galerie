@@ -116,7 +116,7 @@ function ArtistView() {
   // Loading state - show spinner while fetching data
   if (isLoading) {
     return (
-      <div className="container-fluid px-3 px-md-4 py-5">
+      <div className="px-3 px-md-4 py-5">
         <div className="text-center">
           <div className="spinner-border" role="status">
             <span className="visually-hidden">Loading...</span>
@@ -129,7 +129,7 @@ function ArtistView() {
   // Error state - artist not found
   if (!artist) {
     return (
-      <div className="container-fluid px-3 px-md-4 py-5">
+      <div className="px-3 px-md-4 py-5">
         <div className="text-center">
           <h2>Artist not found</h2>
           <Button variant="primary" onClick={() => navigate('/')}>
@@ -142,7 +142,7 @@ function ArtistView() {
 
   // Main render - artist profile and auctions
   return (
-    <div className="container-fluid px-3 px-md-4 py-4">
+    <div className="px-3 px-md-4 py-4">
       {/* Artist Profile Card - Main container for artist information (copied from UserPage) */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container">
         <div className="d-flex flex-column flex-md-row align-items-start">
