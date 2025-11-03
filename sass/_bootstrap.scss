@@ -35,3 +35,11 @@ $enable-negative-margins: true;
   background-color: $secondary;
   border-color: $secondary;
 }
+
+.carousel-indicators [data-bs-target] {
+  background-color: white;
+}
+
+.carousel-indicators .active {
+  background-color: $secondary;
+}
