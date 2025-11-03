@@ -144,7 +144,7 @@ function ArtistView() {
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
       {/* Artist Profile Card - Main container for artist information (copied from UserPage) */}
-      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
+      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container">
         <div className="d-flex flex-column flex-md-row align-items-start">
           {/* Profile Picture Section - Avatar placeholder (copied from UserPage) */}
           <div className="me-md-4 mb-3 mb-md-0 text-center text-md-start">
@@ -198,11 +198,11 @@ function ArtistView() {
       </div>
 
       {/* Ongoing Auctions Section - Using AuctionCard with normal styling */}
-      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
+      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container">
         <h6 className="fw-bold text-dark mb-3">Ongoing auctions</h6>
         <div className="row">
           {auctions.map((auction) => (
-            <div key={auction.id} className="col-md-6 col-lg-3 mb-4">
+            <div key={auction.id} className="col-md-6 col-lg-3 col-xl-2 col-xxl-2 mb-4">
               <AuctionCard {...auction} />
             </div>
           ))}

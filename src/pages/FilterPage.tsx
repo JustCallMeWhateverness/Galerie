@@ -60,7 +60,7 @@ export default function FilterPage() {
   return (
     <>
       <Row >
-        <Col xs={12} md={4} className="mt-4">
+        <Col xs={12} md={4} lg={3} xl={3} xxl={3} className="mt-4">
           <SelectDropdown
             title="Sort By"
             value={selected}

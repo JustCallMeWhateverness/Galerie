@@ -12,7 +12,7 @@ export default function LikedAuctionsList({ auctions }: Props) {
   return (
     <Row>
       {auctions.map(auction => (
-        <Col key={auction.id} xs={6} md={4}>
+        <Col key={auction.id} xs={6} sm={4} md={3} lg={3} xl={2} xxl={2}>
           <AuctionCard {...auction} />
         </Col>
       ))}

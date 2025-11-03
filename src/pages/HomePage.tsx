@@ -117,12 +117,12 @@ export default function HomePage() {
 
       <h4>Popular Auctions</h4>
       <Container className="mb-4">
-        <Row className="flex-nowrap overflow-auto scroll">
+        <Row className="g-3">
           {[...sampleAuctions]
             .filter((auction) => auction.favouritesCount > 50)
             .sort((a, b) => b.favouritesCount - a.favouritesCount)
             .map((auction) => (
-              <Col key={auction.id} xs={6} md={6}>
+              <Col key={auction.id} xs={6} sm={4} md={3} lg={3} xl={2} xxl={2}>
                 <AuctionCard {...auction} />
               </Col>
             ))}
@@ -131,7 +131,7 @@ export default function HomePage() {
 
       <h4>Last Chance</h4>
       <Container className="mb-4">
-        <Row className="flex-nowrap overflow-auto scroll">
+        <Row className="g-3">
           {[...sampleAuctions]
             .filter(
               (auction) =>
@@ -143,7 +143,7 @@ export default function HomePage() {
                 new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
             )
             .map((auction) => (
-              <Col key={auction.id} xs={6} md={6}>
+              <Col key={auction.id} xs={6} sm={4} md={3} lg={3} xl={2} xxl={2}>
                 <AuctionCard {...auction} />
               </Col>
             ))}
@@ -152,7 +152,7 @@ export default function HomePage() {
 
       <h4>New Auctions</h4>
       <Container className="mb-4">
-        <Row className="flex-nowrap overflow-auto scroll">
+        <Row className="g-3">
           {[...sampleAuctions]
             .filter((auction) => {
               const days = 7;
@@ -164,7 +164,7 @@ export default function HomePage() {
                 new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
             )
             .map((auction) => (
-              <Col key={auction.id} xs={6} md={6}>
+              <Col key={auction.id} xs={6} sm={4} md={3} lg={3} xl={2} xxl={2}>
                 <AuctionCard {...auction} />
               </Col>
             ))}

@@ -41,7 +41,7 @@ const sampleInfo: Info = {
 export default function AuctionListingPage() {
   return (
     <Row>
-      <Col>
+      <Col xs={12} lg={10} xl={8} xxl={7} className="mx-auto">
         <Image src="/images/products/3.jpg" alt="Here is a product" />
 
         <AuctionListingBidding auction={sampleAuction} />

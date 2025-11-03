@@ -149,7 +149,7 @@ export default function UserPage() {
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
       {/* User Profile Card - Main container for user information */}
-      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px', border: '1px solid #e9ecef' }}>
+      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container" style={{ border: '1px solid #e9ecef' }}>
         <div className="d-flex flex-column flex-md-row align-items-start">
           {/* Profile Picture Section - Avatar placeholder */}
           <div className="me-md-4 mb-3 mb-md-0 text-center text-md-start">
@@ -302,7 +302,7 @@ export default function UserPage() {
       )}
 
       {/* Navigation Menu Section - User action menu with chevron arrows */}
-      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px', border: '1px solid #e9ecef' }}>
+      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container" style={{ border: '1px solid #e9ecef' }}>
         <h6 className="fw-bold text-dark mb-3">Menu</h6>
 
         <div className="list-group list-group-flush">

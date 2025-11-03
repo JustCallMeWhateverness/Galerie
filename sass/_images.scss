@@ -23,7 +23,7 @@ main {
       transition: filter 0.4s;
 
       &.bw {
-        filter: grayscale(100%)
+        filter: grayscale(100%);
       }
     }
 
