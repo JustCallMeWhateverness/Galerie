@@ -7,19 +7,20 @@ import ArtistCard from "../parts/ArtistCard";
 import type Artist from "../interfaces/Artist";
 
 type AuctionDTO = {
-  id: number;
+  id: string;
   title: string;
   category?: string;
   artistName?: string;
   currentBid: number;
-  endTime: string;
+  endTime: Date;
+  startTime: Date;
   favorited?: boolean;
 };
 
-type Tab = "auctions" | "artists";
+type Tab = "auction" | "artists";
 
 Search.route = {
-  path: "/auctions",
+  path: "/auction",
   menuLabel: "Search",
   index: 2,
 };
@@ -37,9 +38,9 @@ function useQueryParam(name: string, fallback = "") {
 export default function Search() {
   const navigate = useNavigate();
   const q = useQueryParam("q", "");
-  const tab = useQueryParam("tab", "auctions") as Tab;
+  const tab = useQueryParam("tab", "auction") as Tab;
 
-  const [auctions, setAuctions] = useState<AuctionDTO[]>([]);
+  const [auction, setauction] = useState<AuctionDTO[]>([]);
   const [artists, setArtists] = useState<Artist[]>([
     {
       id: 1,
@@ -60,11 +61,11 @@ export default function Search() {
       setLoading(true);
       setError(null);
       try {
-        if (tab === "auctions") {
-          const res = await fetch(`/api/auctions`, { signal: abort.signal });
+        if (tab === "auction") {
+          const res = await fetch(`/api/auction`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data: AuctionDTO[] = await res.json();
-          setAuctions(data ?? []);
+          setauction(data ?? []);
         } else {
           const res = await fetch(`/api/artists`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -83,15 +84,15 @@ export default function Search() {
     return () => abort.abort();
   }, [tab]);
 
-  const auctionsFiltered = useMemo(() => {
+  const auctionFiltered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return auctions;
-    return auctions.filter(a =>
+    if (!s) return auction;
+    return auction.filter(a =>
       a.title?.toLowerCase().includes(s) ||
       a.category?.toLowerCase().includes(s) ||
       a.artistName?.toLowerCase().includes(s)
     );
-  }, [auctions, q]);
+  }, [auction, q]);
 
   const artistsFiltered = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -107,10 +108,10 @@ export default function Search() {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     params.set("tab", next);
-    navigate(`/auctions?${params.toString()}`);
+    navigate(`/auction?${params.toString()}`);
   }
 
-  const list = tab === "auctions" ? auctionsFiltered : artistsFiltered;
+  const list = tab === "auction" ? auctionFiltered : artistsFiltered;
 
   return (
     <>
@@ -125,8 +126,8 @@ export default function Search() {
           <div className="d-flex align-items-center justify-content-between">
             <ButtonGroup aria-label="Result type">
               <Button
-                variant={tab === "auctions" ? "secondary" : "primary"}
-                onClick={() => setTab("auctions")}
+                variant={tab === "auction" ? "secondary" : "primary"}
+                onClick={() => setTab("auction")}
               >
                 Auctions
               </Button>
@@ -150,7 +151,6 @@ export default function Search() {
         </Col>
       </Row>
 
-
       <Row className="mt-3">
         <Col md={8} lg={6} className="mx-auto">
           {loading && (
@@ -172,15 +172,17 @@ export default function Search() {
       </Row>
 
       <Row xs={2} sm={2} md={3} lg={4} className="g-3">
-        {tab === "auctions" &&
-          auctionsFiltered.map((a) => (
+        {tab === "auction" &&
+          auctionFiltered.map((a) => (
             <Col key={a.id ?? `auction-${a.id}`}>
               <AuctionCard
                 id={a.id}
                 title={a.title}
                 currentBid={a.currentBid}
                 endTime={new Date(a.endTime)}
+                startTime={new Date(a.startTime)}
                 favorited={a.favorited ?? false}
+
               />
             </Col>
           ))
