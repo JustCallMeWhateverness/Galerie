@@ -10,24 +10,6 @@ Built with React and TypeScript on the frontend, powered by Orchard Core (.NET) 
 - Search and filtering
 - Save favorites
 
-## Screenshots
-
-### Home Page
-![Home Page](./screenshots/home.png)
-Main auction listing page with search and filter options.
-
-### Auctions Page
-![Auctions](./screenshots/auctions.png)
-Browse auctions with tabs for auctions and artists, showing current bids and time remaining.
-
-### Filters & Sorting
-![Filters](./screenshots/filters.png)
-Advanced filtering and sorting interface for auctions.
-
-### User Profile
-![User Profile](./screenshots/profile.png)
-User account page with profile information and menu options.
-
 ## Tech Stack
 
 - Frontend: React, TypeScript, Vite, SCSS
