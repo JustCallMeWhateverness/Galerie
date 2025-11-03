@@ -27,46 +27,59 @@ export default function EditProfileModal({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-2">
-            <Form.Label>First Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="firstName"
-              value={editForm.firstName}
-              onChange={onChange}
-              placeholder="First Name"
-            />
-          </Form.Group>
-          <Form.Group className="mb-2">
-            <Form.Label>Last Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="lastName"
-              value={editForm.lastName}
-              onChange={onChange}
-              placeholder="Last Name"
-            />
-          </Form.Group>
-          <Form.Group className="mb-2">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              name="username"
-              value={editForm.username}
-              onChange={onChange}
-              placeholder="Username"
-            />
-          </Form.Group>
-          <Form.Group className="mb-2">
-            <Form.Label>Location</Form.Label>
-            <Form.Control
-              type="text"
-              name="location"
-              value={editForm.location}
-              onChange={onChange}
-              placeholder="Location"
-            />
-          </Form.Group>
+          <Row>
+            <Col xs={6} >
+              <Form.Group className="mb-2">
+                <Form.Label>First Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="firstName"
+                  value={editForm.firstName}
+                  onChange={onChange}
+                  placeholder="First Name"
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={6}>
+              <Form.Group className="mb-2">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="lastName"
+                  value={editForm.lastName}
+                  onChange={onChange}
+                  placeholder="Last Name"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={6}>
+              <Form.Group className="mb-2">
+
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="username"
+                  value={editForm.username}
+                  onChange={onChange}
+                  placeholder="Username"
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={6}>
+              <Form.Group className="mb-2">
+                <Form.Label>Location</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="location"
+                  value={editForm.location}
+                  onChange={onChange}
+                  placeholder="Location"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
           <Form.Group className="mb-2">
             <Form.Label>Email</Form.Label>
             <Form.Control
