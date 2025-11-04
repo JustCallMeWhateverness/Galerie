@@ -8,7 +8,9 @@ export default interface User {
   email: string;
   firstName: string;
   lastName: string;
+  username: string;
   role: string;
+  location: string;
   password: string;
   phoneNumber: string;
   likedAuctions?: Auction[];
