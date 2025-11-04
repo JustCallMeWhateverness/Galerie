@@ -32,7 +32,7 @@ export default function UserPage() {
     lastName: "",
     username: '',
     location: '',
-    role: "",
+    roles: [],
     password: "",
     phoneNumber: "",
   });
@@ -49,7 +49,7 @@ export default function UserPage() {
         lastName: user.lastName,
         username: user.username,
         location: user.location || '',
-        role: user.role || "user",
+        roles: user.roles || ["user"],
         password: user.password || "",
         phoneNumber: user.phoneNumber || "",
       });
@@ -105,7 +105,7 @@ export default function UserPage() {
         lastName: user.lastName,
         username: user.username,
         location: user.location || '',
-        role: user.role || "user",
+        roles: user.roles || ["user"],
         password: user.password || "",
         phoneNumber: user.phoneNumber || "",
       });

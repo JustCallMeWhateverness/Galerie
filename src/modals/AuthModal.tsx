@@ -33,7 +33,7 @@ export default function AuthModal({ customTitle,
     if (user) {
       if (redirectPath) {
         navigate(redirectPath, { replace: true });
-      } else if (user.role === "admin") {
+      } else if (user.roles.includes("admin")) {
         navigate("/admin", { replace: true });
       } else {
         navigate("/user", { replace: true });
