@@ -19,16 +19,10 @@ export type ExtendedArtist = Artist & {
 };
 
 export default function ArtistCard(props: Artist) {
-  const { id, firstName, lastName, profession } = props;
+  const { id, title, workTitle } = props;
   const { user } = useAuth();
   const isFavoritedByUser = !!user?.likedArtists?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, undefined, props);
-
-  const ratingNum =
-    typeof props.rating === "number" ? props.rating :
-      props.rating == null ? null :
-        Number(props.rating);
-
 
   return (
     <>
@@ -41,13 +35,10 @@ export default function ArtistCard(props: Artist) {
         </Card.ImgOverlay>
         <Card.Body>
           <Card.Title className='text-center'>
-            {firstName} {lastName}
+            {title}
           </Card.Title>
           <Card.Text className='text-center'>
-            {profession}
-          </Card.Text>
-          <Card.Text className='text-center'>
-            Rating: {ratingNum == null ? "–" : ratingNum.toFixed(1) + "/5"}
+            {workTitle}
           </Card.Text>
         </Card.Body>
       </Card>
