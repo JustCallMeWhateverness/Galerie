@@ -47,6 +47,7 @@ export default function Search() {
 
   useEffect(() => {
     const abort = new AbortController();
+
     async function load() {
       setLoading(true);
       setError(null);
@@ -55,7 +56,15 @@ export default function Search() {
           const res = await fetch(`/api/Auction`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data: AuctionDTO[] = await res.json();
-          setauction(data ?? []);
+
+          const now = new Date();
+          const activeOnly = data.filter(a => {
+            const start = new Date(a.startTime);
+            const end = new Date(a.endTime);
+            return start <= now && end >= now; // bara aktiva auktioner
+          });
+
+          setauction(activeOnly ?? []);
         } else {
           const res = await fetch(`/api/ArtistInfo`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -70,6 +79,7 @@ export default function Search() {
         setLoading(false);
       }
     }
+
     load();
     return () => abort.abort();
   }, [tab]);
