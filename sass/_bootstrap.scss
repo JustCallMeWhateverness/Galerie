@@ -15,8 +15,8 @@ $enable-negative-margins: true;
 //import icon
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
-.body {
-  font-family: Arial, Helvetica, sans-serif;
+.card {
+  background-color: $primary;
 }
 
 // Override some Bootstrap defaults
