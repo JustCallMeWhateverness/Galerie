@@ -4,11 +4,11 @@ main {
     object-fit: cover;
     aspect-ratio: 16/9;
 
-    @media (min-width: 576px) {
+    @include media-breakpoint-up(sm) {
       aspect-ratio: 20/9;
     }
 
-    @media (min-width: 768px) {
+    @include media-breakpoint-up(md) {
       aspect-ratio: 30/9;
     }
   }

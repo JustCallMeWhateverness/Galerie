@@ -8,52 +8,27 @@ $primary: #f2eee9;
 $secondary: #087990;
 $enable-negative-margins: true;
 
-// color suggestions :taupe D8D3CC, light greige: edeceb, light beige: F2EEE9
-// Import bootstrap
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 970px,
+  xl: 1140px,
+  xxl: 1320px
+) !default;
+
+// color suggestions :taupe D8D3CC, light greige: edeceb, light beige: F2EEE9   
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
 
-//import icon
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
 .body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-// Override some Bootstrap defaults
 .navbar-brand {
   font-family: "Passions Conflict", cursive;
   font-size: clamp(5.5rem, 8.5vw, 7.5rem);
   line-height: 1;
-}
-
-.container {
-  max-width: 970px;
-  
-  // Larger container on big screens
-  @media (min-width: 1400px) {
-    max-width: 1320px;
-  }
-  
-  @media (min-width: 1920px) {
-    max-width: 1600px;
-  }
-}
-
-// Responsive card container for profile pages
-.profile-card-container {
-  max-width: 600px;
-  
-  @media (min-width: 992px) {
-    max-width: 700px;
-  }
-  
-  @media (min-width: 1400px) {
-    max-width: 800px;
-  }
-  
-  @media (min-width: 1920px) {
-    max-width: 900px;
-  }
 }
 
 /* Måste också laddas efter bootstrap.css */

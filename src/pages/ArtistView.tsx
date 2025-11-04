@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { type ExtendedArtist } from '../parts/ArtistCard';
 import type Auction from '../interfaces/Auction';
@@ -180,8 +180,10 @@ function ArtistView() {
 
   return (
     <div className="px-3 px-md-4 py-4">
-      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container">
-        <div className="d-flex flex-column flex-md-row align-items-start">
+      <Row>
+        <Col xs={12} lg={10} xl={8} xxl={7} className="mx-auto">
+          <div className="bg-white rounded-3 p-3 p-md-4 mb-4">
+            <div className="d-flex flex-column flex-md-row align-items-start">
           <div className="me-md-4 mb-3 mb-md-0 text-center text-md-start">
             <div 
               className="rounded-3 bg-light d-flex align-items-center justify-content-center mx-auto mx-md-0 overflow-hidden"
@@ -224,11 +226,15 @@ function ArtistView() {
               )}
             </div>
           </div>
-        </div>
-      </div>
+            </div>
+          </div>
+        </Col>
+      </Row>
 
-      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto profile-card-container">
-        <h6 className="fw-bold text-dark mb-3">Ongoing auctions</h6>
+    <Row>
+      <Col xs={12} lg={10} xl={8} xxl={7} className="mx-auto">
+        <div className="bg-white rounded-3 p-3 p-md-4 mb-4">
+          <h6 className="fw-bold text-dark mb-3">Ongoing auctions</h6>
         {auctions.length > 0 ? (
           <div className="row">
             {auctions.map((auction) => (
@@ -242,7 +248,9 @@ function ArtistView() {
             <p>No ongoing auctions</p>
           </div>
         )}
-      </div>
+        </div>
+      </Col>
+    </Row>
     </div>
   );
 }

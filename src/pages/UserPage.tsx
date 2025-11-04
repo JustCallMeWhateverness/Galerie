@@ -19,12 +19,11 @@ UserPage.route = {
 
 export default function UserPage() {
 
-  const { user, loading } = useAuth();
+  const { user, loading, setUser } = useAuth();
   const [modalShow, setModalShow] = React.useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<User>({
-
     id: 0,
     created: "",
     email: "",
@@ -35,6 +34,7 @@ export default function UserPage() {
     roles: [],
     password: "",
     phoneNumber: "",
+    currency: 'SEK',
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
@@ -52,11 +52,12 @@ export default function UserPage() {
         roles: user.roles || ["user"],
         password: user.password || "",
         phoneNumber: user.phoneNumber || "",
+        currency: user.currency || 'SEK',
       });
     }
   }, [user]);
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setEditForm((prev: User) => ({
       ...prev,
@@ -85,6 +86,8 @@ export default function UserPage() {
         setIsEditing(false);
         setSuccessMessage("Profile updated successfully!");
         setTimeout(() => setSuccessMessage(""), 3000);
+        
+        setUser(result);
       } else {
         setErrors([result.error || "Update failed"]);
       }
@@ -108,6 +111,7 @@ export default function UserPage() {
         roles: user.roles || ["user"],
         password: user.password || "",
         phoneNumber: user.phoneNumber || "",
+        currency: user.currency || 'SEK',
       });
     }
     setIsEditing(false);
@@ -132,43 +136,47 @@ export default function UserPage() {
 
   return (
     <div>
-      <Row className="user-profile-row mx-auto">
-        <Col xs={5} className="user-avatar-col">
-          <div className="user-avatar">
-            <i className="bi bi-person-fill"></i>
-          </div>
-          <div className="user-created">Created: {user.created ? new Date(user.created).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }) : 'N/A'}
-          </div>
+      <Row>
+        <Col xs={12} lg={10} xl={8} xxl={7} className="mx-auto">
+          <Row className="user-profile-row">
+            <Col xs={5} className="user-avatar-col">
+              <div className="user-avatar">
+                <i className="bi bi-person-fill"></i>
+              </div>
+              <div className="user-created">Created: {user.created ? new Date(user.created).toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              }) : 'N/A'}
+              </div>
 
-        </Col>
+            </Col>
 
-        <Col>
-          <div>
-            <h4 className="user-name">{user.firstName} {user.lastName}</h4>
-            <div className="username">{user.username}</div>
-            <div className="phone-number">{user.phoneNumber}</div>
-            <div className="user-location">{user.location}</div>
-            <div className="user-email">{user.email}</div>
+            <Col>
+              <div>
+                <h4 className="user-name">{user.firstName} {user.lastName}</h4>
+                <div className="username">{user.username}</div>
+                <div className="phone-number">{user.phoneNumber}</div>
+                <div className="user-location">{user.location}</div>
+                <div className="user-email">{user.email}</div>
 
 
-            <Row className="mt-3">
-              <Col xs="auto" className="d-flex justify-content-between">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setIsEditing(true)}
-                  className="me-2"
-                >
-                  Edit
-                </Button>
-                <Logout />
-              </Col>
-            </Row>
-          </div>
+                <Row className="mt-3">
+                  <Col xs="auto" className="d-flex justify-content-between">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setIsEditing(true)}
+                      className="me-2"
+                    >
+                      Edit
+                    </Button>
+                    <Logout />
+                  </Col>
+                </Row>
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
       {successMessage && (
@@ -195,42 +203,46 @@ export default function UserPage() {
         </Row>
       )}
 
-      <Row className="user-menu-row mx-auto">
-        <Col>
-          <h6 className="user-menu-title">Menu</h6>
-          <div className="list-group list-group-flush user-menu-list">
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link to="/active-bids" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
-                Active bids
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link to="/my-purchases" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
-                My purchases
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link to="/my-sales" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
-                My sales
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="/messages"
-                className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setModalShow(true);
-                }}
-              >
-                Messages
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-          </div>
+      <Row>
+        <Col xs={12} lg={10} xl={8} xxl={7} className="mx-auto">
+          <Row className="user-menu-row">
+            <Col>
+              <h6 className="user-menu-title">Menu</h6>
+              <div className="list-group list-group-flush user-menu-list">
+                <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+                  <Link to="/active-bids" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+                    Active bids
+                    <i className="bi bi-chevron-right text-muted"></i>
+                  </Link>
+                </Row>
+                <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+                  <Link to="/my-purchases" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+                    My purchases
+                    <i className="bi bi-chevron-right text-muted"></i>
+                  </Link>
+                </Row>
+                <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+                  <Link to="/my-sales" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+                    My sales
+                    <i className="bi bi-chevron-right text-muted"></i>
+                  </Link>
+                </Row>
+                <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+                  <Link
+                    to="/messages"
+                    className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setModalShow(true);
+                    }}
+                  >
+                    Messages
+                    <i className="bi bi-chevron-right text-muted"></i>
+                  </Link>
+                </Row>
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
       <ComingSoonModal
