@@ -26,13 +26,26 @@ export default function ArtistCard(props: Artist) {
 
   return (
     <>
-      <Card className="mb-4">
-        <Card.Img style={{ minHeight: '200px', objectFit: 'cover' }} />
-        <Card.ImgOverlay className='text-center'>
-          <span className='float-end' role='button' onClick={onFavorite}>
-            <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
-          </span>
-        </Card.ImgOverlay>
+      <Card
+        className="mb-4 h-100 d-flex flex-column"
+        style={{
+          height: "320px",
+        }}
+      >
+        <div className="position-relative">
+          <Card.Img
+            style={{
+              minHeight: "200px",
+              objectFit: "cover",
+              width: "100%",
+            }}
+          />
+          <Card.ImgOverlay className='text-center'>
+            <span className='float-end' role='button' onClick={onFavorite}>
+              <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
+            </span>
+          </Card.ImgOverlay>
+        </div>
         <Card.Body>
           <Card.Title className='text-center'>
             {title}
