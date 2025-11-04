@@ -61,7 +61,7 @@ export default function Search() {
           const activeOnly = data.filter(a => {
             const start = new Date(a.startTime);
             const end = new Date(a.endTime);
-            return start <= now && end >= now; // bara aktiva auktioner
+            return start <= now && end >= now;
           });
 
           setauction(activeOnly ?? []);
