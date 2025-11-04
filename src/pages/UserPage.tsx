@@ -1,40 +1,43 @@
-import { useState, useEffect } from 'react';
-import { Button, Alert, Col, Row } from 'react-bootstrap';
-import { useAuth } from '../hooks/useAuth';
+import { useState, useEffect } from "react";
+import { Button, Alert, Col, Row } from "react-bootstrap";
+import { useAuth } from "../hooks/useAuth";
 import { Link } from 'react-router-dom';
 
-import type User from '../interfaces/User';
-import AuthModal from '../modals/AuthModal';
-import Logout from '../components/Logout';
-import EditProfileModal from '../modals/EditProfileModal';
-
+import type User from "../interfaces/User";
+import AuthModal from "../modals/AuthModal";
+import Logout from "../components/Logout";
+import EditProfileModal from "../modals/EditProfileModal";
+import { ComingSoonModal } from "../modals/ComingSoonModal";
+import React from "react";
 
 
 UserPage.route = {
-  path: '/user/:id?',
-  menuLabel: 'My Profile',
-  index: 5
+  path: "/user/:id?",
+  menuLabel: "My Profile",
+  index: 5,
 };
 
 export default function UserPage() {
 
   const { user, loading } = useAuth();
+  const [modalShow, setModalShow] = React.useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<User>({
+
     id: 0,
-    created: '',
-    email: '',
-    firstName: '',
-    lastName: '',
+    created: "",
+    email: "",
+    firstName: "",
+    lastName: "",
     username: '',
     location: '',
-    role: '',
-    password: '',
-    phoneNumber: ''
+    role: "",
+    password: "",
+    phoneNumber: "",
   });
   const [errors, setErrors] = useState<string[]>([]);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -46,9 +49,9 @@ export default function UserPage() {
         lastName: user.lastName,
         username: user.username,
         location: user.location || '',
-        role: user.role || 'user',
-        password: user.password || '',
-        phoneNumber: user.phoneNumber || ''
+        role: user.role || "user",
+        password: user.password || "",
+        phoneNumber: user.phoneNumber || "",
       });
     }
   }, [user]);
@@ -57,7 +60,7 @@ export default function UserPage() {
     const { name, value } = e.target;
     setEditForm((prev: User) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -69,9 +72,9 @@ export default function UserPage() {
 
     try {
       const response = await fetch(`/api/users/${user.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(editForm),
       });
@@ -80,13 +83,13 @@ export default function UserPage() {
 
       if (response.ok) {
         setIsEditing(false);
-        setSuccessMessage('Profile updated successfully!');
-        setTimeout(() => setSuccessMessage(''), 3000);
+        setSuccessMessage("Profile updated successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
       } else {
-        setErrors([result.error || 'Update failed']);
+        setErrors([result.error || "Update failed"]);
       }
     } catch {
-      setErrors(['Network error. Please try again.']);
+      setErrors(["Network error. Please try again."]);
     } finally {
       setIsSaving(false);
     }
@@ -102,9 +105,9 @@ export default function UserPage() {
         lastName: user.lastName,
         username: user.username,
         location: user.location || '',
-        role: user.role || 'user',
-        password: user.password || '',
-        phoneNumber: user.phoneNumber || ''
+        role: user.role || "user",
+        password: user.password || "",
+        phoneNumber: user.phoneNumber || "",
       });
     }
     setIsEditing(false);
@@ -124,9 +127,7 @@ export default function UserPage() {
   }
 
   if (!user) {
-    return (
-      <AuthModal customTitle="Log in to view your profile" />
-    );
+    return <AuthModal customTitle="Log in to view your profile" />;
   }
 
   return (
@@ -210,7 +211,14 @@ export default function UserPage() {
               </Link>
             </Row>
             <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link to="/messages" className="text-dark text-decoration-none  d-flex justify-content-between align-items-center">
+              <Link
+                to="/messages"
+                className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setModalShow(true);
+                }}
+              >
                 Messages
                 <i className="bi bi-chevron-right text-muted"></i>
               </Link>
@@ -218,6 +226,10 @@ export default function UserPage() {
           </div>
         </Col>
       </Row>
+      <ComingSoonModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
       <EditProfileModal
         show={isEditing}
         onHide={() => setIsEditing(false)}
