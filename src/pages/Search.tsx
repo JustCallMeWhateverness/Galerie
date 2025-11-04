@@ -13,13 +13,14 @@ type AuctionDTO = {
   artistName?: string;
   currentBid: number;
   endTime: string;
+  startTime: string;
   favorited?: boolean;
 };
 
-type Tab = "auctions" | "artists";
+type Tab = "auction" | "artist";
 
 Search.route = {
-  path: "/auctions",
+  path: "/auction",
   menuLabel: "Search",
   index: 2,
 };
@@ -37,20 +38,10 @@ function useQueryParam(name: string, fallback = "") {
 export default function Search() {
   const navigate = useNavigate();
   const q = useQueryParam("q", "");
-  const tab = useQueryParam("tab", "auctions") as Tab;
+  const tab = useQueryParam("tab", "auction") as Tab;
 
-  const [auctions, setAuctions] = useState<AuctionDTO[]>([]);
-  const [artists, setArtists] = useState<Artist[]>([
-    {
-      id: 1,
-      firstName: "Test",
-      lastName: "Artist",
-      profession: "Painter",
-      rating: 4.5,
-      favorited: false,
-      // Add any other required Artist fields here
-    }
-  ]);
+  const [auction, setauction] = useState<AuctionDTO[]>([]);
+  const [artist, setartist] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,16 +51,16 @@ export default function Search() {
       setLoading(true);
       setError(null);
       try {
-        if (tab === "auctions") {
-          const res = await fetch(`/api/auctions`, { signal: abort.signal });
+        if (tab === "auction") {
+          const res = await fetch(`/api/Auction`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data: AuctionDTO[] = await res.json();
-          setAuctions(data ?? []);
+          setauction(data ?? []);
         } else {
-          const res = await fetch(`/api/artists`, { signal: abort.signal });
+          const res = await fetch(`/api/ArtistInfo`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data: Artist[] = await res.json();
-          setArtists(data ?? []);
+          setartist(data ?? []);
         }
       } catch (e: unknown) {
         if ((e as any)?.name !== "AbortError") {
@@ -83,34 +74,34 @@ export default function Search() {
     return () => abort.abort();
   }, [tab]);
 
-  const auctionsFiltered = useMemo(() => {
+  const auctionFiltered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return auctions;
-    return auctions.filter(a =>
+    if (!s) return auction;
+    return auction.filter(a =>
       a.title?.toLowerCase().includes(s) ||
       a.category?.toLowerCase().includes(s) ||
       a.artistName?.toLowerCase().includes(s)
     );
-  }, [auctions, q]);
+  }, [auction, q]);
 
-  const artistsFiltered = useMemo(() => {
+  const artistFiltered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return artists;
-    return artists.filter(x =>
+    if (!s) return artist;
+    return artist.filter(x =>
       x.firstName.toLowerCase().includes(s) ||
       x.lastName.toLowerCase().includes(s) ||
       (x.profession?.toLowerCase().includes(s) ?? false)
     );
-  }, [artists, q]);
+  }, [artist, q]);
 
   function setTab(next: Tab) {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     params.set("tab", next);
-    navigate(`/auctions?${params.toString()}`);
+    navigate(`/auction?${params.toString()}`);
   }
 
-  const list = tab === "auctions" ? auctionsFiltered : artistsFiltered;
+  const list = tab === "auction" ? auctionFiltered : artistFiltered;
 
   return (
     <>
@@ -125,14 +116,14 @@ export default function Search() {
           <div className="d-flex align-items-center justify-content-between">
             <ButtonGroup aria-label="Result type">
               <Button
-                variant={tab === "auctions" ? "secondary" : "primary"}
-                onClick={() => setTab("auctions")}
+                variant={tab === "auction" ? "secondary" : "primary"}
+                onClick={() => setTab("auction")}
               >
                 Auctions
               </Button>
               <Button
-                variant={tab === "artists" ? "secondary" : "primary"}
-                onClick={() => setTab("artists")}
+                variant={tab === "artist" ? "secondary" : "primary"}
+                onClick={() => setTab("artist")}
               >
                 Artists
               </Button>
@@ -172,8 +163,8 @@ export default function Search() {
       </Row>
 
       <Row xs={2} sm={2} md={3} lg={4} className="g-3">
-        {tab === "auctions" &&
-          auctionsFiltered.map((a) => (
+        {tab === "auction" &&
+          auctionFiltered.map((a) => (
             <Col key={a.id ?? `auction-${a.id}`}>
               <AuctionCard
                 id={a.id}
@@ -181,12 +172,13 @@ export default function Search() {
                 currentBid={a.currentBid}
                 endTime={new Date(a.endTime)}
                 favorited={a.favorited ?? false}
+                startTime={new Date(a.startTime)}
               />
             </Col>
           ))
         }
-        {tab === "artists" &&
-          artistsFiltered.map((s, i) => (
+        {tab === "artist" &&
+          artistFiltered.map((s, i) => (
             <Col key={s.id ?? `artist-${i}`}>
               <ArtistCard {...s} />
             </Col>
