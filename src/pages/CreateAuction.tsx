@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
-import DatePickerInput from "../parts/DatePickerInput";
 import { addDays } from "date-fns";
-import AuthModal from "../modals/AuthModal";
 
+import AuthModal from "../modals/AuthModal";
+import MustBeSellerModal from "../modals/MustBeSellerModal";
+import DatePickerInput from "../parts/DatePickerInput";
 
 CreateAuction.route = {
   path: '/create',
@@ -20,6 +22,7 @@ const currency = "SEK"
 
 export default function CreateAuction() {
 
+  const [showSellerModal, setShowSellerModal] = useState(true);
   const { user, loading } = useAuth();
   const [auction, setAuction] = useState({
     title: '',
@@ -34,6 +37,7 @@ export default function CreateAuction() {
   })
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const navigate = useNavigate();
 
   function setProperty(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     let { name, value } = event.target
@@ -53,6 +57,20 @@ export default function CreateAuction() {
       />
     );
   }
+
+  if (!user.roles || (!user.roles.includes('seller') && !user.roles.includes('Administrator'))) {
+    return (
+      <MustBeSellerModal
+        show={showSellerModal}
+        onHide={() => {
+          setShowSellerModal(false);
+          navigate('/');
+        }}
+        onUpgrade={() => { }}
+      />
+    );
+  }
+
   return <>
     <Container>
       <Row>
