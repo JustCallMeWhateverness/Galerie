@@ -1,8 +1,7 @@
 export default interface Artist {
-  id: number;
-  firstName: string;
-  lastName: string;
-  rating?: number | null;
-  profession?: string;
+  id: string;
+  title?: string;
+  username?: string;
+  workTitle?: string;
   favorited: boolean;
 };

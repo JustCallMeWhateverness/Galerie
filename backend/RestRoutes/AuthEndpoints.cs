@@ -57,8 +57,10 @@ public static class AuthEndpoints
             // Assign Customer role (must exist in Orchard)
             await userManager.AddToRoleAsync(user, "Customer");
 
+            var u = user as User;
             return Results.Ok(new
             {
+                id = u?.UserId,
                 username = user.UserName,
                 email = request.Email,
                 firstName = request.FirstName,
@@ -113,6 +115,7 @@ public static class AuthEndpoints
             var u = user as User;
             return Results.Ok(new
             {
+                id = u?.UserId,
                 username = user.UserName,
                 email = u?.Email,
                 phoneNumber = u?.PhoneNumber,
@@ -144,6 +147,7 @@ public static class AuthEndpoints
 
             return Results.Ok(new
             {
+                id = u?.UserId,
                 username = user.UserName,
                 email = u?.Email,
                 phoneNumber = u?.PhoneNumber,

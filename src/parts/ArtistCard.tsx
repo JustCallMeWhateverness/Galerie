@@ -19,35 +19,39 @@ export type ExtendedArtist = Artist & {
 };
 
 export default function ArtistCard(props: Artist) {
-  const { id, firstName, lastName, profession } = props;
+  const { id, title, workTitle } = props;
   const { user } = useAuth();
   const isFavoritedByUser = !!user?.likedArtists?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, undefined, props);
 
-  const ratingNum =
-    typeof props.rating === "number" ? props.rating :
-      props.rating == null ? null :
-        Number(props.rating);
-
-
   return (
     <>
-      <Card className="mb-4">
-        <Card.Img style={{ minHeight: '200px', objectFit: 'cover' }} />
-        <Card.ImgOverlay className='text-center'>
-          <span className='float-end' role='button' onClick={onFavorite}>
-            <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
-          </span>
-        </Card.ImgOverlay>
+      <Card
+        className="mb-4 h-100 d-flex flex-column"
+        style={{
+          height: "320px",
+        }}
+      >
+        <div className="position-relative">
+          <Card.Img
+            style={{
+              minHeight: "200px",
+              objectFit: "cover",
+              width: "100%",
+            }}
+          />
+          <Card.ImgOverlay className='text-center'>
+            <span className='float-end' role='button' onClick={onFavorite}>
+              <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
+            </span>
+          </Card.ImgOverlay>
+        </div>
         <Card.Body>
           <Card.Title className='text-center'>
-            {firstName} {lastName}
+            {title}
           </Card.Title>
           <Card.Text className='text-center'>
-            {profession}
-          </Card.Text>
-          <Card.Text className='text-center'>
-            Rating: {ratingNum == null ? "–" : ratingNum.toFixed(1) + "/5"}
+            {workTitle}
           </Card.Text>
         </Card.Body>
       </Card>
