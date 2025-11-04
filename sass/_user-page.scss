@@ -57,9 +57,13 @@
   margin-bottom: 0.25rem;
 }
 
-.user-registered {
-  color: #212529;
-  font-size: 0.9rem;
+.user-created {
+  right: 0;
+  bottom: 0;
+  font-size: 0.85rem;
+  color: #6c757d;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
 }
 
 .user-edit-btn {

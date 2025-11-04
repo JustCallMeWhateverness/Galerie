@@ -9,6 +9,7 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
     username: '',
     firstName: '',
     lastName: '',
+    location: '',
     phone: '',
     email: '',
     password: ''
@@ -77,6 +78,15 @@ export default function Register({ onSwitchToLogin }: { onSwitchToLogin: () => v
           placeholder="Enter last name"
           value={registerData.lastName}
           onChange={(e) => setProperty('lastName', e.target.value)}
+        />
+      </Form.Group>
+      <Form.Group controlId="formLocation" className='mb-3'>
+        <Form.Label>Location</Form.Label>
+        <Form.Control required
+          type="text"
+          placeholder="Enter location"
+          value={registerData.location}
+          onChange={(e) => setProperty('location', e.target.value)}
         />
       </Form.Group>
       <Form.Group controlId="formPhoneNumber" className='mb-3'>
