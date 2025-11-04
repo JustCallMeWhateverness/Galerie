@@ -9,7 +9,7 @@ export default interface User {
   firstName: string;
   lastName: string;
   username: string;
-  role: string;
+  roles: string[];
   location: string;
   password: string;
   phoneNumber: string;

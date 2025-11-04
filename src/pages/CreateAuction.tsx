@@ -58,7 +58,7 @@ export default function CreateAuction() {
     );
   }
 
-  if (!user.role || user.role !== 'seller') {
+  if (!user.roles || (!user.roles.includes('seller') && !user.roles.includes('Administrator'))) {
     return (
       <MustBeSellerModal
         show={showSellerModal}
