@@ -98,9 +98,8 @@ export default function Search() {
     const s = q.trim().toLowerCase();
     if (!s) return artist;
     return artist.filter(x =>
-      x.firstName.toLowerCase().includes(s) ||
-      x.lastName.toLowerCase().includes(s) ||
-      (x.profession?.toLowerCase().includes(s) ?? false)
+      x.title?.toLowerCase().includes(s) ||
+      (x.workTitle?.toLowerCase().includes(s) ?? false)
     );
   }, [artist, q]);
 
