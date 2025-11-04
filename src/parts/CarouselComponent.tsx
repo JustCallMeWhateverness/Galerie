@@ -27,7 +27,11 @@ export default function CarouselComponent({
   showControls = true,
 }: Props) {
   return (
-    <Carousel fade indicators={showIndicators} controls={showControls}>
+    <Carousel
+      fade indicators={showIndicators}
+      controls={showControls}
+      prevIcon={<i className="bi bi-chevron-left text-secondary fs-2"></i>}
+      nextIcon={<i className="bi bi-chevron-right text-secondary fs-2"></i>}>
       {items.map((item, index) => (
         <Carousel.Item key={index}>
           {item.link ? (

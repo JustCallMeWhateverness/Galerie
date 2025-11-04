@@ -12,7 +12,7 @@ export default function Footer() {
           </Link>
         </Col>
         <Col className="text-center py-3">
-          <Link to="/auctions" className="d-flex flex-column align-items-center text-decoration-none text-black">
+          <Link to="/auction" className="d-flex flex-column align-items-center text-decoration-none text-black">
             <i className="bi bi-search fs-1"></i>
           </Link>
         </Col>

@@ -1,0 +1,114 @@
+.user-profile-row {
+  background: #fff;
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  padding-top: 1.5rem;
+  max-width: 600px;
+  border: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar-col {
+  text-align: center;
+}
+
+.user-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 1rem;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.user-avatar i {
+  color: #6c757d;
+  font-size: 3rem;
+}
+
+.user-input {
+  border: none;
+  background: transparent;
+  color: #212529;
+  padding: 0;
+}
+
+.user-input-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: #212529;
+  font-size: 1.5rem;
+}
+
+.user-role,
+.user-location,
+.user-email {
+  color: #212529;
+  margin-bottom: 0.25rem;
+}
+
+.user-created {
+  right: 0;
+  bottom: 0;
+  font-size: 0.85rem;
+  color: #6c757d;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+}
+
+.user-edit-btn {
+  border-color: #6c757d !important;
+  color: #000 !important;
+  margin-right: 1rem !important;
+}
+
+.user-alert-success {
+  margin-bottom: 1.5rem;
+}
+
+.user-alert-error {
+  margin-bottom: 1.5rem;
+}
+
+.user-menu-row {
+  background: #fff;
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  max-width: 600px;
+  border: 1px solid #e9ecef;
+}
+
+.user-menu-title {
+  font-weight: bold;
+  color: #212529;
+  margin-bottom: 1rem;
+}
+
+.user-menu-item {
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 0;
+}
+
+.user-menu-label {
+  color: #212529;
+}
+
+.user-menu-icon {
+  color: #6c757d;
+}
+
+.editprofile-modal .modal-content {
+  background: rgba(219, 218, 218, 0.877);
+  backdrop-filter: blur(5px);
+}
