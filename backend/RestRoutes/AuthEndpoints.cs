@@ -36,7 +36,9 @@ public static class AuthEndpoints
                     Properties = new JsonObject
                     {
                         ["FirstName"] = request.FirstName ?? "",
-                        ["LastName"] = request.LastName ?? ""
+                        ["LastName"] = request.LastName ?? "",
+                        ["Location"] = request.Location ?? "",
+                        ["Created"] = DateTime.UtcNow.ToString("o")
                     }
                 },
                 request.Password,
@@ -62,6 +64,8 @@ public static class AuthEndpoints
                 firstName = request.FirstName,
                 lastName = request.LastName,
                 phone = request.Phone,
+                location = request.Location,
+                created = DateTime.UtcNow,
                 role = "Customer",
                 message = "User created successfully"
             });
@@ -114,6 +118,8 @@ public static class AuthEndpoints
                 phoneNumber = u?.PhoneNumber,
                 firstName = u?.Properties?["FirstName"]?.ToString(),
                 lastName = u?.Properties?["LastName"]?.ToString(),
+                location = u?.Properties?["Location"]?.ToString(),
+                created = u?.Properties?["Created"]?.ToString(),
                 roles = context.User.FindAll(ClaimTypes.Role)
                     .Select(c => c.Value)
                     .ToList()
@@ -143,6 +149,8 @@ public static class AuthEndpoints
                 phoneNumber = u?.PhoneNumber,
                 firstName = u?.Properties?["FirstName"]?.ToString(),
                 lastName = u?.Properties?["LastName"]?.ToString(),
+                location = u?.Properties?["Location"]?.ToString(),
+                created = u?.Properties?["Created"]?.ToString(),
                 roles = context.User.FindAll(ClaimTypes.Role)
                     .Select(c => c.Value)
                     .ToList()
@@ -167,7 +175,9 @@ public record RegisterRequest(
     string Password,
     string? FirstName,
     string? LastName,
-    string? Phone
+    string? Phone,
+    string? Location,
+    string? Created
 );
 
 public record LoginRequest(string UsernameOrEmail, string Password);

@@ -137,6 +137,12 @@ export default function UserPage() {
           <div className="user-avatar">
             <i className="bi bi-person-fill"></i>
           </div>
+          <div className="user-created">Created: {user.created ? new Date(user.created).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'N/A'}
+          </div>
 
         </Col>
 
@@ -145,8 +151,9 @@ export default function UserPage() {
             <h4 className="user-name">{user.firstName} {user.lastName}</h4>
             <div className="username">{user.username}</div>
             <div className="phone-number">{user.phoneNumber}</div>
-            <div className="user-location">Location</div>
+            <div className="user-location">{user.location}</div>
             <div className="user-email">{user.email}</div>
+
 
             <Row className="mt-3">
               <Col xs="auto" className="d-flex justify-content-between">
