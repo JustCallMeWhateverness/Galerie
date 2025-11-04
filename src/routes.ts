@@ -14,6 +14,7 @@ import FilterPage from "./pages/FilterPage.tsx";
 import AuctionListingPage from "./pages/AuctionListingPage.tsx";
 import ActiveBids from "./pages/ActiveBid.tsx";
 import MySalesPage from "./pages/MySalesPage.tsx";
+import MyPurchases from "./pages/MyPurchases.tsx";
 
 export default [
   NotFoundPage,
@@ -28,6 +29,7 @@ export default [
   AuctionListingPage,
   ActiveBids,
   MySalesPage,
+  MyPurchases,
 ]
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
   .sort((a, b) => (a.index || 0) - (b.index || 0));
