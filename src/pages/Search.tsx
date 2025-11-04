@@ -40,8 +40,8 @@ export default function Search() {
   const q = useQueryParam("q", "");
   const tab = useQueryParam("tab", "auction") as Tab;
 
-  const [auction, setauction] = useState<AuctionDTO[]>([]);
-  const [artist, setartist] = useState<Artist[]>([]);
+  const [auction, setAuction] = useState<AuctionDTO[]>([]);
+  const [artist, setArtist] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,12 +64,12 @@ export default function Search() {
             return start <= now && end >= now;
           });
 
-          setauction(activeOnly ?? []);
+          setAuction(activeOnly ?? []);
         } else {
           const res = await fetch(`/api/ArtistInfo`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data: Artist[] = await res.json();
-          setartist(data ?? []);
+          setArtist(data ?? []);
         }
       } catch (e: unknown) {
         if ((e as any)?.name !== "AbortError") {
