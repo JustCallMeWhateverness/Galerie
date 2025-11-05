@@ -64,6 +64,5 @@ export function useArtistInfo() {
     data,
     loading,
     error,
-    refetch: () => user?.id && fetchMyArtistInfo(),
   };
 }
