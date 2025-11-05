@@ -1,6 +1,4 @@
-//Here is Edit/Add artist info
 import { Modal, Button, Form, Col } from "react-bootstrap";
-import { useAuth } from "../hooks/useAuth";
 import type InterfaceArtistInfo from "../interfaces/InterfaceArtistInfo";
 
 interface EditArtistModalProps {
@@ -11,15 +9,13 @@ interface EditArtistModalProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
 }
-
+//TODO: Make a save button that works, and make the modal editable
 export default function EditArtistModal({
   show,
   onHide,
   editForm,
   onChange,
 }: EditArtistModalProps) {
-  const { user } = useAuth();
-
   return (
     <Modal show={show} onHide={onHide} centered className="editartist-modal">
       <Modal.Header closeButton>
