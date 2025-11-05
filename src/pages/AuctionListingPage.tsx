@@ -5,7 +5,6 @@ import BidHistory from "../components/BidHistory";
 import type { Bid } from "../interfaces/Bid";
 import type { Info } from "../components/GetInformation";
 import { GetInformation } from "../components/GetInformation";
-import AuctionListingBidding, { type Auction } from "../components/AuctionListingBidding";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -44,7 +43,30 @@ const sampleInfo: Info = {
   freight: "500 SEK",
 };
 
+interface Customer {
+  id: string,
+  username: string
+}
 
+interface AuctionData {
+  id: string,
+  title: string,
+  description: string,
+  pickupEnabled: boolean,
+  freightEnabled: boolean,
+  startTime: string,
+  endTime: string,
+  seller: [Customer],
+  category: string,
+  items?: [{
+    id: string,
+    title: string | null,
+    customer: [Customer],
+    amount: number,
+    contentType: string
+
+  }]
+}
 
 
 
@@ -52,10 +74,14 @@ export default function AuctionListingPage() {
 
   const { id } = useParams<{ id: string }>()
 
-  const [auctionData, setAuctionData] = useState<Auction | null>(null)
+  const [auctionData, setAuctionData] = useState<AuctionData | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [auctionInformation, setAuctionInformation] = useState()
 
   useEffect(() => {
     async function fetchData() {
+      setIsLoading(true)
       try {
         const response = await fetch(`/api/Auction/${id}`, { method: "GET" })
         const data = await response.json()
@@ -63,6 +89,10 @@ export default function AuctionListingPage() {
         if (response.ok && !data.error) {
           console.log("Fetched auction data: ", data)
           setAuctionData(data)
+
+
+
+
         }
         else {
           console.log("error: ", data.error)
@@ -70,6 +100,7 @@ export default function AuctionListingPage() {
       }
       finally {
         console.log("finished")
+        setIsLoading(false)
       }
     }
     fetchData()
@@ -81,10 +112,7 @@ export default function AuctionListingPage() {
     <Row>
       <Col>
         <Image src="/images/products/3.jpg" alt="Here is a product" />
-
-        {auctionData !== null && }
-
-        <AuctionListingBidding auction={auctionData} />
+        {/* <AuctionListingBidding auction={auctionData} /> */}
 
         <div>
           {/* Add bid here */}
@@ -106,7 +134,7 @@ export default function AuctionListingPage() {
 
         <div>
           {/* Get Item information here */}
-          <GetInformation info={auctionData} />
+          <GetInformation info={sampleInfo} />
         </div>
 
         <div
