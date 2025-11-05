@@ -9,7 +9,7 @@ import Logout from "../components/Logout";
 import EditProfileModal from "../modals/EditProfileModal";
 import { ComingSoonModal } from "../modals/ComingSoonModal";
 import React from "react";
-import { ArtistInfo } from "../components/ArtistInfo";
+import ArtistInfo from "../components/ArtistInfo";
 
 UserPage.route = {
   path: "/user/:id?",
