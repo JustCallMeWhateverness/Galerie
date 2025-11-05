@@ -3,6 +3,7 @@ import { useFavorite } from "../hooks/useFavorite";
 import { useAuth } from "../hooks/useAuth";
 import type Artist from "../interfaces/Artist";
 import AuthModal from "../modals/AuthModal";
+import { Link } from "react-router-dom";
 
 /**
  * Extended Artist type - Used for detailed artist profile pages
@@ -16,20 +17,25 @@ export type ExtendedArtist = Artist & {
   email?: string;
   registrationDate?: string;
   avatar?: string;
+  href?: string;
 };
 
 export default function ArtistCard(props: Artist) {
-  const { id, title, workTitle } = props;
+  const { id, title, workTitle, href } = props;
   const { user } = useAuth();
   const isFavoritedByUser = !!user?.likedArtists?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, undefined, props);
+  const to = href ?? `/artist-view/${id}`;
 
   return (
     <>
       <Card
+        as={Link}
+        to={to}
         className="mb-4 h-100 d-flex flex-column"
         style={{
           height: "320px",
+          cursor: "pointer",
         }}
       >
         <div className="position-relative">
