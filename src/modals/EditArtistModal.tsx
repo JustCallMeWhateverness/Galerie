@@ -7,7 +7,9 @@ interface EditArtistModalProps {
   show: boolean;
   onHide: () => void;
   editForm: InterfaceArtistInfo;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
 export default function EditArtistModal({
@@ -17,7 +19,7 @@ export default function EditArtistModal({
   onChange,
 }: EditArtistModalProps) {
   const { user } = useAuth();
-  const customerName = user?.firstName || user?.username || user?.id || "";
+
   return (
     <Modal show={show} onHide={onHide} centered className="editartist-modal">
       <Modal.Header closeButton>
@@ -31,7 +33,7 @@ export default function EditArtistModal({
               <Form.Control
                 type="text"
                 name="customer"
-                value={customerName}
+                value={editForm?.customer ?? ""}
                 disabled
               />
             </Form.Group>
