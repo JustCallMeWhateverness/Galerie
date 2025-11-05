@@ -74,12 +74,17 @@ export default function CreateAuction() {
     const newAuction = {
       title: auction.title,
       description: auction.description,
-      Seller: { UserIds: [user?.id || ''] },
-      AuctionCategory: { ContentItemIds: [auction.AuctionCategory] },
-      PickupEnabled: auction.PickupEnabled,
-      FreightEnabled: auction.FreightEnabled,
-      StartTime: startDate?.toISOString(),
-      EndTime: endDate?.toISOString(),
+      seller: [
+        {
+          id: user.id,
+          username: user.username
+        }
+      ],
+      auctionCategoryId: auction.AuctionCategory,
+      pickupEnabled: auction.PickupEnabled,
+      freightEnabled: auction.FreightEnabled,
+      startTime: startDate?.toISOString(),
+      endTime: endDate?.toISOString(),
     };
     console.log("Auction POST body:", newAuction);
     try {
@@ -104,11 +109,9 @@ export default function CreateAuction() {
           errorMessage = errorJson.error || errorJson.message || errorText;
         } catch { }
         console.error("Failed to create auction:", errorMessage);
-        alert("Failed to create auction: " + errorMessage);
       }
     } catch (error) {
       console.error("Error creating auction:", error);
-      alert("Network error: " + (error instanceof Error ? error.message : String(error)));
     }
   }
 
