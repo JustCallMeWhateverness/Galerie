@@ -8,6 +8,7 @@ import routes from './routes';
 import App from './App';
 
 import { AuthProvider } from './context/AuthContext';
+import { CurrencyProvider } from './context/CurrencyContext';
 
 // Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
@@ -23,7 +24,9 @@ const router = createBrowserRouter([
 createRoot(document.querySelector('#root')!).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <CurrencyProvider>
+        <RouterProvider router={router} />
+      </CurrencyProvider>
     </AuthProvider>
   </StrictMode>
 );

@@ -8,6 +8,7 @@ import AuthModal from "../modals/AuthModal";
 import Logout from "../components/Logout";
 import EditProfileModal from "../modals/EditProfileModal";
 import { ComingSoonModal } from "../modals/ComingSoonModal";
+import CurrencySettingsModal from "../modals/CurrencySettingsModal";
 import React from "react";
 
 
@@ -21,6 +22,7 @@ export default function UserPage() {
 
   const { user, loading } = useAuth();
   const [modalShow, setModalShow] = React.useState(false);
+  const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<User>({
@@ -230,6 +232,19 @@ export default function UserPage() {
                 <i className="bi bi-chevron-right text-muted"></i>
               </Link>
             </Row>
+            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+              <Link
+                to="#"
+                className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowCurrencyModal(true);
+                }}
+              >
+                Settings
+                <i className="bi bi-chevron-right text-muted"></i>
+              </Link>
+            </Row>
           </div>
         </Col>
       </Row>
@@ -245,6 +260,10 @@ export default function UserPage() {
         onSave={handleSave}
         onCancel={handleCancel}
         isSaving={isSaving}
+      />
+      <CurrencySettingsModal
+        show={showCurrencyModal}
+        onHide={() => setShowCurrencyModal(false)}
       />
     </div>
   );

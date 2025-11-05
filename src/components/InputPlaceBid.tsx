@@ -1,13 +1,17 @@
 import { Button, Form } from "react-bootstrap";
 import { useState } from "react";
+import { useCurrency } from '../hooks/useCurrency';
 
 export default function InputPlaceBid() {
   const [result, setResult] = useState("");
   const [value, setValue] = useState("");
+  const { getCurrencySymbol, convertToSEK } = useCurrency();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setResult("Form has been submitted with with Input: " + value);
+    const amountInSelectedCurrency = parseFloat(value);
+    const amountInSEK = convertToSEK(amountInSelectedCurrency);
+    setResult(`Form has been submitted with Input: ${value} ${getCurrencySymbol()} (${amountInSEK.toFixed(2)} SEK)`);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -38,8 +42,7 @@ export default function InputPlaceBid() {
             opacity: 0.6,
           }}
         >
-          SEK
-          {/* TODO : Change this to variable so it can be changed depending on currency? */}
+          {getCurrencySymbol()}
         </span>
       </div>
       <Button type="submit" variant="primary" className="w-100">
