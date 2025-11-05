@@ -10,6 +10,7 @@ import EditProfileModal from "../modals/EditProfileModal";
 import { ComingSoonModal } from "../modals/ComingSoonModal";
 import React from "react";
 import ArtistInfo from "../components/ArtistInfo";
+import { useArtistInfo } from "../hooks/useArtistInfo";
 
 UserPage.route = {
   path: "/user/:id?",
@@ -36,6 +37,7 @@ export default function UserPage() {
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
+  const { data: artistInfo } = useArtistInfo();
 
   useEffect(() => {
     if (user) {
@@ -196,12 +198,13 @@ export default function UserPage() {
           </Col>
         </Row>
       )}
-
-      <Row className="user-profile-row mx-auto">
-        <Col>
-          <ArtistInfo></ArtistInfo>
-        </Col>
-      </Row>
+      {artistInfo && (
+        <Row className="user-profile-row mx-auto">
+          <Col>
+            <ArtistInfo></ArtistInfo>
+          </Col>
+        </Row>
+      )}
 
       <Row className="user-menu-row mx-auto">
         <Col>
