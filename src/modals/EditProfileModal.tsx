@@ -1,5 +1,5 @@
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import type User from '../interfaces/User';
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import type User from "../interfaces/User";
 
 interface EditProfileModalProps {
   show: boolean;
@@ -18,7 +18,7 @@ export default function EditProfileModal({
   onChange,
   onSave,
   onCancel,
-  isSaving
+  isSaving,
 }: EditProfileModalProps) {
   return (
     <Modal show={show} onHide={onHide} centered className="editprofile-modal">
@@ -28,7 +28,7 @@ export default function EditProfileModal({
       <Modal.Body>
         <Form>
           <Row>
-            <Col xs={6} >
+            <Col xs={6}>
               <Form.Group className="mb-2">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
@@ -56,7 +56,6 @@ export default function EditProfileModal({
           <Row>
             <Col xs={6}>
               <Form.Group className="mb-2">
-
                 <Form.Label>Username</Form.Label>
                 <Form.Control
                   type="text"
@@ -100,6 +99,14 @@ export default function EditProfileModal({
               placeholder="Phone Number"
             />
           </Form.Group>
+          <Form.Group className="mb-2"> </Form.Group>
+          <Form.Label>I am an artist</Form.Label>
+          <Form.Check
+            type="checkbox"
+            id="artist-toggle"
+            label="Create my Artist profile"
+            //When press save - TODO create artist profile
+          />
         </Form>
       </Modal.Body>
       <Modal.Footer>
@@ -107,7 +114,7 @@ export default function EditProfileModal({
           Cancel
         </Button>
         <Button variant="primary" onClick={onSave} disabled={isSaving}>
-          {isSaving ? 'Saving...' : 'Save'}
+          {isSaving ? "Saving..." : "Save"}
         </Button>
       </Modal.Footer>
     </Modal>
