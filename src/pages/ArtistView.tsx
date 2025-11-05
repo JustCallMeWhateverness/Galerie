@@ -5,115 +5,141 @@ import { type ExtendedArtist } from '../parts/ArtistCard';
 import type Auction from '../interfaces/Auction';
 import AuctionCard from '../parts/AuctionCard';
 
-/**
- * ArtistView Component - Individual artist profile page
- * Route: /artist-view/:id
- * 
- * TODO: Replace mock data with real API calls when backend is ready
- * - GET /api/artists/:id - Get artist profile
- * - GET /api/artists/:id/auctions - Get artist's auctions
- */
+type AuctionDTO = {
+  id: number;
+  title: string;
+  category?: string;
+  artistName?: string;
+  currentBid: number;
+  endTime: string;
+  startTime: string;
+  favorited?: boolean;
+  seller?: Array<{ id: string; username?: string }>;
+  customer?: Array<{ id: string; username?: string }>;
+};
+
 function ArtistView() {
-  // Get artist ID from URL parameters
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // State management
   const [artist, setArtist] = useState<ExtendedArtist | null>(null);
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch artist profile data
-  const fetchArtistData = useCallback(async () => {
+  const fetchArtistData = useCallback(async (signal?: AbortSignal) => {
+    if (!id) {
+      console.error('No artist ID provided');
+      setArtist(null);
+      return;
+    }
+
     try {
-      if (!id) {
-        console.error('No artist ID provided');
+      const response = await fetch(`/api/ArtistInfo/${id}`, { signal });
+      if (!response.ok) {
+        if (response.status === 404) {
+          setArtist(null);
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
         return;
       }
 
-      // TODO: Replace with real API call
-      // const response = await fetch(`/api/artists/${id}`);
-      // const artistData = await response.json();
-      // setArtist(artistData);
-
-      // Mock data for testing
-      if (id === '1') {
-        const artistData: ExtendedArtist = {
-          id: 1,
-          firstName: 'Luca',
-          lastName: 'Ortega',
-          profession: 'Woodworker',
-          favorited: false,
-          location: 'Somiedo, Spain',
-          email: 'luca@ortega.com',
-          registrationDate: '10 january 2019',
-          avatar: '/images/artists/luca-ortega.png'
-        };
-        setArtist(artistData);
+      const artistData = await response.json();
+      if (artistData && artistData.id) {
+        setArtist(artistData as ExtendedArtist);
       } else {
         setArtist(null);
       }
     } catch (error) {
-      console.error('Error fetching artist data:', error);
-      setArtist(null);
+      if ((error as Error)?.name !== 'AbortError') {
+        console.error('Error fetching artist data:', error);
+        setArtist(null);
+      }
     }
   }, [id]);
 
-  // Fetch artist's auctions
-  const fetchArtistAuctions = useCallback(async () => {
-    try {
-      // TODO: Replace with real API call
-      // const response = await fetch(`/api/artists/${id}/auctions`);
-      // const artistAuctions = await response.json();
-      // setAuctions(artistAuctions);
-
-      // Mock data for testing
-      const mockAuctions: Auction[] = [
-        {
-          id: 1,
-          title: 'Twisted Cuff',
-          currentBid: 150,
-          endTime: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
-          favorited: false
-        },
-        {
-          id: 2,
-          title: 'Gemstone Ring',
-          currentBid: 320,
-          endTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days
-          favorited: false
-        },
-        {
-          id: 3,
-          title: 'Fine Chain Necklace',
-          currentBid: 280,
-          endTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days
-          favorited: false
-        },
-        {
-          id: 4,
-          title: 'Hoop Earrings',
-          currentBid: 95,
-          endTime: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day
-          favorited: false
-        }
-      ];
-
-      setAuctions(mockAuctions);
-    } catch (error) {
-      console.error('Error fetching artist auctions:', error);
-    } finally {
-      setIsLoading(false);
+  const fetchArtistAuctions = useCallback(async (signal?: AbortSignal) => {
+    if (!id) {
+      setAuctions([]);
+      return;
     }
-  }, []);
 
-  // Fetch data when component mounts or artist ID changes
+    try {
+      const response = await fetch(`/api/Auction`, { signal });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const allAuctions: AuctionDTO[] = await response.json();
+      
+      const artistAuctions = (allAuctions || []).filter((auction: AuctionDTO) => {
+        if (auction.seller && Array.isArray(auction.seller)) {
+          return auction.seller.some((seller) => seller.id === id);
+        }
+        if (auction.customer && Array.isArray(auction.customer)) {
+          return auction.customer.some((customer) => customer.id === id);
+        }
+        return auction.artistName && auction.artistName.toLowerCase() === id.toLowerCase();
+      });
+
+      const now = new Date();
+      const convertedAuctions: Auction[] = artistAuctions
+        .map((auction: AuctionDTO) => {
+          const startTime = new Date(auction.startTime);
+          const endTime = new Date(auction.endTime);
+          
+          if (startTime <= now && endTime >= now) {
+            return {
+              id: auction.id,
+              title: auction.title,
+              currentBid: auction.currentBid || 0,
+              startTime: startTime,
+              endTime: endTime,
+              favorited: auction.favorited || false
+            };
+          }
+          return null;
+        })
+        .filter((auction: Auction | null) => auction !== null) as Auction[];
+
+      setAuctions(convertedAuctions);
+    } catch (error) {
+      if ((error as Error)?.name !== 'AbortError') {
+        console.error('Error fetching artist auctions:', error);
+        setAuctions([]);
+      }
+    }
+  }, [id]);
+
   useEffect(() => {
-    fetchArtistData();
-    fetchArtistAuctions();
+    setIsLoading(true);
+    
+    const abortController = new AbortController();
+    
+    const loadData = async () => {
+      try {
+        await Promise.all([
+          fetchArtistData(abortController.signal),
+          fetchArtistAuctions(abortController.signal)
+        ]);
+      } catch (error) {
+        if ((error as Error)?.name !== 'AbortError') {
+          console.error('Error loading data:', error);
+        }
+      } finally {
+        if (!abortController.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadData();
+    
+    return () => {
+      abortController.abort();
+    };
   }, [id, fetchArtistData, fetchArtistAuctions]);
 
-  // Loading state - show spinner while fetching data
   if (isLoading) {
     return (
       <div className="container-fluid px-3 px-md-4 py-5">
@@ -126,7 +152,6 @@ function ArtistView() {
     );
   }
 
-  // Error state - artist not found
   if (!artist) {
     return (
       <div className="container-fluid px-3 px-md-4 py-5">
@@ -140,13 +165,10 @@ function ArtistView() {
     );
   }
 
-  // Main render - artist profile and auctions
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
-      {/* Artist Profile Card - Main container for artist information (copied from UserPage) */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
         <div className="d-flex flex-column flex-md-row align-items-start">
-          {/* Profile Picture Section - Avatar placeholder (copied from UserPage) */}
           <div className="me-md-4 mb-3 mb-md-0 text-center text-md-start">
             <div 
               className="rounded-3 bg-light d-flex align-items-center justify-content-center mx-auto mx-md-0 overflow-hidden"
@@ -159,7 +181,7 @@ function ArtistView() {
               {artist.avatar ? (
                 <img 
                   src={artist.avatar} 
-                  alt={`${artist.firstName} ${artist.lastName}`}
+                  alt={artist.title || artist.username || 'Artist'}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -172,32 +194,28 @@ function ArtistView() {
             </div>
           </div>
 
-          {/* Artist Information Section - Name, profession, email, etc. (copied from UserPage) */}
           <div className="flex-grow-1" style={{ marginTop: '20px' }}>
-            {/* Display Mode - Show artist information (copied from UserPage display mode) */}
             <div>
-              {/* Artist name display */}
-              <h4 className="fw-bold mb-1 text-dark">{artist.firstName} {artist.lastName}</h4>
-              {/* Artist profession */}
-              <div className="text-dark mb-1">{artist.profession}</div>
-              {/* Artist location */}
+              <h4 className="fw-bold mb-1 text-dark">{artist.title || artist.username || 'Artist'}</h4>
+              {artist.workTitle && (
+                <div className="text-dark mb-1">{artist.workTitle}</div>
+              )}
               {artist.location && (
                 <div className="text-dark mb-1">{artist.location}</div>
               )}
-              {/* Artist email */}
               {artist.email && (
                 <div className="text-dark mb-1">{artist.email}</div>
               )}
-              {/* Registration date */}
-              <div className="text-dark small">
-                Reg. {artist.registrationDate}
-              </div>
+              {artist.registrationDate && (
+                <div className="text-dark small">
+                  Reg. {artist.registrationDate}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Ongoing Auctions Section - Using AuctionCard with normal styling */}
       <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
         <h6 className="fw-bold text-dark mb-3">Ongoing auctions</h6>
         <div className="row">
