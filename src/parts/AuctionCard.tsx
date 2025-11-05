@@ -20,8 +20,8 @@ export default function AuctionCard(props: Props) {
   const remainingTimeMessage = getRemainingTimeMessage(endTime);
   const to = href ?? `/auction/${id}`;
   const onFavClick: React.MouseEventHandler<HTMLSpanElement> = (e) => {
-    e.preventDefault();   // förhindra navigation
-    e.stopPropagation();  // stoppa bubbla
+    e.preventDefault();
+    e.stopPropagation();
     onFavorite();
   };
 
