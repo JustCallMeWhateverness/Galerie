@@ -148,7 +148,7 @@ export default function UserPage() {
               : "N/A"}
           </div>
         </Col>
-
+        
         <Col>
           <div>
             <h4 className="user-name">
@@ -199,7 +199,7 @@ export default function UserPage() {
         </Row>
       )}
       {artistInfo && (
-        <Row className="user-profile-row mx-auto">
+        <Row>
           <Col>
             <ArtistInfo></ArtistInfo>
           </Col>
