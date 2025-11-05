@@ -17,6 +17,7 @@ $enable-negative-margins: true;
 
 .card {
   background-color: $primary;
+  text-decoration: none;
 }
 
 // Override some Bootstrap defaults
@@ -30,7 +31,6 @@ $enable-negative-margins: true;
   max-width: 970px;
 }
 
-/* Måste också laddas efter bootstrap.css */
 .custom-checkbox .form-check-input:checked {
   background-color: $secondary;
   border-color: $secondary;
