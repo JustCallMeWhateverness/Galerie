@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 
 AuctionListingPage.route = {
-  path: "/listing/:id",
+  path: "/auction/:id",
   index: 2,
   menulabel: "Auction Listing Page"
 };

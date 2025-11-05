@@ -4,4 +4,5 @@ export default interface Artist {
   username?: string;
   workTitle?: string;
   favorited: boolean;
+  href?: string;
 };
