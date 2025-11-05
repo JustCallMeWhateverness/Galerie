@@ -5,15 +5,21 @@ import BidHistory from "../components/BidHistory";
 import type { Bid } from "../interfaces/Bid";
 import type { Info } from "../components/GetInformation";
 import { GetInformation } from "../components/GetInformation";
-import AuctionListingBidding from "../components/AuctionListingBidding";
+import AuctionListingBidding, { type Auction } from "../components/AuctionListingBidding";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 
 AuctionListingPage.route = {
-  path: "/listing",
+  path: "/listing/:id",
   index: 2,
-  menulabel: "Auction Listing Page",
+  menulabel: "Auction Listing Page"
 };
 
-//Imported things and copied things directly from auktioncard. This will be changed in future.
+
+
+// correct id for testing: 48hs8es0fgnn42ky7tqmk55yxf & 4ecvgth42ytqrrr7phwkyhw2mv
+
 
 const sampleAuction = {
   id: 1,
@@ -38,13 +44,47 @@ const sampleInfo: Info = {
   freight: "500 SEK",
 };
 
+
+
+
+
 export default function AuctionListingPage() {
+
+  const { id } = useParams<{ id: string }>()
+
+  const [auctionData, setAuctionData] = useState<Auction | null>(null)
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`/api/Auction/${id}`, { method: "GET" })
+        const data = await response.json()
+
+        if (response.ok && !data.error) {
+          console.log("Fetched auction data: ", data)
+          setAuctionData(data)
+        }
+        else {
+          console.log("error: ", data.error)
+        }
+      }
+      finally {
+        console.log("finished")
+      }
+    }
+    fetchData()
+  }, [])
+
+
+
   return (
     <Row>
       <Col>
         <Image src="/images/products/3.jpg" alt="Here is a product" />
 
-        <AuctionListingBidding auction={sampleAuction} />
+        {auctionData !== null && }
+
+        <AuctionListingBidding auction={auctionData} />
 
         <div>
           {/* Add bid here */}
@@ -66,7 +106,7 @@ export default function AuctionListingPage() {
 
         <div>
           {/* Get Item information here */}
-          <GetInformation info={sampleInfo} />
+          <GetInformation info={auctionData} />
         </div>
 
         <div
