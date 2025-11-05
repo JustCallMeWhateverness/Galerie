@@ -26,6 +26,11 @@ export default function ArtistCard(props: Artist) {
   const isFavoritedByUser = !!user?.likedArtists?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, undefined, props);
   const to = href ?? `/artist-view/${id}`;
+  const onFavClick: React.MouseEventHandler<HTMLSpanElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onFavorite();
+  };
 
   return (
     <>
@@ -47,7 +52,7 @@ export default function ArtistCard(props: Artist) {
             }}
           />
           <Card.ImgOverlay className='text-center'>
-            <span className='float-end' role='button' onClick={onFavorite}>
+            <span className='float-end' role='button' onClick={onFavClick}>
               <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
             </span>
           </Card.ImgOverlay>
