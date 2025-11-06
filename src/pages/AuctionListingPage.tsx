@@ -8,7 +8,7 @@ import { GetInformation } from "../components/GetInformation";
 import AuctionListingBidding from "../components/AuctionListingBidding";
 
 AuctionListingPage.route = {
-  path: "/listing",
+  path: "/auction/:id",
   index: 2,
   menulabel: "Auction Listing Page",
 };
