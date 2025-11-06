@@ -3,7 +3,6 @@ import { useFavorite } from '../hooks/useFavorite';
 import { useAuth } from '../hooks/useAuth';
 import type Auction from '../interfaces/Auction';
 import { Link } from "react-router-dom";
-
 import AuthModal from '../modals/AuthModal';
 import { getRemainingTimeMessage } from '../utils/timeHelpers';
 
@@ -33,26 +32,33 @@ export default function AuctionCard(props: Props) {
       <Card
         as={Link}
         to={to}
-        className="mb-4"
-        style={{ cursor: "pointer" }}>
+        className="mb-4 h-100 d-flex flex-column"
+        style={{
+          height: "320px",
+          cursor: "pointer"
+        }}>
         <Card.Img
           src={imageUrl}
           alt={title}
-          style={{ minHeight: "200px", objectFit: "cover" }}
+          style={{
+            minHeight: "200px",
+            objectFit: "cover",
+            width: "100%",
+          }}
         />
         <Card.ImgOverlay className='text-center'>
           <span className='float-end' role='button' onClick={onFavClick}>
             {/* bi-suit-heart must be at the end for the correct logo to be shown */}
             <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
           </span>
+        </Card.ImgOverlay>
+        <Card.Body>
           <Card.Title className='text-center'>
             {title}
           </Card.Title>
           <Card.Text className='text-center'>
             Time left: {remainingTimeMessage}
           </Card.Text>
-        </Card.ImgOverlay>
-        <Card.Body>
           <Card.Text className='text-center text-decoration-none'>
             Current bid: {currentBid} SEK
           </Card.Text>
