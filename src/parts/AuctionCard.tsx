@@ -43,6 +43,7 @@ export default function AuctionCard(props: Props) {
           style={{
             minHeight: "200px",
             objectFit: "cover",
+            objectPosition: "center",
             width: "100%",
           }}
         />

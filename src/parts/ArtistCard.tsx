@@ -48,6 +48,7 @@ export default function ArtistCard(props: Artist) {
             style={{
               minHeight: "200px",
               objectFit: "cover",
+              objectPosition: "center",
               width: "100%",
             }}
           />

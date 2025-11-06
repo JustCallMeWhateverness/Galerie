@@ -65,7 +65,8 @@ export default function CarouselComponent({
             className="d-block w-100"
             style={{
               height,
-              objectFit: "cover",
+              objectFit: "contain",
+              objectPosition: "center",
               cursor: item.link ? "pointer" : "default",
             }}
           />
