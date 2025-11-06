@@ -11,6 +11,7 @@ import { ComingSoonModal } from "../modals/ComingSoonModal";
 import Logout from "../components/Logout";
 import ArtistInfo from "../components/ArtistInfo";
 import { createArtistProfile } from "../api/createArtistProfile";
+import CurrencySettingsModal from "../modals/CurrencySettingsModal";
 
 UserPage.route = {
   path: "/user/:id?",
@@ -19,6 +20,7 @@ UserPage.route = {
 export default function UserPage() {
   const { user, loading } = useAuth();
   const [modalShow, setModalShow] = React.useState(false);
+  const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<User>({
@@ -264,6 +266,19 @@ export default function UserPage() {
                 <i className="bi bi-chevron-right text-muted"></i>
               </Link>
             </Row>
+            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+              <Link
+                to="#"
+                className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowCurrencyModal(true);
+                }}
+              >
+                Settings
+                <i className="bi bi-chevron-right text-muted"></i>
+              </Link>
+            </Row>
           </div>
         </Col>
       </Row>
@@ -281,6 +296,10 @@ export default function UserPage() {
         onToggleArtist={setIsArtistChecked}
         onCreateArtist={handleCreateArtist}
         hasArtistInfo={hasArtistInfo}
+      />
+      <CurrencySettingsModal
+        show={showCurrencyModal}
+        onHide={() => setShowCurrencyModal(false)}
       />
     </div>
   );
