@@ -28,13 +28,13 @@ const sampleBids: Bid[] = [
   { id: "3", amount: 80, createdAt: "2025-10-22T15:10:00Z" }, // anonymt
 ];
 const sampleInfo: AuctionInfo = {
-  title: "Scarf",
-  description: "A warm and cozy scarf perfect for winter days.",
-  seller: "Claire Wilson",
-  pickupLocation: "Stockholm",
-  freightPrice: 500,
+  title: "...Loading",
+  description: "...Loading",
+  seller: "...Loading",
+  pickupLocation: "...Loading",
+  freightPrice: 0,
   freightEnabled: true,
-  pickupEnabled: false,
+  pickupEnabled: true,
   timeRemaining: "1 day"
 };
 
@@ -113,7 +113,9 @@ export default function AuctionListingPage() {
         <Image src="/images/products/3.jpg" alt="Here is a product" />
 
         <div>
-          {/* Get Item information here */}
+          {/* Get Item information here 
+          UPDATE WITH BETTER SAMPLE INFO (tydligare att det är laddningsdata)
+          */}
           <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
         </div>
         <div>
