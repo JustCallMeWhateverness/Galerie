@@ -1,4 +1,4 @@
-export default interface ArtistInfo {
+export default interface InterfaceArtistInfo {
   id: string;
   title: string;
   customer?: string;
