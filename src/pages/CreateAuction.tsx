@@ -7,6 +7,7 @@ import { addDays } from "date-fns";
 import AuthModal from "../modals/AuthModal";
 import MustBeSellerModal from "../modals/MustBeSellerModal";
 import DatePickerInput from "../parts/DatePickerInput";
+import BackButton from "../components/BackButton";
 
 CreateAuction.route = {
   path: '/create',
@@ -143,6 +144,7 @@ export default function CreateAuction() {
     <Container>
       <Row>
         <Col>
+          <BackButton className="mb-3" />
           <h2>Create an Auction</h2>
           <Form onSubmit={handleSubmit}>
             <Form.Group className='mb-4'>

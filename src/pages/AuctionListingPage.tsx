@@ -2,6 +2,7 @@ import { Row, Col } from "react-bootstrap";
 import Image from "../parts/Image";
 import InputPlaceBid from "../components/InputPlaceBid";
 import BidHistory from "../components/BidHistory";
+import BackButton from "../components/BackButton";
 import type { Bid } from "../interfaces/Bid";
 import type { Info } from "../components/GetInformation";
 import { GetInformation } from "../components/GetInformation";
@@ -42,6 +43,7 @@ export default function AuctionListingPage() {
   return (
     <Row>
       <Col>
+        <BackButton className="mb-3" />
         <Image src="/images/products/3.jpg" alt="Here is a product" />
 
         <AuctionListingBidding auction={sampleAuction} />

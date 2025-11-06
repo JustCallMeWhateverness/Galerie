@@ -4,6 +4,7 @@ import type { Option } from "../interfaces/SelectDropdown";
 import MultiSelectDropdown from "../parts/MultiSelectDropdown";
 import RangeDropdown from "../parts/RangeDropdown";
 import { Row, Col, Button } from "react-bootstrap";
+import BackButton from "../components/BackButton";
 
 FilterPage.route = {
   path: "/filter",
@@ -59,8 +60,9 @@ export default function FilterPage() {
 
   return (
     <>
-      <Row >
+      <Row>
         <Col xs={12} md={4} className="mt-4">
+          <BackButton className="mb-3" fallbackTo="/auction" />
           <SelectDropdown
             title="Sort By"
             value={selected}
