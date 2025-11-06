@@ -8,6 +8,8 @@ import { AuctionInformation } from "../components/AuctionInformation";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getRemainingTimeMessage } from "../utils/timeHelpers";
+import { useAuth } from "../hooks/useAuth";
+import { useFavorite } from "../hooks/useFavorite";
 
 
 AuctionListingPage.route = {
@@ -67,6 +69,18 @@ export default function AuctionListingPage() {
   const [auctionInformation, setAuctionInformation] = useState<AuctionInfo | null>(null)
   const [img, setImg] = useState<imageUpload | null>(null)
 
+  const { user } = useAuth()
+  const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id)
+  const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser)
+
+  const onFavClick: React.MouseEventHandler<HTMLSpanElement> = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onFavorite()
+
+
+  }
+
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true)
@@ -103,8 +117,8 @@ export default function AuctionListingPage() {
 
   return (
     <>
-      {isLoading && <Spinner animation="border" role="status">
-        <span> Loading... </span>
+      {isLoading && <Spinner animation="border" role="status" >
+        <span className="visually-hidden"> Loading... </span>
       </Spinner>}
       {!isLoading &&
         <Row>
@@ -113,7 +127,11 @@ export default function AuctionListingPage() {
               src={imageUrl}
               alt={img?.mediaTexts} />
 
-            <div>
+            <div className="justify">
+              <span className='heart-hitbox float-end' role='button' onClick={onFavClick}>
+                {/* bi-suit-heart must be at the end for the correct logo to be shown */}
+                <i className={`fs-2 mx-2 bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
+              </span>
               <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
             </div>
             <div>

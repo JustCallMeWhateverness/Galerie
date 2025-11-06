@@ -31,8 +31,6 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
   return (
     <section className="mt-1">
       <Stack gap={2}>
-
-
         <h1>{title}</h1>
         <div>{description}</div>
         <div>
