@@ -25,7 +25,7 @@ export function useArtistInfo() {
           ? list.find(
               (it: any) =>
                 Array.isArray(it.customer) &&
-                it.customer.some((u: any) => u?.id === user.id)
+                it.customer.some((u: any) => u?.id === user?.id)
             )
           : null;
 
