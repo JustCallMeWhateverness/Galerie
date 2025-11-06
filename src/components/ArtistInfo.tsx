@@ -1,14 +1,61 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EditArtistModal from "../modals/EditArtistModal";
 import { useArtistInfo } from "../hooks/useArtistInfo";
 import { Row, Col, Button } from "react-bootstrap";
+import { updateArtistProfile } from "../api/editArtistProfile";
+import type InterfaceArtistInfo from "../interfaces/InterfaceArtistInfo";
 
 //TODO: Make the editbutton work
 export default function ArtistInfo() {
   const [show, setShow] = useState(false);
   const { data: artistInfo, loading } = useArtistInfo();
 
+  const [editForm, setEditForm] = useState<InterfaceArtistInfo>({
+    id: "",
+    title: "",
+    workTitle: "",
+    description: "",
+    customer: "",
+  });
+  const [saving, setSaving] = useState(false);
+
+  const openModal = () => {
+    if (!artistInfo) return;
+    setEditForm({
+      id: String(artistInfo.id ?? ""),
+      title: artistInfo.title ?? "",
+      workTitle: artistInfo.workTitle ?? "",
+      description: artistInfo.description ?? "",
+      customer: artistInfo.customer ?? "",
+    });
+    setShow(true);
+  };
+
   if (loading) return <p>Loading artist info...</p>;
+
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!editForm.id) return;
+    setSaving(true);
+    try {
+      await updateArtistProfile(editForm.id, {
+        title: editForm.title,
+        workTitle: editForm.workTitle,
+        description: editForm.description,
+      });
+      setShow(false);
+
+      window.location.reload();
+    } finally {
+      setSaving(false);
+    }
+  };
   return (
     <>
       <Row className="user-profile-row mx-auto">
@@ -46,7 +93,7 @@ export default function ArtistInfo() {
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => setShow(true)}
+              onClick={openModal}
               className="me-2"
             >
               Edit
@@ -57,8 +104,9 @@ export default function ArtistInfo() {
           <EditArtistModal
             show={show}
             onHide={() => setShow(false)}
-            editForm={artistInfo}
-            onChange={() => {}}
+            onSave={handleSave}
+            editForm={editForm}
+            onChange={handleEditChange}
           />
         )}
       </Row>
