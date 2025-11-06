@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCurrency } from '../hooks/useCurrency';
 
 export type Auction = {
   id: number;
@@ -14,6 +15,7 @@ export default function AuctionListingBidding({
   auction: Auction;
 }) {
   const { id, title, currentBid, endTime, favorited } = auction;
+  const { formatCurrency } = useCurrency();
 
   const [isFavorited, setFavorited] = useState(favorited);
   const currentTime = new Date();
@@ -54,9 +56,8 @@ export default function AuctionListingBidding({
       </div>
 
       <div>
-        {/*Current bid. start bid, timeleft.  */}
-        <p className="mb-1">Start Bid: </p> {/*  */}
-        <p>Current bid: {currentBid} SEK</p>
+        <p className="mb-1">Start Bid: </p>
+        <p>Current bid: {formatCurrency(currentBid)}</p>
         <small className="text-muted">Time left: {remainingTimeMessage}</small>
       </div>
     </>

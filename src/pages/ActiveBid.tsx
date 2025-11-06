@@ -1,5 +1,6 @@
 import { Row, Col } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
+import { useCurrency } from "../hooks/useCurrency";
 import AuthModal from "../modals/AuthModal";
 
 ActiveBids.route = {
@@ -8,6 +9,7 @@ ActiveBids.route = {
 
 export default function ActiveBids() {
   const { user, loading } = useAuth();
+  const { formatCurrency } = useCurrency();
 
   if (loading) {
     return <p>Loading…</p>;
@@ -43,7 +45,7 @@ export default function ActiveBids() {
         <ul>
           {activeBids.map((bid) => (
             <li key={bid.id}>
-              <strong>{bid.amount}</strong> SEK – placed{" "}
+              <strong>{formatCurrency(bid.amount)}</strong> – placed{" "}
               {new Date(bid.createdAt).toLocaleString()}
             </li>
           ))}

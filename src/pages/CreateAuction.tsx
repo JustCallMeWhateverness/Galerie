@@ -15,7 +15,6 @@ CreateAuction.route = {
 };
 
 const minimumAuctionLengthDays = 3;
-const currency = "SEK";
 
 export default function CreateAuction() {
   const [showSellerModal, setShowSellerModal] = useState(true);

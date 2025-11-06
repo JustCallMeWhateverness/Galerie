@@ -1,6 +1,7 @@
 import { Card } from 'react-bootstrap';
 import { useFavorite } from '../hooks/useFavorite';
 import { useAuth } from '../hooks/useAuth';
+import { useCurrency } from '../hooks/useCurrency';
 import type Auction from '../interfaces/Auction';
 import { Link } from "react-router-dom";
 
@@ -15,6 +16,7 @@ export default function AuctionCard(props: Props) {
 
   const { id, title, currentBid, endTime, href } = props;
   const { user } = useAuth();
+  const { formatCurrency } = useCurrency();
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, props);
   const remainingTimeMessage = getRemainingTimeMessage(endTime);
@@ -47,7 +49,7 @@ export default function AuctionCard(props: Props) {
         </Card.ImgOverlay>
         <Card.Body>
           <Card.Text className='text-center text-decoration-none'>
-            Current bid: {currentBid} SEK
+            Current bid: {formatCurrency(currentBid)}
           </Card.Text>
         </Card.Body>
       </Card>
