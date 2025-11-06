@@ -7,7 +7,7 @@ import ArtistCard from "../parts/ArtistCard";
 import type Artist from "../interfaces/Artist";
 
 type AuctionDTO = {
-  id: number;
+  id: string;
   title: string;
   category?: string;
   artistName?: string;
@@ -15,6 +15,11 @@ type AuctionDTO = {
   endTime: string;
   startTime: string;
   favorited?: boolean;
+  favoritesCount: number;
+  imageUpload?: {
+    paths: string[];
+    mediaTexts?: string[];
+  };
 };
 
 type Tab = "auction" | "artist";
@@ -182,6 +187,8 @@ export default function Search() {
                 endTime={new Date(a.endTime)}
                 favorited={a.favorited ?? false}
                 startTime={new Date(a.startTime)}
+                favouritesCount={a.favoritesCount}
+                imageUpload={a.imageUpload}
               />
             </Col>
           ))

@@ -13,7 +13,7 @@ type Props = Auction & {
 
 export default function AuctionCard(props: Props) {
 
-  const { id, title, currentBid, endTime, href } = props;
+  const { id, title, currentBid, endTime, href, imageUpload } = props;
   const { user } = useAuth();
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, props);
@@ -25,6 +25,9 @@ export default function AuctionCard(props: Props) {
     onFavorite();
   };
 
+  const imagePath = imageUpload?.paths?.[0];
+  const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg";
+
   return (
     <>
       <Card
@@ -32,7 +35,11 @@ export default function AuctionCard(props: Props) {
         to={to}
         className="mb-4"
         style={{ cursor: "pointer" }}>
-        <Card.Img style={{ minHeight: '200px', objectFit: 'cover' }} />
+        <Card.Img
+          src={imageUrl}
+          alt={title}
+          style={{ minHeight: "200px", objectFit: "cover" }}
+        />
         <Card.ImgOverlay className='text-center'>
           <span className='float-end' role='button' onClick={onFavClick}>
             {/* bi-suit-heart must be at the end for the correct logo to be shown */}
