@@ -1,21 +1,19 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { Button, Alert, Col, Row } from "react-bootstrap";
-import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
-
+import { useAuth } from "../hooks/useAuth";
+import { useArtistInfo } from "../hooks/useArtistInfo";
 import type User from "../interfaces/User";
 import AuthModal from "../modals/AuthModal";
-import Logout from "../components/Logout";
 import EditProfileModal from "../modals/EditProfileModal";
 import { ComingSoonModal } from "../modals/ComingSoonModal";
-import React from "react";
+import Logout from "../components/Logout";
 import ArtistInfo from "../components/ArtistInfo";
-import { useArtistInfo } from "../hooks/useArtistInfo";
+import { createArtistProfile } from "../api/createArtistProfile";
 
 UserPage.route = {
   path: "/user/:id?",
-  menuLabel: "My Profile",
-  index: 5,
 };
 
 export default function UserPage() {
@@ -37,7 +35,10 @@ export default function UserPage() {
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
+  const [isArtistChecked, setIsArtistChecked] = useState(false);
+  const [createArtist, setCreatingArtist] = useState(false);
   const { data: artistInfo } = useArtistInfo();
+  const hasArtistInfo = Boolean(artistInfo);
 
   useEffect(() => {
     if (user) {
@@ -76,6 +77,7 @@ export default function UserPage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(editForm),
       });
 
@@ -114,6 +116,17 @@ export default function UserPage() {
     setErrors([]);
   };
 
+  const handleCreateArtist = async () => {
+    if (!user || hasArtistInfo) return;
+    setCreatingArtist(true);
+    try {
+      await createArtistProfile(String(user.id), user.username);
+      window.location.reload(); // Temporary quick fix: reload to update UI after creating ArtistInfo
+    } finally {
+      setCreatingArtist(false);
+    }
+  };
+
   if (loading) {
     return (
       <Row className="justify-content-center align-items-center user-loading-row">
@@ -148,7 +161,7 @@ export default function UserPage() {
               : "N/A"}
           </div>
         </Col>
-        
+
         <Col>
           <div>
             <h4 className="user-name">
@@ -198,6 +211,7 @@ export default function UserPage() {
           </Col>
         </Row>
       )}
+
       {artistInfo && (
         <Row>
           <Col>
@@ -262,6 +276,11 @@ export default function UserPage() {
         onSave={handleSave}
         onCancel={handleCancel}
         isSaving={isSaving}
+        isArtistChecked={isArtistChecked}
+        creatingArtist={createArtist}
+        onToggleArtist={setIsArtistChecked}
+        onCreateArtist={handleCreateArtist}
+        hasArtistInfo={hasArtistInfo}
       />
     </div>
   );
