@@ -69,7 +69,7 @@ export default function HomePage() {
   return (
     <>
       <Row>
-        <Col>
+        <Col className="mb-2">
           <CarouselComponent
             items={upcomingAuctions.map(a => ({
               id: a.id,
@@ -85,85 +85,81 @@ export default function HomePage() {
       </Row>
 
       <h4>Popular Auctions</h4>
-      <Container className="mb-4">
-        <Row xs={2} sm={2} md={3} lg={4} className="g-3">
-          {[...auctions]
-            .filter((auction) => auction.favouritesCount >= 50)
-            .sort((a, b) => b.favouritesCount - a.favouritesCount)
-            .map((auction) => (
-              <Col key={auction.id}>
-                <AuctionCard
-                  id={auction.id}
-                  title={auction.title}
-                  currentBid={auction.currentBid}
-                  favorited={auction.favorited ?? false}
-                  startTime={new Date(auction.startTime)}
-                  endTime={new Date(auction.endTime)}
-                  favouritesCount={auction.favouritesCount}
-                  imageUpload={auction.imageUpload}
+      <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
+        {[...auctions]
+          .filter((auction) => auction.favouritesCount >= 50)
+          .sort((a, b) => b.favouritesCount - a.favouritesCount)
+          .map((auction) => (
+            <Col key={auction.id}>
+              <AuctionCard
+                id={auction.id}
+                title={auction.title}
+                currentBid={auction.currentBid}
+                favorited={auction.favorited ?? false}
+                startTime={new Date(auction.startTime)}
+                endTime={new Date(auction.endTime)}
+                favouritesCount={auction.favouritesCount}
+                imageUpload={auction.imageUpload}
 
-                />
-              </Col>
-            ))}
-        </Row>
-      </Container >
+              />
+            </Col>
+          ))}
+      </Row>
+
 
       <h4>Last Chance</h4>
-      <Container className="mb-4">
-        <Row xs={2} sm={2} md={3} lg={4} className="g-3">
-          {[...auctions]
-            .filter((auction) => auction.endTime.getTime() - Date.now() > 0 && auction.endTime.getTime() - Date.now()
-              < 24 * 60 * 60 * 1000)
-            .sort(
-              (a, b) =>
-                new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
-            )
-            .map((auction) => (
-              <Col key={auction.id}>
-                <AuctionCard
-                  id={auction.id}
-                  title={auction.title}
-                  currentBid={auction.currentBid}
-                  favorited={auction.favorited ?? false}
-                  startTime={new Date(auction.startTime)}
-                  endTime={new Date(auction.endTime)}
-                  favouritesCount={auction.favouritesCount}
-                  imageUpload={auction.imageUpload}
-                />
-              </Col>
-            ))}
-        </Row>
-      </Container>
+      <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
+        {[...auctions]
+          .filter((auction) => auction.endTime.getTime() - Date.now() > 0 && auction.endTime.getTime() - Date.now()
+            < 24 * 60 * 60 * 1000)
+          .sort(
+            (a, b) =>
+              new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
+          )
+          .map((auction) => (
+            <Col key={auction.id}>
+              <AuctionCard
+                id={auction.id}
+                title={auction.title}
+                currentBid={auction.currentBid}
+                favorited={auction.favorited ?? false}
+                startTime={new Date(auction.startTime)}
+                endTime={new Date(auction.endTime)}
+                favouritesCount={auction.favouritesCount}
+                imageUpload={auction.imageUpload}
+              />
+            </Col>
+          ))}
+      </Row>
+
 
       <h4>New Auctions</h4>
-      <Container className="mb-4">
-        <Row xs={2} sm={2} md={3} lg={4} className="g-3">
-          {[...auctions]
-            .filter((auction) => {
-              const days = 7;
-              return Date.now() - auction.startTime.getTime() < days * 24 * 60 * 60 * 1000
-                && Date.now() - auction.startTime.getTime() > 0;
-            })
-            .sort(
-              (a, b) =>
-                new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
-            )
-            .map((auction) => (
-              <Col key={auction.id}>
-                <AuctionCard
-                  id={auction.id}
-                  title={auction.title}
-                  currentBid={auction.currentBid}
-                  favorited={auction.favorited ?? false}
-                  startTime={new Date(auction.startTime)}
-                  endTime={new Date(auction.endTime)}
-                  favouritesCount={auction.favouritesCount}
-                  imageUpload={auction.imageUpload}
-                />
-              </Col>
-            ))}
-        </Row>
-      </Container>
+      <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
+        {[...auctions]
+          .filter((auction) => {
+            const days = 7;
+            return Date.now() - auction.startTime.getTime() < days * 24 * 60 * 60 * 1000
+              && Date.now() - auction.startTime.getTime() > 0;
+          })
+          .sort(
+            (a, b) =>
+              new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
+          )
+          .map((auction) => (
+            <Col key={auction.id}>
+              <AuctionCard
+                id={auction.id}
+                title={auction.title}
+                currentBid={auction.currentBid}
+                favorited={auction.favorited ?? false}
+                startTime={new Date(auction.startTime)}
+                endTime={new Date(auction.endTime)}
+                favouritesCount={auction.favouritesCount}
+                imageUpload={auction.imageUpload}
+              />
+            </Col>
+          ))}
+      </Row>
     </>
   );
 }
