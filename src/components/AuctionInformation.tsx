@@ -1,4 +1,5 @@
 import { Stack } from "react-bootstrap";
+import { useCurrency } from "../context/CurrencyContext";
 
 export type AuctionInfo = {
   title: string;
@@ -25,9 +26,8 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
     freightPrice,
     startBid } = info;
 
-  { console.log(startBid) }
+  const { formatCurrency } = useCurrency()
 
-  //TODO: Fetch real info from backend.
   return (
     <section className="mt-1">
       <Stack gap={2}>
@@ -39,7 +39,7 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
           <strong>Time remaining:</strong>&nbsp;{timeRemaining}
         </div>
         <div>
-          <strong>Starting Price:</strong>&nbsp;{startBid === undefined ? 399 : startBid} SEK
+          <strong>Starting Price:</strong>&nbsp;{startBid === undefined ? formatCurrency(399) : formatCurrency(startBid)}
         </div>
 
         <div>
