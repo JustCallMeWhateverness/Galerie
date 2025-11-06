@@ -86,12 +86,12 @@ export default function HomePage() {
 
       <h4>Popular Auctions</h4>
       <Container className="mb-4">
-        <Row className="flex-nowrap overflow-auto scroll">
+        <Row xs={2} sm={2} md={3} lg={4} className="g-3">
           {[...auctions]
             .filter((auction) => auction.favouritesCount >= 50)
             .sort((a, b) => b.favouritesCount - a.favouritesCount)
             .map((auction) => (
-              <Col key={auction.id} xs={6} md={6}>
+              <Col key={auction.id}>
                 <AuctionCard
                   id={auction.id}
                   title={auction.title}
@@ -106,11 +106,11 @@ export default function HomePage() {
               </Col>
             ))}
         </Row>
-      </Container>
+      </Container >
 
       <h4>Last Chance</h4>
       <Container className="mb-4">
-        <Row className="flex-nowrap overflow-auto scroll">
+        <Row xs={2} sm={2} md={3} lg={4} className="g-3">
           {[...auctions]
             .filter((auction) => auction.endTime.getTime() - Date.now() > 0 && auction.endTime.getTime() - Date.now()
               < 24 * 60 * 60 * 1000)
@@ -119,7 +119,7 @@ export default function HomePage() {
                 new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
             )
             .map((auction) => (
-              <Col key={auction.id} xs={6} md={6}>
+              <Col key={auction.id}>
                 <AuctionCard
                   id={auction.id}
                   title={auction.title}
@@ -137,7 +137,7 @@ export default function HomePage() {
 
       <h4>New Auctions</h4>
       <Container className="mb-4">
-        <Row className="flex-nowrap overflow-auto scroll">
+        <Row xs={2} sm={2} md={3} lg={4} className="g-3">
           {[...auctions]
             .filter((auction) => {
               const days = 7;
@@ -149,7 +149,7 @@ export default function HomePage() {
                 new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
             )
             .map((auction) => (
-              <Col key={auction.id} xs={6} md={6}>
+              <Col key={auction.id}>
                 <AuctionCard
                   id={auction.id}
                   title={auction.title}
