@@ -43,7 +43,8 @@ interface AuctionResponse {
   seller: [Customer],
   category: string,
   items?: Bid[],
-  startBid?: number
+  startBid?: number,
+  imageUpload?: imageUpload
 }
 
 export type Bid = {
@@ -53,12 +54,18 @@ export type Bid = {
   timestamp?: string
 }
 
+type imageUpload = {
+  paths: string[],
+  mediaTexts?: string[]
+}
+
 export default function AuctionListingPage() {
 
   const { id } = useParams<{ id: string }>()
   const [isLoading, setIsLoading] = useState(true)
   const [bids, setBids] = useState<Bid[]>([])
   const [auctionInformation, setAuctionInformation] = useState<AuctionInfo | null>(null)
+  const [img, setImg] = useState<imageUpload | null>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -77,6 +84,7 @@ export default function AuctionListingPage() {
         })
 
         setBids(data.items ?? [])
+        setImg(data.imageUpload ?? null)
 
       }
       catch (error) {
@@ -89,6 +97,8 @@ export default function AuctionListingPage() {
     fetchData()
   }, [])
 
+  const imagePath = img?.paths?.[0]
+  const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg"
 
 
   return (
@@ -99,7 +109,9 @@ export default function AuctionListingPage() {
       {!isLoading &&
         <Row>
           <Col>
-            <Image src="/images/products/3.jpg" alt="Here is a product" />
+            <Image
+              src={imageUrl}
+              alt={img?.mediaTexts} />
 
             <div>
               <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
