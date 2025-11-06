@@ -26,7 +26,8 @@ const sampleInfo: AuctionInfo = {
   freightPrice: 0,
   freightEnabled: true,
   pickupEnabled: true,
-  timeRemaining: "Information missing"
+  timeRemaining: "Information missing",
+  startBid: 30
 };
 
 
@@ -41,7 +42,8 @@ interface AuctionResponse {
   endTime: string,
   seller: [Customer],
   category: string,
-  items?: Bid[]
+  items?: Bid[],
+  startBid?: number
 }
 
 export type Bid = {
@@ -70,7 +72,8 @@ export default function AuctionListingPage() {
           seller: data.seller[0].username,
           pickupEnabled: data.pickupEnabled,
           freightEnabled: data.freightEnabled,
-          timeRemaining: getRemainingTimeMessage(new Date(data.endTime))
+          timeRemaining: getRemainingTimeMessage(new Date(data.endTime)),
+          startBid: data.startBid
         })
 
         setBids(data.items ?? [])

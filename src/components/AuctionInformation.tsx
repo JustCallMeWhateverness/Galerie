@@ -9,6 +9,7 @@ export type AuctionInfo = {
   timeRemaining: string;
   pickupLocation?: string;
   freightPrice?: number;
+  startBid?: number;
 
 };
 
@@ -21,8 +22,10 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
     freightEnabled,
     timeRemaining,
     pickupLocation,
-    freightPrice } = info;
+    freightPrice,
+    startBid } = info;
 
+  { console.log(startBid) }
 
   //TODO: Fetch real info from backend.
   return (
@@ -35,8 +38,9 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
         <div>
           <strong>Time remaining:</strong>&nbsp;{timeRemaining}
         </div>
-
-        {/* TODO: lägg till time remaining högre upp på sidan */}
+        <div>
+          <strong>Starting Price:</strong>&nbsp;{startBid === undefined ? 399 : startBid} SEK
+        </div>
 
         <div>
           <strong>Artist:</strong>&nbsp;{seller}
