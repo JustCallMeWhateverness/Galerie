@@ -3,8 +3,8 @@ import Image from "../parts/Image";
 import BidInput from "../components/BidInput";
 import BidHistory from "../components/BidHistory";
 import type { Bid } from "../interfaces/Bid";
-import type { Info } from "../components/GetInformation";
-import { GetInformation } from "../components/GetInformation";
+import type { Info } from "../components/AuctionInformation";
+import { AuctionInformation } from "../components/AuctionInformation";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -122,12 +122,9 @@ export default function AuctionListingPage() {
         <Image src="/images/products/3.jpg" alt="Here is a product" />
         <h1>{auctionData?.title}</h1>
 
-        {/* TODO: lägg till time remaining högre upp på sidan */}
-
-
         <div>
           {/* Get Item information here */}
-          <GetInformation info={sampleInfo} />
+          <AuctionInformation info={sampleInfo} />
         </div>
         <div>
           <BidInput />

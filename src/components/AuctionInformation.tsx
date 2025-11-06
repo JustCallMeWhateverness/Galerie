@@ -7,14 +7,16 @@ export type Info = {
   freight: string;
 };
 
-export function GetInformation({ info }: { info: Info }) {
+export function AuctionInformation({ info }: { info: Info }) {
   const { title, size, description, artist, pickupLocation, freight } = info;
 
   //TODO: Fetch real info from backend.
   return (
     <section className="mt-2">
+      <h1>{title}</h1>
       <p>{description}</p>
 
+      {/* TODO: lägg till time remaining högre upp på sidan */}
       <div className="mt-3">
         {/* <p className="mb-1">
           <strong>Size:</strong> {size}
