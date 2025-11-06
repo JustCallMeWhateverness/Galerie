@@ -4,9 +4,9 @@ export async function createArtistProfile(userId: string, username: string) {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify({
-      title: "—",
-      workTitle: "—",
-      description: "No description yet.",
+      title: "",
+      workTitle: "",
+      description: "",
       customer: [{ id: String(userId), username }],
     }),
   });
