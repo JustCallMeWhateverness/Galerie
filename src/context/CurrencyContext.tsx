@@ -31,11 +31,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(storageKey, newCurrency);
   };
 
-  /**
-   * Converts SEK amount to user's selected currency
-   * @param amount - Amount in SEK (from backend)
-   * @returns Amount in user's selected currency
-   */
   const convertCurrency = (amount: number): number => {
     if (currency === 'SEK') return amount;
     const rate = exchangeRates[currency];
@@ -43,11 +38,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     return Math.round(converted * 100) / 100;
   };
 
-  /**
-   * Converts user's input amount (in selected currency) to SEK for backend submission
-   * @param amount - Amount in user's selected currency
-   * @returns Amount in SEK (for backend API)
-   */
   const convertToSEK = (amount: number): number => {
     if (currency === 'SEK') return amount;
     const rate = exchangeRates[currency];
@@ -55,12 +45,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     return Math.round(converted * 100) / 100;
   };
 
-  /**
-   * Formats SEK amount as user's selected currency string
-   * Backend always stores amounts in SEK, this converts and formats for display
-   * @param amount - Amount in SEK (from backend)
-   * @returns Formatted currency string in user's selected currency
-   */
   const formatCurrency = (amount: number): string => {
     const converted = convertCurrency(amount);
     return new Intl.NumberFormat('en-US', {
@@ -71,10 +55,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     }).format(converted);
   };
 
-  /**
-   * Gets the currency symbol for the user's selected currency
-   * @returns Currency symbol string (e.g., '$', '€', 'kr')
-   */
   const getCurrencySymbol = (): string => {
     return currencySymbols[currency];
   };

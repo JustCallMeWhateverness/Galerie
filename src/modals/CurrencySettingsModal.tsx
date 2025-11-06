@@ -1,4 +1,5 @@
 import { Modal, Form, Button } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 import { useCurrency } from '../context/CurrencyContext';
 import { currencies, currencyNames } from '../utils/currencyRates';
 import type { Currency } from '../utils/currencyRates';
@@ -13,24 +14,37 @@ export default function CurrencySettingsModal({
   onHide,
 }: CurrencySettingsModalProps) {
   const { currency, setCurrency } = useCurrency();
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency>(currency);
+
+  useEffect(() => {
+    if (show) {
+      setSelectedCurrency(currency);
+    }
+  }, [show, currency]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrency(e.target.value as Currency);
+    setSelectedCurrency(e.target.value as Currency);
   };
 
   const handleSave = () => {
+    setCurrency(selectedCurrency);
+    onHide();
+  };
+
+  const handleClose = () => {
+    setSelectedCurrency(currency);
     onHide();
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Currency Settings</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Group>
           <Form.Label>Select Currency</Form.Label>
-          <Form.Select value={currency} onChange={handleChange}>
+          <Form.Select value={selectedCurrency} onChange={handleChange}>
             {currencies.map((curr) => (
               <option key={curr} value={curr}>
                 {curr} - {currencyNames[curr]}
@@ -40,7 +54,7 @@ export default function CurrencySettingsModal({
         </Form.Group>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
         <Button variant="primary" onClick={handleSave}>
@@ -50,4 +64,3 @@ export default function CurrencySettingsModal({
     </Modal>
   );
 }
-
