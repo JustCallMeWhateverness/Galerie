@@ -34,7 +34,7 @@ export default function AuctionCard(props: Props) {
         style={{ cursor: "pointer" }}>
         <Card.Img style={{ minHeight: '200px', objectFit: 'cover' }} />
         <Card.ImgOverlay className='text-center'>
-          <span className='float-end' role='button' onClick={onFavClick}>
+          <span className='heart-hitbox float-end' role='button' onClick={onFavClick}>
             {/* bi-suit-heart must be at the end for the correct logo to be shown */}
             <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
           </span>
