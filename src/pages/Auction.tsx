@@ -7,6 +7,7 @@ import type { AuctionInfo } from "../components/AuctionInformation";
 import { AuctionInformation } from "../components/AuctionInformation";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getRemainingTimeMessage } from "../utils/timeHelpers";
 
 
 AuctionListingPage.route = {
@@ -80,18 +81,21 @@ export default function AuctionListingPage() {
       setIsLoading(true)
       try {
         const response = await fetch(`/api/Auction/${id}`, { method: "GET" })
-        const data = await response.json()
+        const data: AuctionData = await response.json()
+        setAuctionData(data)
+        setAuctionInformation({
+          title: data.title,
+          description: data.description,
+          seller: data.seller[0].username,
+          pickupEnabled: data.pickupEnabled,
+          freightEnabled: data.freightEnabled,
+          timeRemaining: getRemainingTimeMessage(new Date(data.endTime))
+        })
 
-        if (response.ok && !data.error) {
-          console.log("Fetched auction data: ", data)
-          setAuctionData(data)
 
-
-
-        }
-        else {
-          console.log("error: ", data.error)
-        }
+      }
+      catch (error) {
+        console.log("Error: ", error)
       }
       finally {
         console.log("finished")
@@ -110,7 +114,7 @@ export default function AuctionListingPage() {
 
         <div>
           {/* Get Item information here */}
-          <AuctionInformation info={sampleInfo} />
+          <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
         </div>
         <div>
           <BidInput />

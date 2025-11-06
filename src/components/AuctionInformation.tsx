@@ -7,7 +7,7 @@ export type AuctionInfo = {
   pickupEnabled: boolean;
   freightEnabled: boolean;
   timeRemaining: string;
-  pickupLocation: string;
+  pickupLocation?: string;
   freightPrice?: number;
 
 };
