@@ -4,6 +4,7 @@ import type InterfaceArtistInfo from "../interfaces/InterfaceArtistInfo";
 interface EditArtistModalProps {
   show: boolean;
   onHide: () => void;
+  onSave: () => void;
   editForm: InterfaceArtistInfo;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -13,13 +14,14 @@ interface EditArtistModalProps {
 export default function EditArtistModal({
   show,
   onHide,
+  onSave,
   editForm,
   onChange,
 }: EditArtistModalProps) {
   return (
     <Modal show={show} onHide={onHide} centered className="editartist-modal">
       <Modal.Header closeButton>
-        <Modal.Title>Artist Information</Modal.Title>
+        <Modal.Title>Edit Artist Information</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -29,7 +31,7 @@ export default function EditArtistModal({
               <Form.Control
                 type="text"
                 name="customer"
-                value={editForm?.customer ?? ""}
+                value={editForm.customer}
                 disabled
               />
             </Form.Group>
@@ -75,6 +77,9 @@ export default function EditArtistModal({
         </Form>
       </Modal.Body>
       <Modal.Footer>
+        <Button variant="primary" onClick={onSave}>
+          Save
+        </Button>
         <Button variant="secondary" onClick={onHide}>
           Cancel
         </Button>
