@@ -1,36 +1,61 @@
-export type Info = {
-  title?: string;
-  size: string;
+import { Stack } from "react-bootstrap";
+
+export type AuctionInfo = {
+  title: string;
   description: string;
-  artist: string;
+  seller: string;
+  pickupEnabled: boolean;
+  freightEnabled: boolean;
+  timeRemaining: string;
   pickupLocation: string;
-  freight: string;
+  freightPrice?: number;
+
 };
 
-export function AuctionInformation({ info }: { info: Info }) {
-  const { title, size, description, artist, pickupLocation, freight } = info;
+export function AuctionInformation({ info }: { info: AuctionInfo }) {
+  const {
+    title,
+    description,
+    seller,
+    pickupEnabled,
+    freightEnabled,
+    timeRemaining,
+    pickupLocation,
+    freightPrice } = info;
+
 
   //TODO: Fetch real info from backend.
   return (
-    <section className="mt-2">
-      <h1>{title}</h1>
-      <p>{description}</p>
+    <section className="mt-1">
+      <Stack gap={2}>
 
-      {/* TODO: lägg till time remaining högre upp på sidan */}
-      <div className="mt-3">
-        {/* <p className="mb-1">
-          <strong>Size:</strong> {size}
-        </p> */}
-        <p className="mb-1">
-          <strong>Artist:</strong> {artist}
-        </p>
-        <p className="mb-1">
-          <strong>Pickup Location:</strong> {pickupLocation}
-        </p>
-        <p className="mb-1">
-          <strong>Freight:</strong> Available
-        </p>
-      </div>
+
+        <h1>{title}</h1>
+        <div>{description}</div>
+        <div>
+          <strong>Time remaining:</strong>&nbsp;{timeRemaining}
+        </div>
+
+        {/* TODO: lägg till time remaining högre upp på sidan */}
+
+        <div>
+          <strong>Artist:</strong>&nbsp;{seller}
+        </div>
+
+        {/* Only displays pickup and freight information if they're enabled. */}
+        {pickupEnabled &&
+          <div>
+            <strong>Pickup Location:</strong> {!pickupLocation ? "Stockholm" : pickupLocation}
+          </div>
+        }
+        {
+          freightEnabled &&
+          <div>
+            <strong>Freight:</strong> {!freightPrice ? "200" : freightPrice} SEK
+          </div>
+        }
+
+      </Stack>
     </section>
   );
 }
