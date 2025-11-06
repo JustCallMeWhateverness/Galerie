@@ -1,6 +1,6 @@
 import { Row, Col } from "react-bootstrap";
 import Image from "../parts/Image";
-import InputPlaceBid from "../components/InputPlaceBid";
+import BidInput from "../components/BidInput";
 import BidHistory from "../components/BidHistory";
 import type { Bid } from "../interfaces/Bid";
 import type { Info } from "../components/GetInformation";
@@ -67,7 +67,13 @@ interface AuctionData {
 
   }]
 }
-
+interface AuctionInformation {
+  title: string,
+  description: string,
+  artist: string,
+  pickupEnabled: boolean,
+  freightEnabled: boolean
+}
 
 
 export default function AuctionListingPage() {
@@ -77,7 +83,10 @@ export default function AuctionListingPage() {
   const [auctionData, setAuctionData] = useState<AuctionData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const [auctionInformation, setAuctionInformation] = useState()
+  const [auctionInformation, setAuctionInformation] = useState<AuctionInformation | null>(null)
+
+
+
 
   useEffect(() => {
     async function fetchData() {
@@ -89,7 +98,6 @@ export default function AuctionListingPage() {
         if (response.ok && !data.error) {
           console.log("Fetched auction data: ", data)
           setAuctionData(data)
-
 
 
 
@@ -112,11 +120,17 @@ export default function AuctionListingPage() {
     <Row>
       <Col>
         <Image src="/images/products/3.jpg" alt="Here is a product" />
-        {/* <AuctionListingBidding auction={auctionData} /> */}
+        <h1>{auctionData?.title}</h1>
+
+        {/* TODO: lägg till time remaining högre upp på sidan */}
+
 
         <div>
-          {/* Add bid here */}
-          <InputPlaceBid />
+          {/* Get Item information here */}
+          <GetInformation info={sampleInfo} />
+        </div>
+        <div>
+          <BidInput />
         </div>
 
         <div>
@@ -132,28 +146,6 @@ export default function AuctionListingPage() {
           &nbsp;
         </div>
 
-        <div>
-          {/* Get Item information here */}
-          <GetInformation info={sampleInfo} />
-        </div>
-
-        <div
-          className="btn btn-primary w-100 py-2"
-          style={{ height: "auto" }}
-          aria-hidden="true"
-        >
-          &nbsp;
-        </div>
-
-        <div>
-          {/* questions and comments here, This might be a TODO and its okey */}
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi,
-            exercitationem. Laboriosam, sequi? Accusantium odio exercitationem
-            ipsam impedit laboriosam dolor non esse alias vel cumque ipsa magni
-            iste quis, nemo expedita?
-          </p>
-        </div>
       </Col>
     </Row>
   );

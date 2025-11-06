@@ -16,9 +16,9 @@ export function GetInformation({ info }: { info: Info }) {
       <p>{description}</p>
 
       <div className="mt-3">
-        <p className="mb-1">
+        {/* <p className="mb-1">
           <strong>Size:</strong> {size}
-        </p>
+        </p> */}
         <p className="mb-1">
           <strong>Artist:</strong> {artist}
         </p>
@@ -26,7 +26,7 @@ export function GetInformation({ info }: { info: Info }) {
           <strong>Pickup Location:</strong> {pickupLocation}
         </p>
         <p className="mb-1">
-          <strong>Freight:</strong> {freight}
+          <strong>Freight:</strong> Available
         </p>
       </div>
     </section>
