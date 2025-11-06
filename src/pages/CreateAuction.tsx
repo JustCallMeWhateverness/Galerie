@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 import { addDays } from "date-fns";
-
+import FileUpload from "../components/FileUpload";
 import AuthModal from "../modals/AuthModal";
 import MustBeSellerModal from "../modals/MustBeSellerModal";
 import DatePickerInput from "../parts/DatePickerInput";
@@ -19,7 +19,8 @@ const minimumAuctionLengthDays = 3;
 export default function CreateAuction() {
   const [showSellerModal, setShowSellerModal] = useState(true);
   const { user, loading } = useAuth();
-  const [categories, setCategories] = useState<{ id: string, title: string }[]>([]);
+  const [imagePaths, setImagePaths] = useState<string[]>([]);
+  const [categories, setCategories] = useState<{ id: string, title: string; }[]>([]);
   const [auction, setAuction] = useState({
     title: '',
     description: '',
@@ -33,6 +34,10 @@ export default function CreateAuction() {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const navigate = useNavigate();
+
+  const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
+    setImagePaths([res.path]);
+  };
 
 
   useEffect(() => {
@@ -63,6 +68,8 @@ export default function CreateAuction() {
     setAuction({ ...auction, [name]: processedValue });
   }
 
+
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user?.id) {
@@ -82,6 +89,9 @@ export default function CreateAuction() {
       auctionCategoryId: auction.AuctionCategory,
       pickupEnabled: auction.PickupEnabled,
       freightEnabled: auction.FreightEnabled,
+      imageUpload: imagePaths.length
+        ? { paths: imagePaths, mediaTexts: [''] }
+        : null,
       startTime: startDate?.toISOString(),
       endTime: endDate?.toISOString(),
     };
@@ -204,6 +214,13 @@ export default function CreateAuction() {
                 onChange={setProperty}
               />
             </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label>Image</Form.Label>
+              <FileUpload onUploaded={handleImageUploaded} />
+
+            </Form.Group>
+
             <Row className="mb-4">
               <Col xs={6}>
                 <Form.Group>
