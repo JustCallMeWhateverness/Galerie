@@ -1,7 +1,5 @@
-import type Auction from './Auction';
-import type Artist from './Artist';
-import type { Bid } from './Bid';
-
+import type Auction from "./Auction";
+import type Artist from "./Artist";
 export default interface User {
   id: number;
   created: string;
@@ -15,5 +13,4 @@ export default interface User {
   phoneNumber: string;
   likedAuctions?: Auction[];
   likedArtists?: Artist[];
-  activeBids?: Bid[];
 }

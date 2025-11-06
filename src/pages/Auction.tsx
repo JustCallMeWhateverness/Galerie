@@ -1,8 +1,8 @@
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Spinner } from "react-bootstrap";
 import Image from "../parts/Image";
 import BidInput from "../components/BidInput";
 import BidHistory from "../components/BidHistory";
-import type { Bid } from "../interfaces/Bid";
+import type { Customer } from "../interfaces/Customer"
 import type { AuctionInfo } from "../components/AuctionInformation";
 import { AuctionInformation } from "../components/AuctionInformation";
 import { useParams } from "react-router-dom";
@@ -16,34 +16,22 @@ AuctionListingPage.route = {
   menulabel: "Auction Listing Page"
 };
 
+// TODO: Add timestamp field to Bid in backend
 
-
-// correct id for testing: 48hs8es0fgnn42ky7tqmk55yxf & 4ecvgth42ytqrrr7phwkyhw2mv
-
-
-const sampleBids: Bid[] = [
-  { id: "4", amount: 220, bidder: "Jonas", createdAt: "2025-10-23T16:45:00Z" },
-  { id: "1", amount: 120, bidder: "Anna", createdAt: "2025-10-22T18:12:00Z" },
-  { id: "2", amount: 95, bidder: "Jonas", createdAt: "2025-10-22T16:45:00Z" },
-  { id: "3", amount: 80, createdAt: "2025-10-22T15:10:00Z" }, // anonymt
-];
 const sampleInfo: AuctionInfo = {
-  title: "...Loading",
-  description: "...Loading",
-  seller: "...Loading",
-  pickupLocation: "...Loading",
+  title: "Information missing",
+  description: "Information missing",
+  seller: "Information missing",
+  pickupLocation: "Information missing",
   freightPrice: 0,
   freightEnabled: true,
   pickupEnabled: true,
-  timeRemaining: "1 day"
+  timeRemaining: "Information missing"
 };
 
-interface Customer {
-  id: string,
-  username: string
-}
 
-interface AuctionData {
+
+interface AuctionResponse {
   id: string,
   title: string,
   description: string,
@@ -53,36 +41,29 @@ interface AuctionData {
   endTime: string,
   seller: [Customer],
   category: string,
-  items?: [{
-    id: string,
-    title: string | null,
-    customer: [Customer],
-    amount: number,
-    contentType: string
-
-  }]
+  items?: Bid[]
 }
 
+export type Bid = {
+  customerId: string,
+  amount: number,
+  contentType: string,
+  timestamp?: string
+}
 
 export default function AuctionListingPage() {
 
   const { id } = useParams<{ id: string }>()
-
-  const [auctionData, setAuctionData] = useState<AuctionData | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-
+  const [isLoading, setIsLoading] = useState(true)
+  const [bids, setBids] = useState<Bid[]>([])
   const [auctionInformation, setAuctionInformation] = useState<AuctionInfo | null>(null)
-
-
-
 
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true)
       try {
         const response = await fetch(`/api/Auction/${id}`, { method: "GET" })
-        const data: AuctionData = await response.json()
-        setAuctionData(data)
+        const data: AuctionResponse = await response.json()
         setAuctionInformation({
           title: data.title,
           description: data.description,
@@ -92,13 +73,13 @@ export default function AuctionListingPage() {
           timeRemaining: getRemainingTimeMessage(new Date(data.endTime))
         })
 
+        setBids(data.items ?? [])
 
       }
       catch (error) {
         console.log("Error: ", error)
       }
       finally {
-        console.log("finished")
         setIsLoading(false)
       }
     }
@@ -108,34 +89,30 @@ export default function AuctionListingPage() {
 
 
   return (
-    <Row>
-      <Col>
-        <Image src="/images/products/3.jpg" alt="Here is a product" />
+    <>
+      {isLoading && <Spinner animation="border" role="status">
+        <span> Loading... </span>
+      </Spinner>}
+      {!isLoading &&
+        <Row>
+          <Col>
+            <Image src="/images/products/3.jpg" alt="Here is a product" />
 
-        <div>
-          {/* Get Item information here 
-          UPDATE WITH BETTER SAMPLE INFO (tydligare att det är laddningsdata)
-          */}
-          <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
-        </div>
-        <div>
-          <BidInput />
-        </div>
+            <div>
+              <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
+            </div>
+            <div>
+              <BidInput />
+            </div>
 
-        <div>
-          {/* Get Bidhistory here */}
-          <BidHistory bids={sampleBids} />
-        </div>
+            <div>
+              <BidHistory bids={bids} />
+            </div>
 
-        <div
-          className="btn btn-primary w-100 py-2"
-          style={{ height: "auto" }}
-          aria-hidden="true"
-        >
-          &nbsp;
-        </div>
+          </Col>
+        </Row>
+      }
 
-      </Col>
-    </Row>
+    </>
   );
 }
