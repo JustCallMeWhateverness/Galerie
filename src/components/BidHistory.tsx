@@ -1,6 +1,7 @@
 
 
 import { Col, ListGroup, Row } from "react-bootstrap";
+import { useCurrency } from "../hooks/useCurrency";
 import type { Bid } from "../pages/Auction";
 
 type Props = {
@@ -8,8 +9,7 @@ type Props = {
 };
 
 export default function BidHistory({ bids }: Props) {
-
-
+  const { formatCurrency } = useCurrency();
   if (!bids?.length) {
     return <p>No bids placed yet.</p>;
   }
@@ -28,7 +28,7 @@ export default function BidHistory({ bids }: Props) {
             <ListGroup variant="flush">
               <ListGroup.Item className="small d-flex flex-column text-start">
                 <div>
-                  <strong>{b.amount} SEK</strong>
+                  <strong>{formatCurrency(b.amount)}</strong>
                 </div>
                 <small className="text-muted">
 

@@ -1,13 +1,17 @@
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
+import { useCurrency } from '../hooks/useCurrency';
 
 export default function BidInput() {
   const [result, setResult] = useState("");
   const [value, setValue] = useState("");
+  const { getCurrencySymbol, convertToSEK } = useCurrency();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setResult("Form has been submitted with with Input: " + value);
+    const amountInSelectedCurrency = parseFloat(value);
+    const amountInSEK = convertToSEK(amountInSelectedCurrency);
+    setResult(`Form has been submitted with Input: ${value} ${getCurrencySymbol()} (${amountInSEK.toFixed(2)} SEK)`);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -28,7 +32,7 @@ export default function BidInput() {
             value={value}
             onChange={handleChange}
           />
-          <InputGroup.Text>SEK</InputGroup.Text>
+          <InputGroup.Text>{getCurrencySymbol()}</InputGroup.Text>
         </InputGroup>
 
       </div>
