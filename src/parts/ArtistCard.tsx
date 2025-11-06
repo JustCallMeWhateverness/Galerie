@@ -53,7 +53,7 @@ export default function ArtistCard(props: Artist) {
             }}
           />
           <Card.ImgOverlay className='text-center'>
-            <span className='float-end' role='button' onClick={onFavClick}>
+            <span className='heart-hitbox float-end' role='button' onClick={onFavClick}>
               <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
             </span>
           </Card.ImgOverlay>
