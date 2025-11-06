@@ -43,3 +43,10 @@ $enable-negative-margins: true;
 .carousel-indicators .active {
   background-color: $secondary;
 }
+
+.heart-hitbox {
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-top: 5px;
+  margin: -4px;
+}
