@@ -10,14 +10,12 @@ ArtistView.route = {
   index: 0,
 };
 
-/** Bygg säker bild-URL från ev. relativ media-path. */
 function toMediaUrl(p?: string): string {
   if (!p) return "/images/placeholder.jpg";
   if (p.startsWith("http") || p.startsWith("/media/")) return p;
   return `/media/${p}`;
 }
 
-/** Är auktionen aktiv just nu? */
 function isActive(startIso: string, endIso: string): boolean {
   const now = Date.now();
   const start = new Date(startIso).getTime();
@@ -25,17 +23,15 @@ function isActive(startIso: string, endIso: string): boolean {
   return start <= now && end >= now;
 }
 
-/** --- DTOs från API (endast fält vi använder) --- */
 type ArtistInfoDTO = {
-  id: string;               // ArtistInfo-id (OBS: inte nödvändigtvis user-id)
+  id: string;
   title?: string;
   workTitle?: string;
-  username?: string;        // artistens användarnamn (t.ex. "Tindra")
+  username?: string;
   location?: string;
   email?: string;
   registrationDate?: string;
   favorited?: boolean;
-  // Vissa implementationer lägger user-id här. Kan heta customer / userId / ownerId – vi testar flera.
   customer?: string | { id: string; } | Array<{ id: string; }>;
   userId?: string;
   ownerId?: string;
@@ -54,7 +50,6 @@ type AuctionDTO = {
   startTime: string;
   favorited?: boolean;
 
-  // Auktionen kopplas oftast till säljaren via user-id + username
   seller?: Array<{ id: string; username?: string; }>;
   customer?: Array<{ id: string; username?: string; }>;
 
@@ -77,7 +72,6 @@ export default function ArtistView() {
   const [loadingAuctions, setLoadingAuctions] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  /** Hämta artist */
   useEffect(() => {
     if (!artistInfoId) {
       setArtist(null);
@@ -106,7 +100,6 @@ export default function ArtistView() {
         }
         const dto: ArtistInfoDTO = await res.json();
 
-        // 1) Plocka fram user-id robust (olika fältnamn förekommer ibland)
         const extractedUserId =
           (typeof dto.customer === "string" && dto.customer) ||
           ((dto.customer as any)?.id as string | undefined) ||
@@ -117,11 +110,9 @@ export default function ArtistView() {
 
         setArtistUserId(extractedUserId);
 
-        // 2) Plocka username (matchar auktioner om id saknas)
-        const uname = dto.username || dto.title || null; // ofta "Tindra"
+        const uname = dto.username || dto.title || null;
         setArtistUsername(uname);
 
-        // 3) Bygg avatar-url från MediaField
         const rawPath = dto.profileImage?.paths?.[0];
         const avatar = toMediaUrl(rawPath);
 
@@ -140,7 +131,7 @@ export default function ArtistView() {
         setArtist(mapped);
       } catch (e: unknown) {
         if ((e as any)?.name !== "AbortError") {
-          setError((e as Error).message || "Kunde inte ladda artist.");
+          setError((e as Error).message || "Could not get artist.");
           setArtist(null);
         }
       } finally {
@@ -151,16 +142,13 @@ export default function ArtistView() {
     return () => abort.abort();
   }, [artistInfoId]);
 
-  /** Hämta artistens auktioner: matcha på user-id OR username */
   useEffect(() => {
-    // vänta tills vi åtminstone har artistens username eller user-id
     if (!artistInfoId) {
       setAuctions([]);
       setLoadingAuctions(false);
       return;
     }
     if (artistUserId === null && artistUsername === null) {
-      // vi saknar nycklar för att kunna matcha – invänta artist-fetchen
       return;
     }
 
@@ -180,7 +168,6 @@ export default function ArtistView() {
 
         const lowerName = artistUsername?.toLowerCase();
 
-        // Matcha på id eller username i seller/customer
         const mine = (data ?? []).filter((a) => {
           const bySeller =
             Array.isArray(a.seller) &&
@@ -201,11 +188,9 @@ export default function ArtistView() {
           return bySeller || byCustomer;
         });
 
-        // Endast aktiva, och mappa till ditt Auction-interface.
         const activeMapped: Auction[] = mine
           .filter((a) => isActive(a.startTime, a.endTime))
           .map((a) => {
-            // Gör imageUpload typesäkert (sätt bara när paths finns)
             const raw = a.imageUpload;
             const paths = Array.isArray(raw?.paths) ? raw!.paths : undefined;
             const mediaTexts = Array.isArray(raw?.mediaTexts)
@@ -229,7 +214,7 @@ export default function ArtistView() {
         setAuctions(activeMapped);
       } catch (e: unknown) {
         if ((e as any)?.name !== "AbortError") {
-          setError((e as Error).message || "Kunde inte ladda auktioner.");
+          setError((e as Error).message || "Could not get auctions.");
           setAuctions([]);
         }
       } finally {
@@ -251,7 +236,7 @@ export default function ArtistView() {
       <div className="container-fluid px-3 px-md-4 py-5">
         <div className="text-center">
           <div className="spinner-border" role="status">
-            <span className="visually-hidden">Laddar…</span>
+            <span className="visually-hidden">Loading…</span>
           </div>
         </div>
       </div>
@@ -276,7 +261,6 @@ export default function ArtistView() {
     );
   }
 
-  // --- Render ---
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
       <div
@@ -341,10 +325,10 @@ export default function ArtistView() {
         className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto"
         style={{ maxWidth: "980px" }}
       >
-        <h6 className="fw-bold text-dark mb-3">Pågående auktioner</h6>
+        <h6 className="fw-bold text-dark mb-3">Active auctions</h6>
         {auctions.length === 0 ? (
           <div className="text-muted">
-            Den här artisten har inga pågående auktioner just nu.
+            This artisit has no active auctions.
           </div>
         ) : (
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
