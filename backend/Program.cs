@@ -9,6 +9,10 @@ builder.Services.AddOrchardCms();
 
 var app = builder.Build();
 
+// Register SSE services
+builder.Services.AddSingleton<SseConnectionManager>();
+builder.Services.AddHostedService<SseBackgroundService>();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
