@@ -1,23 +1,101 @@
 namespace RestRoutes;
 
-using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
+using YesSql.Services;
+using System.Text.Json;
 
-public static partial class GetRoutes
+public static class SseEndpoints
 {
-    private static List<Dictionary<string, object>> ApplyQueryFilters(
+    // Heartbeat interval in milliseconds (keeps SSE connections alive)
+    private const int HEARTBEAT_INTERVAL_MS = 20000;
+
+    public static void MapSseEndpoints(this WebApplication app)
+    {
+        app.MapGet("/api/sse/{contentType}", async (
+            string contentType,
+            [FromServices] YesSql.ISession session,
+            [FromServices] SseConnectionManager connectionManager,
+            HttpContext context) =>
+        {
+            // Check permissions
+            var permissionCheck = await PermissionsACL.CheckPermissions(contentType, "GET", context, session);
+            if (permissionCheck != null) return permissionCheck;
+
+            // Set SSE headers
+            context.Response.Headers["Content-Type"] = "text/event-stream";
+            context.Response.Headers["Cache-Control"] = "no-cache";
+            context.Response.Headers["Connection"] = "keep-alive";
+            context.Response.Headers["X-Accel-Buffering"] = "no"; // Disable nginx buffering
+
+            var writer = new StreamWriter(context.Response.Body);
+            // Don't use AutoFlush - we'll manually flush async
+
+            try
+            {
+                // Get initial data with filters (but no orderby/limit/offset for SSE)
+                var cleanObjects = await GetRoutes.FetchCleanContent(contentType, session, populate: true);
+
+                // Apply WHERE filters only (extract just the WHERE part)
+                var filteredData = ApplyWhereFiltersOnly(context.Request.Query, cleanObjects);
+
+                // Send initial data
+                await SendSseEvent(writer, "initial", filteredData);
+
+                // Register connection with filters
+                var connection = new SseConnection(
+                    writer,
+                    contentType,
+                    context.Request.Query,
+                    context.RequestAborted
+                );
+                connectionManager.AddConnection(contentType, connection);
+
+                // Keep connection alive until client disconnects
+                while (!context.RequestAborted.IsCancellationRequested)
+                {
+                    // Send periodic heartbeat to keep connection alive
+                    await writer.WriteAsync(": heartbeat\n\n");
+                    await writer.FlushAsync();
+                    await Task.Delay(HEARTBEAT_INTERVAL_MS);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Connection closed or error
+                Console.WriteLine($"SSE connection closed: {ex.Message}");
+            }
+            finally
+            {
+                await writer.DisposeAsync();
+            }
+
+            return Results.Empty;
+        });
+    }
+
+    public static async Task SendSseEvent(StreamWriter writer, string eventType, object data)
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(data);
+            await writer.WriteAsync($"event: {eventType}\n");
+            await writer.WriteAsync($"data: {json}\n\n");
+            await writer.FlushAsync();
+        }
+        catch (Exception)
+        {
+            // Connection closed, ignore
+        }
+    }
+
+    // Apply WHERE filters only (no orderby, limit, offset)
+    private static List<Dictionary<string, object>> ApplyWhereFiltersOnly(
         IQueryCollection query,
         List<Dictionary<string, object>> data)
     {
         string? where = query["where"];
-        string? orderby = query["orderby"];
-        string? limit = query["limit"];
-        string? offset = query["offset"];
 
-        // If no query params, return data as-is
-        if (string.IsNullOrEmpty(where) &&
-            string.IsNullOrEmpty(orderby) &&
-            string.IsNullOrEmpty(limit) &&
-            string.IsNullOrEmpty(offset))
+        if (string.IsNullOrEmpty(where))
         {
             return data;
         }
@@ -30,37 +108,14 @@ public static partial class GetRoutes
         }
         var arr = Arr(arrItems.ToArray());
 
-        // Apply WHERE filters
-        if (!string.IsNullOrEmpty(where))
-        {
-            arr = ApplyWhereFilters(arr, where);
-        }
-
-        // Apply ORDER BY
-        if (!string.IsNullOrEmpty(orderby))
-        {
-            arr = ApplyOrderBy(arr, orderby);
-        }
-
-        // Apply LIMIT and OFFSET
-        int? limitInt = !string.IsNullOrEmpty(limit) && Regex.IsMatch(limit, @"^\d{1,}$")
-            ? int.Parse(limit) : null;
-        int? offsetInt = !string.IsNullOrEmpty(offset) && Regex.IsMatch(offset, @"^\d{1,}$")
-            ? int.Parse(offset) : null;
-
-        if (offsetInt.HasValue && limitInt.HasValue)
-        {
-            arr = Arr(arr.Slice(offsetInt.Value, offsetInt.Value + limitInt.Value));
-        }
-        else if (limitInt.HasValue)
-        {
-            arr = Arr(arr.Slice(0, limitInt.Value));
-        }
+        // Apply WHERE filters (reuse GetRoutes logic)
+        arr = ApplyWhereFilters(arr, where);
 
         // Convert back to List<Dictionary>
         return ConvertFromArr(arr);
     }
 
+    // Copy filtering logic from GetRoutes.QueryFilters.cs
     private static Obj ConvertToObj(Dictionary<string, object> dict)
     {
         var obj = Obj();
@@ -68,9 +123,9 @@ public static partial class GetRoutes
         {
             if (kvp.Value is Dictionary<string, object> nestedDict)
             {
-                obj[kvp.Key] = ConvertToObj(nestedDict);  // Recursive for nested objects
+                obj[kvp.Key] = ConvertToObj(nestedDict);
             }
-              else if (kvp.Value is System.Collections.IEnumerable enumerable && kvp.Value is not string)
+            else if (kvp.Value is System.Collections.IEnumerable enumerable && kvp.Value is not string)
             {
                 // Handle any enumerable (List<object>, List<string>, arrays, etc.) but not strings
                 var arr = Arr();
@@ -113,7 +168,7 @@ public static partial class GetRoutes
             var value = obj[key];
             if (value is Obj nestedObj)
             {
-                dict[key] = ConvertFromObj(nestedObj);  // Recursive!
+                dict[key] = ConvertFromObj(nestedObj);
             }
             else if (value is Arr nestedArr)
             {
@@ -141,7 +196,6 @@ public static partial class GetRoutes
 
     private static Arr ApplyWhereFilters(Arr data, string where)
     {
-        // Split by operators (but keep them)
         var ops1 = Arr("!=", ">=", "<=", "=", ">", "<", "_LIKE_", "_AND_", "LIKE", "AND");
         var ops2 = Arr("!=", ">=", "<=", "=", ">", "<", "LIKE", "AND", "LIKE", "AND");
 
@@ -167,7 +221,6 @@ public static partial class GetRoutes
             idx++;
         }
 
-        // Validate structure (AND every 4th position)
         var i = 0;
         var faulty = false;
         foreach (var x in mappedParts)
@@ -179,23 +232,19 @@ public static partial class GetRoutes
             }
         }
 
-        if (faulty)
-        {
-            return data; // Invalid syntax, return unfiltered
-        }
+        if (faulty) return data;
 
-        // Extract keys, values, operators
         var keys = Arr();
         var values = Arr();
         var operators = Arr();
 
         for (var j = 0; j < mappedParts.Length; j++)
         {
-             if (j % 4 == 0)
+            if (j % 4 == 0)
             {
                 // Trim whitespace before cleaning
                 var trimmed = ((string)mappedParts[j]).Trim();
-                keys.Push(Regex.Replace(trimmed, @"[^A-Za-z0-9_\-,\.]", ""));
+                keys.Push(System.Text.RegularExpressions.Regex.Replace(trimmed, @"[^A-Za-z0-9_\-,\.]", ""));
             }
             else if (j % 4 == 2)
             {
@@ -208,7 +257,6 @@ public static partial class GetRoutes
             }
         }
 
-        // Apply each filter sequentially
         var result = data;
         for (var idx2 = 0; idx2 < keys.Length; idx2++)
         {
@@ -226,10 +274,9 @@ public static partial class GetRoutes
     {
         var keyParts = key.Split('.');
 
-     return data.Filter(item =>
+        return data.Filter(item =>
         {
             var itemValue = GetNestedValue(item, keyParts);
-
             if (itemValue == null) return false;
 
             var valueStr = value?.ToString() ?? "";
@@ -275,45 +322,20 @@ public static partial class GetRoutes
         });
     }
 
-   private static dynamic? GetNestedValue(dynamic obj, string[] keyParts)
+    private static dynamic? GetNestedValue(dynamic obj, string[] keyParts)
     {
         dynamic current = obj;
-
         foreach (var part in keyParts)
         {
             if (current is Obj dynObj && dynObj.HasKey(part))
             {
                 current = dynObj[part];
             }
-            else if (current is Arr dynArr)
-            {
-                // If current is an array, traverse into each object and collect the specified property
-                // This allows filtering on array.property (e.g., customer.id)
-                var results = Arr();
-                foreach (var arrItem in dynArr)
-                {
-                    if (arrItem is Obj arrObj && arrObj.HasKey(part))
-                    {
-                        results.Push(arrObj[part]);
-                    }
-                }
-
-                // If we found any results, continue with those
-                if (results.Length > 0)
-                {
-                    current = results;
-                }
-                else
-                {
-                    return null;
-                }
-            }
             else
             {
                 return null;
             }
         }
-
         return current;
     }
 
@@ -324,48 +346,5 @@ public static partial class GetRoutes
             return aNum.CompareTo(bNum);
         }
         return string.Compare(a, b, StringComparison.Ordinal);
-    }
-
-    private static Arr ApplyOrderBy(Arr data, string orderby)
-    {
-        // Clean orderby string
-        orderby = Regex.Replace(orderby, @"[^A-Za-z0-9_\-,\.]", "");
-        var orderFields = orderby.Split(",");
-
-        // Convert to list for LINQ sorting
-        var list = new List<Obj>();
-        foreach (Obj item in data)
-        {
-            list.Add(item);
-        }
-
-        IOrderedEnumerable<Obj>? ordered = null;
-
-        foreach (var field in orderFields)
-        {
-            var trimmed = field.Trim();
-            var cleaned = Regex.Replace(trimmed, @"\+", "");
-            var isDesc = cleaned.StartsWith("-");
-            var fieldName = isDesc ? cleaned.Substring(1) : cleaned;
-            var keyParts = fieldName.Split('.');
-
-            if (ordered == null)
-            {
-                // First sort
-                ordered = isDesc
-                    ? list.OrderByDescending(item => GetNestedValue(item, keyParts)?.ToString() ?? "")
-                    : list.OrderBy(item => GetNestedValue(item, keyParts)?.ToString() ?? "");
-            }
-            else
-            {
-                // ThenBy for multiple sorts
-                ordered = isDesc
-                    ? ordered.ThenByDescending(item => GetNestedValue(item, keyParts)?.ToString() ?? "")
-                    : ordered.ThenBy(item => GetNestedValue(item, keyParts)?.ToString() ?? "");
-            }
-        }
-
-        var finalList = ordered != null ? ordered.ToList() : list;
-        return Arr(finalList.ToArray());
     }
 }

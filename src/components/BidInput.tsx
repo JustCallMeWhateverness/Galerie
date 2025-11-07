@@ -1,8 +1,8 @@
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import { useCurrency } from '../hooks/useCurrency';
 
-export default function InputPlaceBid() {
+export default function BidInput() {
   const [result, setResult] = useState("");
   const [value, setValue] = useState("");
   const { getCurrencySymbol, convertToSEK } = useCurrency();
@@ -23,27 +23,18 @@ export default function InputPlaceBid() {
     <Form className="mt-4" onSubmit={handleSubmit}>
       <div className="position-relative mb-3">
         {/* TODO: min value will depend on the current bid - maybe use step? */}
-        <Form.Control
-          type="number"
-          min="1"
-          placeholder="Enter your bid"
-          value={value}
-          onChange={handleChange}
-        />
 
-        <span
-          className="position-absolute text-muted"
-          style={{
-            right: "1rem",
-            top: "50%",
-            transform: "translateY(-50%)",
-            pointerEvents: "none",
-            fontSize: "0.9rem",
-            opacity: 0.6,
-          }}
-        >
-          {getCurrencySymbol()}
-        </span>
+        <InputGroup>
+          <Form.Control
+            type="number"
+            min="1"
+            placeholder="Enter your bid"
+            value={value}
+            onChange={handleChange}
+          />
+          <InputGroup.Text>{getCurrencySymbol()}</InputGroup.Text>
+        </InputGroup>
+
       </div>
       <Button type="submit" variant="primary" className="w-100">
         Place bid

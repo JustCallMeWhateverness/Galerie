@@ -1,6 +1,8 @@
-import type { Bid } from "../interfaces/Bid";
+
+
 import { Col, ListGroup, Row } from "react-bootstrap";
 import { useCurrency } from "../hooks/useCurrency";
+import type { Bid } from "../pages/Auction";
 
 type Props = {
   bids: Bid[];
@@ -21,24 +23,27 @@ export default function BidHistory({ bids }: Props) {
       </Col>
 
       {visibleBids.map((b) => (
-        <Col xs={6} key={b.id} className="px-2 mb-1">
-          <ListGroup variant="flush">
-            <ListGroup.Item className="small d-flex flex-column text-start">
-              <div>
-                <strong>{formatCurrency(b.amount)}</strong>
-              </div>
-              <small className="text-muted">
-                {new Date(b.createdAt).toLocaleString("sv-SE", {
-                  year: "numeric",
-                  month: "short",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </small>
-            </ListGroup.Item>
-          </ListGroup>
-        </Col>
+        b.contentType === "Bid" ?
+          <Col xs={6} key={b.amount} className="px-2 mb-1">
+            <ListGroup variant="flush">
+              <ListGroup.Item className="small d-flex flex-column text-start">
+                <div>
+                  <strong>{formatCurrency(b.amount)}</strong>
+                </div>
+                <small className="text-muted">
+
+                  {new Date(b.timestamp ?? '2025-10-10T20:20:20Z').toLocaleString("sv-SE", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </small>
+              </ListGroup.Item>
+            </ListGroup>
+          </Col>
+          : <p>invalid bid</p>
       ))}
     </Row>
   );

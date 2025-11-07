@@ -1,5 +1,5 @@
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import type User from '../interfaces/User';
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import type User from "../interfaces/User";
 
 interface EditProfileModalProps {
   show: boolean;
@@ -9,6 +9,11 @@ interface EditProfileModalProps {
   onSave: () => void;
   onCancel: () => void;
   isSaving: boolean;
+  isArtistChecked: boolean;
+  creatingArtist: boolean;
+  onToggleArtist: (checked: boolean) => void;
+  onCreateArtist: () => void;
+  hasArtistInfo: boolean;
 }
 
 export default function EditProfileModal({
@@ -18,7 +23,12 @@ export default function EditProfileModal({
   onChange,
   onSave,
   onCancel,
-  isSaving
+  isSaving,
+  isArtistChecked,
+  creatingArtist,
+  onToggleArtist,
+  onCreateArtist,
+  hasArtistInfo,
 }: EditProfileModalProps) {
   return (
     <Modal show={show} onHide={onHide} centered className="editprofile-modal">
@@ -28,7 +38,7 @@ export default function EditProfileModal({
       <Modal.Body>
         <Form>
           <Row>
-            <Col xs={6} >
+            <Col xs={6}>
               <Form.Group className="mb-2">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
@@ -56,7 +66,6 @@ export default function EditProfileModal({
           <Row>
             <Col xs={6}>
               <Form.Group className="mb-2">
-
                 <Form.Label>Username</Form.Label>
                 <Form.Control
                   type="text"
@@ -100,14 +109,32 @@ export default function EditProfileModal({
               placeholder="Phone Number"
             />
           </Form.Group>
+          <Form.Group className="mb-2"> </Form.Group>
+          <Form.Label>I am an artist</Form.Label>
+          <Form.Check
+            type="checkbox"
+            id="artist-toggle"
+            label="Create my Artist profile"
+            checked={isArtistChecked}
+            onChange={(e) => onToggleArtist(e.target.checked)}
+            disabled={hasArtistInfo}
+          />
         </Form>
       </Modal.Body>
+
       <Modal.Footer>
+        <Button
+          variant="primary"
+          onClick={onCreateArtist}
+          disabled={hasArtistInfo || !isArtistChecked || creatingArtist}
+        >
+          {creatingArtist ? "Creating..." : "Create Artist Profile"}
+        </Button>
         <Button variant="secondary" onClick={onCancel}>
           Cancel
         </Button>
         <Button variant="primary" onClick={onSave} disabled={isSaving}>
-          {isSaving ? 'Saving...' : 'Save'}
+          {isSaving ? "Saving..." : "Save"}
         </Button>
       </Modal.Footer>
     </Modal>
