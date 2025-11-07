@@ -125,7 +125,11 @@ export default function AuctionListingPage() {
           <Col>
             <Image
               src={imageUrl}
-              alt={img?.mediaTexts} />
+              alt={img?.mediaTexts}
+              style={{
+                objectPosition: "center",
+              }}
+            />
 
             <div className="justify">
               <span className='heart-hitbox float-end' role='button' onClick={onFavClick}>
