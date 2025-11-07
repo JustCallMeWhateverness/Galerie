@@ -1,8 +1,9 @@
 // Images in the main element
 main {
   img {
-    object-fit: cover;
-    aspect-ratio: 16/9;
+    object-fit: contain;
+
+    // aspect-ratio: 16/9;
 
     @media (min-width: 576px) {
       aspect-ratio: 20/9;
@@ -23,7 +24,7 @@ main {
       transition: filter 0.4s;
 
       &.bw {
-        filter: grayscale(100%)
+        filter: grayscale(100%);
       }
     }
 
@@ -36,9 +37,9 @@ main {
     }
   }
 
-  article.product-details img {
-    aspect-ratio: 20/9;
-  }
+  // article.product-details img {
+  //   aspect-ratio: 20/9;
+  // }
 
   img.bw {
     filter: grayscale(100%) sepia(20%);
