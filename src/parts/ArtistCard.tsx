@@ -21,7 +21,7 @@ export type ExtendedArtist = Artist & {
 };
 
 export default function ArtistCard(props: Artist) {
-  const { id, title, workTitle, href } = props;
+  const { id, title, workTitle, href, profileImage } = props;
   const { user } = useAuth();
   const isFavoritedByUser = !!user?.likedArtists?.some(a => a.id === id);
   const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, undefined, props);
@@ -31,6 +31,9 @@ export default function ArtistCard(props: Artist) {
     e.stopPropagation();
     onFavorite();
   };
+
+  const imagePath = profileImage?.paths?.[0];
+  const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg";
 
   return (
     <>
@@ -45,6 +48,8 @@ export default function ArtistCard(props: Artist) {
       >
         <div className="position-relative">
           <Card.Img
+            src={imageUrl}
+            alt={title}
             style={{
               minHeight: "200px",
               objectFit: "cover",
