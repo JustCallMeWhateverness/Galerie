@@ -247,7 +247,7 @@ export default function ArtistView() {
     return (
       <div className="container-fluid px-3 px-md-4 py-5">
         <div className="text-center">
-          <h2>Artist hittades inte</h2>
+          <h2>Could not found artist</h2>
         </div>
         {error && (
           <div className="text-center text-muted mt-2">{error}</div>
