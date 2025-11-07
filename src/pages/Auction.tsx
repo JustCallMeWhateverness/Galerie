@@ -39,7 +39,7 @@ export type Bid = {
   customerId: string,
   amount: number,
   contentType: string,
-  timestamp: string
+  timeStamp: string
 }
 
 type imageUpload = {
