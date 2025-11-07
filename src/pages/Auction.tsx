@@ -19,22 +19,6 @@ AuctionListingPage.route = {
   menulabel: "Auction Listing Page"
 };
 
-// TODO: Add timestamp field to Bid in backend
-
-const sampleInfo: AuctionInfo = {
-  title: "Information missing",
-  description: "Information missing",
-  seller: "Information missing",
-  pickupLocation: "Information missing",
-  freightPrice: 0,
-  freightEnabled: true,
-  pickupEnabled: true,
-  timeRemaining: "Information missing",
-  startBid: 30
-};
-
-
-
 interface AuctionResponse {
   id: string,
   title: string,
@@ -46,15 +30,16 @@ interface AuctionResponse {
   seller: [Customer],
   category: string,
   items?: Bid[],
-  startBid?: number,
-  imageUpload?: imageUpload
+  startBid: number,
+  imageUpload?: imageUpload,
+  color: string
 }
 
 export type Bid = {
   customerId: string,
   amount: number,
   contentType: string,
-  timestamp?: string
+  timestamp: string
 }
 
 type imageUpload = {
@@ -96,7 +81,8 @@ export default function AuctionListingPage() {
           pickupEnabled: data.pickupEnabled,
           freightEnabled: data.freightEnabled,
           timeRemaining: getRemainingTimeMessage(new Date(data.endTime)),
-          startBid: data.startBid
+          startBid: data.startBid,
+          color: data.color
         })
 
         setBids(data.items ?? [])
@@ -148,7 +134,9 @@ export default function AuctionListingPage() {
                 {/* bi-suit-heart must be at the end for the correct logo to be shown */}
                 <i className={`fs-2 mx-2 bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
               </span>
-              <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
+              {auctionInformation &&
+                <AuctionInformation info={auctionInformation} />
+              }
             </div>
             <div>
               <BidInput miniBid={minimumBid} />
