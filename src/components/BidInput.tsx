@@ -1,32 +1,64 @@
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import { useCurrency } from '../hooks/useCurrency';
+import { useAuth } from "../hooks/useAuth";
 
 interface Props {
-  miniBid: number
+  miniBid: number,
+  auctionId: string,
+  onBidSuccess?: () => void
 }
 
-
-export default function BidInput({ miniBid }: Props) {
-  const [result, setResult] = useState("");
+export default function BidInput({ miniBid, auctionId, onBidSuccess }: Props) {
   const [value, setValue] = useState("");
   const { getCurrencySymbol, convertToSEK } = useCurrency();
-  const step = 25
-
-  const [validated, setValidated] = useState(false)
-
+  const { user } = useAuth()
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    const numValue = parseFloat(value)
-
-
     const amountInSelectedCurrency = parseFloat(value);
     const amountInSEK = convertToSEK(amountInSelectedCurrency);
-    setResult(`Form has been submitted with Input: ${value} ${getCurrencySymbol()} (${amountInSEK.toFixed(2)} SEK)`);
+
+    sendBid(auctionId, amountInSEK)
+
   }
 
+  async function sendBid(auctionId: string, amount: number) {
+    const body = {
+      items: {
+        $push: [
+          {
+            customerId: user?.id,
+            amount: amount,
+            contentType: "Bid",
+            timeStamp: Date.now()
+          }
+        ]
+      }
+    };
+
+    try {
+      const response = await fetch(`/api/Auction/${auctionId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (onBidSuccess) { onBidSuccess() }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error sending bid:', error);
+      throw error;
+    }
+  }
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value);
   };
@@ -40,7 +72,6 @@ export default function BidInput({ miniBid }: Props) {
           <Form.Control
             type="number"
             min={miniBid}
-            // step={step}
             placeholder={`Enter your bid, minimum ${miniBid}`}
             value={value}
             onChange={handleChange}
@@ -57,7 +88,7 @@ export default function BidInput({ miniBid }: Props) {
         Place bid
       </Button>
 
-      <h4>{result}</h4> {/*TODO: Remove when not needed for testing*/}
+      {/* <h4>{result}</h4> TODO: Remove when not needed for testing */}
     </Form>
   );
 }

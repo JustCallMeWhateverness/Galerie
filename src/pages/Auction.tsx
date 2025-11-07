@@ -13,7 +13,7 @@ import { useFavorite } from "../hooks/useFavorite";
 import AuthModal from "../modals/AuthModal";
 
 
-AuctionListingPage.route = {
+Auction.route = {
   path: "/auction/:id",
   index: 2,
   menulabel: "Auction Listing Page"
@@ -47,7 +47,7 @@ type imageUpload = {
   mediaTexts?: string[]
 }
 
-export default function AuctionListingPage() {
+export default function Auction() {
 
   const { id } = useParams<{ id: string }>()
   const [isLoading, setIsLoading] = useState(true)
@@ -65,6 +65,22 @@ export default function AuctionListingPage() {
     e.stopPropagation()
     onFavorite()
 
+
+  }
+
+  async function refreshBid() {
+    try {
+      const response = await fetch(`/api/Auction/${id}`, { method: "GET" })
+      const data: AuctionResponse = await response.json()
+      setBids(data.items ?? [])
+
+      if (data.items && data.items.length > 0) {
+        setMinimumBid(Math.max(...data.items.map(bid => bid.amount)))
+      }
+    }
+    catch (error) {
+      console.log("error refreshing: ", error)
+    }
 
   }
 
@@ -87,19 +103,11 @@ export default function AuctionListingPage() {
 
         setBids(data.items ?? [])
         setImg(data.imageUpload ?? null)
-
-        if (bids.length > 0) {
-          setMinimumBid(Math.max(...bids.map(bid => bid.amount)))
+        if (data.items && data.items.length > 0) {
+          setMinimumBid(Math.max(...data.items.map(bid => bid.amount)))
+        } else {
+          setMinimumBid(data.startBid)
         }
-        else if (auctionInformation?.startBid) {
-          setMinimumBid(auctionInformation.startBid)
-        }
-        else {
-          setMinimumBid(0)
-        }
-        console.log(data.startBid)
-
-
       }
       catch (error) {
         console.log("Error: ", error)
@@ -139,7 +147,7 @@ export default function AuctionListingPage() {
               }
             </div>
             <div>
-              <BidInput miniBid={minimumBid} />
+              <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
             </div>
 
             <div>
