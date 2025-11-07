@@ -63,15 +63,23 @@ export default function HomePage() {
     return () => abort.abort();
   }, []);
 
-  const upcomingAuctions = auctions.filter(a => a.startTime > now);
+  // Function to get random auctions for carousel
+  function getRandomAuctions<T>(arr: T[], limit: number): T[] {
+    return [...arr]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, limit);
+  }
 
+  const carouselLimit = 5;
+  const upcomingAuctions = auctions.filter(a => a.startTime > now);
+  const carouselAuctions = getRandomAuctions(upcomingAuctions, carouselLimit);
 
   return (
     <>
       <Row>
         <Col className="mb-2">
           <CarouselComponent
-            items={upcomingAuctions.map(a => ({
+            items={carouselAuctions.map(a => ({
               id: a.id,
               title: a.title,
               imageUpload: a.imageUpload,
