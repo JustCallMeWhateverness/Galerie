@@ -5,6 +5,7 @@ import SearchBar from "../components/SearchBar";
 import AuctionCard from "../parts/AuctionCard";
 import ArtistCard from "../parts/ArtistCard";
 import type Artist from "../interfaces/Artist";
+import FilterModal from "../modals/FilterModal";
 
 type AuctionDTO = {
   id: string;
@@ -49,6 +50,11 @@ export default function Search() {
   const [artist, setArtist] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [showFilter, setShowFilter] = useState(false);
+  function handleFilterApply(params: URLSearchParams) {
+    navigate(`/auction?${params.toString()}`);
+  }
 
   useEffect(() => {
     const abort = new AbortController();
@@ -143,14 +149,10 @@ export default function Search() {
               </Button>
             </ButtonGroup>
 
-            <Link
-              to="/filter"
-              className="text-black text-decoration-none me-2"
-              aria-label="Open filters"
-              title="Filters"
+            <Button variant="none" onClick={() => setShowFilter(true)}
             >
               <i className="bi bi-filter fs-4"></i>
-            </Link>
+            </Button>
           </div>
         </Col>
       </Row>
@@ -175,6 +177,11 @@ export default function Search() {
           )}
         </Col>
       </Row>
+      <FilterModal
+        show={showFilter}
+        onHide={() => setShowFilter(false)}
+        onApply={handleFilterApply}
+      />
 
       <Row xs={2} sm={2} md={3} lg={4} className="g-3">
         {tab === "auction" &&
