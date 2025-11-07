@@ -4,7 +4,7 @@ using System.Text.Json;
 
 public static partial class GetRoutes
 {
-    private static void CollectContentItemIds(Dictionary<string, JsonElement> obj, HashSet<string> ids)
+    public static void CollectContentItemIds(Dictionary<string, JsonElement> obj, HashSet<string> ids)
     {
         foreach (var kvp in obj)
         {
@@ -44,7 +44,7 @@ public static partial class GetRoutes
         }
     }
 
-    private static void CollectUserIds(Dictionary<string, JsonElement> obj, HashSet<string> userIds)
+    public static void CollectUserIds(Dictionary<string, JsonElement> obj, HashSet<string> userIds)
     {
         foreach (var kvp in obj)
         {
@@ -78,7 +78,7 @@ public static partial class GetRoutes
         }
     }
 
-    private static void PopulateContentItemIds(
+    public static void PopulateContentItemIds(
         Dictionary<string, JsonElement> obj,
         Dictionary<string, Dictionary<string, JsonElement>> itemsDictionary)
     {
