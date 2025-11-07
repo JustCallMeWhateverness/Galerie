@@ -28,9 +28,9 @@ export default function ArtistInfo() {
       workTitle: artistInfo.workTitle ?? "",
       description: artistInfo.description ?? "",
       customer: artistInfo.customer ?? "",
-      profileImage: artistInfo.profileImage, // behåll ev. befintlig bild
+      profileImage: artistInfo.profileImage,
     });
-    setImagePaths(artistInfo.profileImage?.paths ?? []); // initiera paths
+    setImagePaths(artistInfo.profileImage?.paths ?? []);
     setShow(true);
   };
 
@@ -44,7 +44,7 @@ export default function ArtistInfo() {
   };
 
   const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
-    setImagePaths([res.path]); // enkel: en bild
+    setImagePaths([res.path]);
   };
 
   const handleSave = async () => {
@@ -55,17 +55,15 @@ export default function ArtistInfo() {
         title: editForm.title,
         workTitle: editForm.workTitle,
         description: editForm.description,
-        // ⬇️ lägg bara med om vi har paths (ren payload)
         profileImage: imagePaths.length ? { paths: imagePaths, mediaTexts: [""] } : undefined,
       });
       setShow(false);
-      window.location.reload(); // behåll er temporära refresh
+      window.location.reload();
     } finally {
       setSaving(false);
     }
   };
 
-  // liten helper för bild-url
   const resolveMediaUrl = (p?: string) =>
     !p ? "/images/avatar-placeholder.png"
       : p.startsWith("http") || p.startsWith("/media/") ? p : `/media/${p}`;
