@@ -76,41 +76,77 @@ public static class PostRoutes
                     var pascalKey = ToPascalCase(kvp.Key);
                     var value = kvp.Value;
 
-                    // Handle "items" field - this should become BagPart
-                    if (kvp.Key == "items" && value is JsonElement itemsElement && itemsElement.ValueKind == JsonValueKind.Array)
+                    // Handle BagPart fields - detect arrays with objects that have "contentType" property
+                    // Supports both "items" (default BagPart) and named BagParts like "step", "ingredients", etc.
+                    if (value is JsonElement jsonArrayElement && jsonArrayElement.ValueKind == JsonValueKind.Array)
                     {
-                        var bagItems = new List<object>();
-                        foreach (var item in itemsElement.EnumerateArray())
+                        // Check if first element has contentType property (indicates BagPart items)
+                        var firstElement = jsonArrayElement.EnumerateArray().FirstOrDefault();
+                        if (firstElement.ValueKind == JsonValueKind.Object &&
+                            firstElement.TryGetProperty("contentType", out _))
                         {
-                            if (item.ValueKind == JsonValueKind.Object)
+                            var bagItems = new List<object>();
+                            foreach (var item in jsonArrayElement.EnumerateArray())
                             {
-                                // Get contentType first
-                                string? itemType = null;
-                                if (item.TryGetProperty("contentType", out var ctProp) && ctProp.ValueKind == JsonValueKind.String)
+                                if (item.ValueKind == JsonValueKind.Object)
                                 {
-                                    itemType = ctProp.GetString();
-                                }
+                                    // Get contentType first
+                                    string? itemType = null;
+                                    if (item.TryGetProperty("contentType", out var ctProp) && ctProp.ValueKind == JsonValueKind.String)
+                                    {
+                                        itemType = ctProp.GetString();
+                                    }
 
-                                if (!string.IsNullOrEmpty(itemType))
-                                {
-                                    var bagItem = CreateBagPartItem(item, itemType);
-                                    bagItems.Add(bagItem);
+                                    if (!string.IsNullOrEmpty(itemType))
+                                    {
+                                        var bagItem = CreateBagPartItem(item, itemType);
+                                        bagItems.Add(bagItem);
+                                    }
                                 }
                             }
-                        }
 
-                        if (bagItems.Count > 0)
-                        {
-                            contentItem.Content["BagPart"] = new Dictionary<string, object>
+                            if (bagItems.Count > 0)
                             {
-                                ["ContentItems"] = bagItems
-                            };
+                                // "items" → "BagPart", "step" → "Step", "ingredients" → "Ingredients"
+                                var partName = kvp.Key == "items" ? "BagPart" : pascalKey;
+                                contentItem.Content[partName] = new Dictionary<string, object>
+                                {
+                                    ["ContentItems"] = bagItems
+                                };
+                            }
+                            continue;
                         }
-                        continue;
+                    }
+
+                    // Check if value is a number or boolean first - these should NEVER be treated as ID references
+                    bool isNumberOrBoolean = false;
+                    if (value is JsonElement checkElement)
+                    {
+                        isNumberOrBoolean = checkElement.ValueKind == JsonValueKind.Number ||
+                                          checkElement.ValueKind == JsonValueKind.True ||
+                                          checkElement.ValueKind == JsonValueKind.False;
+                    }
+
+                    // Check if this is a UserPickerField BEFORE checking field name ending with "Id"
+                    // UserPickerFields are arrays of objects with both "id" and "username" properties
+                    bool isUserPickerField = false;
+                    if (value is JsonElement checkElement2 && checkElement2.ValueKind == JsonValueKind.Array)
+                    {
+                        var firstElement = checkElement2.EnumerateArray().FirstOrDefault();
+                        if (firstElement.ValueKind == JsonValueKind.Object &&
+                            firstElement.TryGetProperty("id", out _) &&
+                            firstElement.TryGetProperty("username", out _))
+                        {
+                            isUserPickerField = true;
+                        }
                     }
 
                     // Handle fields ending with "Id" - these are content item references
-                    if (kvp.Key.EndsWith("Id", StringComparison.OrdinalIgnoreCase) &&
+                    // BUT skip this if the value is a number or boolean (e.g., "startBid" with number value)
+                    // OR if it's a UserPickerField (which should be handled later in the array logic)
+                    if (!isNumberOrBoolean &&
+                        !isUserPickerField &&
+                        kvp.Key.EndsWith("Id", StringComparison.OrdinalIgnoreCase) &&
                         kvp.Key.Length > 2)
                     {
                         // Transform "ownerId" → "Owner" with ContentItemIds
@@ -399,8 +435,14 @@ public static class PostRoutes
             var pascalKey = ToPascalCase(prop.Name);
             var value = prop.Value;
 
+            // Check if value is a number or boolean first - these should NEVER be treated as ID references
+            bool isNumberOrBoolean = value.ValueKind == JsonValueKind.Number ||
+                                    value.ValueKind == JsonValueKind.True ||
+                                    value.ValueKind == JsonValueKind.False;
+
             // Handle fields ending with "Id" - these are content item references
-            if (prop.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase) && prop.Name.Length > 2)
+            // BUT skip this if the value is a number or boolean (e.g., "startBid" with number value)
+            if (!isNumberOrBoolean && prop.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase) && prop.Name.Length > 2)
             {
                 var fieldName = pascalKey.Substring(0, pascalKey.Length - 2);
                 if (value.ValueKind == JsonValueKind.String)
@@ -415,9 +457,22 @@ public static class PostRoutes
                     }
                 }
             }
+            // Check if string value looks like a content item ID (even without "Id" suffix)
             else if (value.ValueKind == JsonValueKind.String)
             {
-                typeSection[pascalKey] = new Dictionary<string, object> { ["Text"] = value.GetString()! };
+                var strValue = value.GetString();
+                // If it looks like a content item ID (26 chars alphanumeric), treat as reference
+                if (strValue != null && strValue.Length == 26 && strValue.All(c => char.IsLetterOrDigit(c)))
+                {
+                    typeSection[pascalKey] = new Dictionary<string, object>
+                    {
+                        ["ContentItemIds"] = new List<string> { strValue }
+                    };
+                }
+                else
+                {
+                    typeSection[pascalKey] = new Dictionary<string, object> { ["Text"] = strValue! };
+                }
             }
             else if (value.ValueKind == JsonValueKind.Number)
             {
