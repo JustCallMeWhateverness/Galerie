@@ -13,7 +13,7 @@ type Props = Auction & {
 
 export default function AuctionCard(props: Props) {
 
-  const { id, title, currentBid, endTime, href, imageUpload } = props;
+  const { id, title, currentBid, endTime, href, imageUpload, startBid } = props;
   const { user } = useAuth();
   const { formatCurrency } = useCurrency();
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id);
@@ -63,7 +63,14 @@ export default function AuctionCard(props: Props) {
             Time left: {remainingTimeMessage}
           </Card.Text>
           <Card.Text className='text-center text-decoration-none'>
-            Current bid: {formatCurrency(currentBid)}
+            {currentBid > startBid ? (
+              <>Current bid: {formatCurrency(currentBid)}</>
+            ) : (
+              <>
+                Start price: {formatCurrency(startBid)}
+                <small className="text-muted d-block">No bids yet</small>
+              </>
+            )}
           </Card.Text>
         </Card.Body>
       </Card>

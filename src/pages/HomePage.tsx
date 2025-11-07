@@ -12,6 +12,7 @@ type AuctionDTO = {
   id: string;
   title: string;
   currentBid: number;
+  startBid: number;
   endTime: Date;
   startTime: Date;
   favorited?: boolean;
@@ -20,6 +21,9 @@ type AuctionDTO = {
     paths: string[];
     mediaTexts?: string[];
   };
+  items?: {
+    amount: number;
+  }[];
 };
 
 export default function HomePage() {
@@ -41,17 +45,23 @@ export default function HomePage() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: AuctionDTO[] = await res.json();
 
-        const mapped: Auction[] = (data ?? []).map((a) => ({
-          id: a.id,
-          title: a.title,
-          currentBid: Number(a.currentBid ?? 0),
-          startTime: new Date(a.startTime),
-          endTime: new Date(a.endTime),
-          favorited: Boolean(a.favorited),
-          favouritesCount: a.favouritesCount ?? 0,
-          imageUpload: a.imageUpload,
+        const mapped: Auction[] = (data ?? []).map((a) => {
+          const highestBid = a.items && a.items.length > 0
+            ? Math.max(...a.items.map(bid => bid.amount))
+            : a.startBid ?? 0;
 
-        }));
+          return {
+            id: a.id,
+            title: a.title,
+            currentBid: highestBid,
+            startBid: a.startBid ?? 0,
+            startTime: new Date(a.startTime),
+            endTime: new Date(a.endTime),
+            favorited: Boolean(a.favorited),
+            favouritesCount: a.favouritesCount ?? 0,
+            imageUpload: a.imageUpload,
+          };
+        });
 
         setAuctions(mapped);
       } catch (e: any) {
@@ -95,6 +105,7 @@ export default function HomePage() {
                 id={auction.id}
                 title={auction.title}
                 currentBid={auction.currentBid}
+                startBid={auction.startBid}
                 favorited={auction.favorited ?? false}
                 startTime={new Date(auction.startTime)}
                 endTime={new Date(auction.endTime)}
@@ -122,6 +133,7 @@ export default function HomePage() {
                 id={auction.id}
                 title={auction.title}
                 currentBid={auction.currentBid}
+                startBid={auction.startBid}
                 favorited={auction.favorited ?? false}
                 startTime={new Date(auction.startTime)}
                 endTime={new Date(auction.endTime)}
@@ -151,6 +163,7 @@ export default function HomePage() {
                 id={auction.id}
                 title={auction.title}
                 currentBid={auction.currentBid}
+                startBid={auction.startBid}
                 favorited={auction.favorited ?? false}
                 startTime={new Date(auction.startTime)}
                 endTime={new Date(auction.endTime)}
