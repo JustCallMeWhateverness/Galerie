@@ -10,7 +10,7 @@ import FavouritesPage from "./pages/FavouritesPage.tsx";
 import Search from "./pages/Search.tsx";
 import ArtistView from "./pages/ArtistView.tsx";
 import CreateAuction from "./pages/CreateAuction.tsx";
-import AuctionListingPage from "./pages/Auction.tsx";
+import Auction from "./pages/Auction.tsx";
 import ActiveBids from "./pages/ActiveBid.tsx";
 import MySalesPage from "./pages/MySalesPage.tsx";
 import MyPurchases from "./pages/MyPurchases.tsx";
@@ -24,7 +24,7 @@ export default [
   Search,
   ArtistView,
   CreateAuction,
-  AuctionListingPage,
+  Auction,
   ActiveBids,
   MySalesPage,
   MyPurchases,

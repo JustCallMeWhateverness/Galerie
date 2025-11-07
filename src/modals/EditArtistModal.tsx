@@ -1,5 +1,6 @@
-import { Modal, Button, Form, Col } from "react-bootstrap";
+import { Modal, Button, Form, Col, Row } from "react-bootstrap";
 import type InterfaceArtistInfo from "../interfaces/InterfaceArtistInfo";
+import FileUpload from "../components/FileUpload";
 
 interface EditArtistModalProps {
   show: boolean;
@@ -9,33 +10,39 @@ interface EditArtistModalProps {
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
+  onImageUploaded?: (res: { url: string; fileName: string; path: string; }) => void;
 }
-//TODO: Make a save button that works, and make the modal editable
+
 export default function EditArtistModal({
   show,
   onHide,
   onSave,
   editForm,
   onChange,
+  onImageUploaded,
 }: EditArtistModalProps) {
+
+  const resolveMediaUrl = (p?: string) =>
+    !p ? "/images/avatar-placeholder.png"
+      : p.startsWith("http") || p.startsWith("/media/") ? p : `/media/${p}`;
+
+  const current = resolveMediaUrl(editForm.profileImage?.paths?.[0]);
+
   return (
     <Modal show={show} onHide={onHide} centered className="editartist-modal">
       <Modal.Header closeButton>
         <Modal.Title>Edit Artist Information</Modal.Title>
       </Modal.Header>
+
       <Modal.Body>
         <Form>
           <Col>
             <Form.Group className="mb-2">
               <Form.Label>Your Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="customer"
-                value={editForm.customer}
-                disabled
-              />
+              <Form.Control type="text" name="customer" value={editForm.customer} disabled />
             </Form.Group>
           </Col>
+
           <Col>
             <Form.Group className="mb-2">
               <Form.Label>Profession / Creative title</Form.Label>
@@ -61,6 +68,7 @@ export default function EditArtistModal({
               />
             </Form.Group>
           </Col>
+
           <Col>
             <Form.Group className="mb-2">
               <Form.Label>Description of your business</Form.Label>
@@ -75,14 +83,25 @@ export default function EditArtistModal({
             </Form.Group>
           </Col>
         </Form>
+        <Row className="mb-3 align-items-center">
+          <Col xs="auto">
+            <img
+              src={current}
+              alt="Artist avatar"
+              style={{ width: 96, height: 96, objectFit: "cover", borderRadius: "50%" }}
+            />
+          </Col>
+          <Col>
+            <Form.Label className="mb-1">Profile image</Form.Label>
+            <FileUpload onUploaded={onImageUploaded} />
+          </Col>
+        </Row>
+
       </Modal.Body>
+
       <Modal.Footer>
-        <Button variant="primary" onClick={onSave}>
-          Save
-        </Button>
-        <Button variant="secondary" onClick={onHide}>
-          Cancel
-        </Button>
+        <Button variant="primary" onClick={onSave}>Save</Button>
+        <Button variant="secondary" onClick={onHide}>Cancel</Button>
       </Modal.Footer>
     </Modal>
   );

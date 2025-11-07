@@ -4,4 +4,8 @@ export default interface InterfaceArtistInfo {
   customer?: string;
   description: string;
   workTitle: string;
+  profileImage?: {
+    paths: string[];
+    mediaTexts?: string[];
+  };
 }

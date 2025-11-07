@@ -4,6 +4,7 @@ import type { Option } from "../interfaces/SelectDropdown";
 import MultiSelectDropdown from "../parts/MultiSelectDropdown";
 import RangeDropdown from "../parts/RangeDropdown";
 import { Button, Modal } from "react-bootstrap";
+import BackButton from "../components/BackButton";
 
 const sortOptions: Option[] = [
   { value: "low", label: "Lowest current bid" },

@@ -2,6 +2,10 @@ export type UpdateArtistProps = {
   title?: string;
   workTitle?: string;
   description?: string;
+  profileImage?: {
+    paths: string[];
+    mediaTexts?: string[];
+  };
 };
 
 export async function updateArtistProfile(

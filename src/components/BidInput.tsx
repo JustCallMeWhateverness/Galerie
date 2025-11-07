@@ -1,23 +1,67 @@
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import { useCurrency } from '../hooks/useCurrency';
+import { useAuth } from "../hooks/useAuth";
 
-export default function BidInput() {
-  const [result, setResult] = useState("");
+interface Props {
+  miniBid: number,
+  auctionId: string,
+  onBidSuccess?: () => void
+}
+
+export default function BidInput({ miniBid, auctionId, onBidSuccess }: Props) {
   const [value, setValue] = useState("");
   const { getCurrencySymbol, convertToSEK } = useCurrency();
+  const { user } = useAuth()
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const amountInSelectedCurrency = parseFloat(value);
     const amountInSEK = convertToSEK(amountInSelectedCurrency);
-    setResult(`Form has been submitted with Input: ${value} ${getCurrencySymbol()} (${amountInSEK.toFixed(2)} SEK)`);
+
+    sendBid(auctionId, amountInSEK)
+
   }
 
+  async function sendBid(auctionId: string, amount: number) {
+    const body = {
+      items: {
+        $push: [
+          {
+            customerId: user?.id,
+            amount: amount,
+            contentType: "Bid",
+            timeStamp: Date.now()
+          }
+        ]
+      }
+    };
+
+    try {
+      const response = await fetch(`/api/Auction/${auctionId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (onBidSuccess) { onBidSuccess() }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error sending bid:', error);
+      throw error;
+    }
+  }
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value);
-    setResult("");
-  }
+  };
 
   return (
     <Form className="mt-4" onSubmit={handleSubmit}>
@@ -27,11 +71,15 @@ export default function BidInput() {
         <InputGroup>
           <Form.Control
             type="number"
-            min="1"
-            placeholder="Enter your bid"
+            min={miniBid}
+            placeholder={`Enter your bid, minimum ${miniBid}`}
             value={value}
             onChange={handleChange}
+            required
+            autoComplete="off"
           />
+          <Form.Control.Feedback type="invalid">The bid must be higher than {miniBid}
+          </Form.Control.Feedback>
           <InputGroup.Text>{getCurrencySymbol()}</InputGroup.Text>
         </InputGroup>
 
@@ -39,7 +87,8 @@ export default function BidInput() {
       <Button type="submit" variant="primary" className="w-100">
         Place bid
       </Button>
-      <h4>{result}</h4> {/*TODO: Remove when not needed for testing*/}
+
+      {/* <h4>{result}</h4> TODO: Remove when not needed for testing */}
     </Form>
   );
 }
