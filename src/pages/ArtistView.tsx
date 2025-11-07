@@ -5,6 +5,7 @@ import AuctionCard from "../parts/AuctionCard";
 import type Auction from "../interfaces/Auction";
 import type { ExtendedArtist } from "../parts/ArtistCard";
 import BackButton from "../components/BackButton";
+import ProfileCard from "../components/ProfileCard";
 
 ArtistView.route = {
   path: "/artist-view/:id",
@@ -50,7 +51,7 @@ type AuctionDTO = {
   endTime: string;
   startTime: string;
   favorited?: boolean;
-
+  favouritesCount?: number;
   seller?: Array<{ id: string; username?: string; }>;
   customer?: Array<{ id: string; username?: string; }>;
 
@@ -265,63 +266,20 @@ export default function ArtistView() {
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
       <BackButton className="mb-3" />
-      <div
-        className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto"
-        style={{ maxWidth: "600px" }}
-      >
-        <div className="d-flex flex-column flex-md-row align-items-start">
-          <div className="me-md-4 mb-3 mb-md-0 text-center text-md-start">
-            <div
-              className="rounded-3 bg-light d-flex align-items-center justify-content-center mx-auto mx-md-0 overflow-hidden"
-              style={{
-                width: "180px",
-                height: "280px",
-                border: "1px solid #e9ecef",
-              }}
-            >
-              {artist.avatar ? (
-                <img
-                  src={artist.avatar}
-                  alt={artist.title || "Artist"}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                  }}
-                />
-              ) : (
-                <i
-                  className="bi bi-person-fill text-muted"
-                  style={{ fontSize: "3rem" }}
-                ></i>
-              )}
-            </div>
-          </div>
-
-          <div className="flex-grow-1" style={{ marginTop: "20px" }}>
-            <div>
-              <h4 className="fw-bold mb-1 text-dark">
-                {artist.title || "Artist"}
-              </h4>
-              {artist.workTitle && (
-                <div className="text-dark mb-1">{artist.workTitle}</div>
-              )}
-              {artist.location && (
-                <div className="text-dark mb-1">{artist.location}</div>
-              )}
-              {artist.email && (
-                <div className="text-dark mb-1">{artist.email}</div>
-              )}
-              {artist.registrationDate && (
-                <div className="text-dark small">
-                  Reg. {artist.registrationDate}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      <ProfileCard
+        avatar={artist.avatar}
+        title={artist.title || artist.username || 'Artist'}
+        fields={[
+          { value: artist.workTitle },
+          { value: artist.location },
+          { value: artist.email },
+        ]}
+        dateInfo={{
+          label: "Reg.",
+          value: artist.registrationDate || null,
+          position: "info",
+        }}
+      />
 
       <div
         className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto"

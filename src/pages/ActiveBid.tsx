@@ -1,4 +1,3 @@
-import { Row, Col } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 import { useCurrency } from "../hooks/useCurrency";
 import AuthModal from "../modals/AuthModal";
@@ -13,7 +12,15 @@ export default function ActiveBids() {
   const { formatCurrency } = useCurrency();
 
   if (loading) {
-    return <p>Loading…</p>;
+    return (
+      <div className="container-fluid px-3 px-md-4 py-5">
+        <div className="text-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -30,30 +37,26 @@ export default function ActiveBids() {
 
   if (activeBids.length === 0) {
     return (
-      <Row className="mt-4">
-        <Col>
-          <BackButton className="mb-3" fallbackTo="/user" />
-          <h2>Active Bids</h2>
-          <p>You have no active bids.</p>
-        </Col>
-      </Row>
+      <div className="container-fluid px-3 px-md-4 py-4">
+        <BackButton className="mb-3" fallbackTo="/user" />
+        <h2>Active Bids</h2>
+        <p>You have no active bids.</p>
+      </div>
     );
   }
 
   return (
-    <Row className="mt-4">
-      <Col>
-        <BackButton className="mb-3" fallbackTo="/user" />
-        <h2>Active Bids</h2>
-        <ul>
-          {activeBids.map((bid) => (
-            <li key={bid.id}>
-              <strong>{formatCurrency(bid.amount)}</strong> – placed{" "}
-              {new Date(bid.createdAt).toLocaleString()}
-            </li>
-          ))}
-        </ul>
-      </Col>
-    </Row>
+    <div className="container-fluid px-3 px-md-4 py-4">
+      <BackButton className="mb-3" fallbackTo="/user" />
+      <h2>Active Bids</h2>
+      <ul>
+        {activeBids.map((bid) => (
+          <li key={bid.id}>
+            <strong>{formatCurrency(bid.amount)}</strong> – placed{" "}
+            {new Date(bid.createdAt).toLocaleString()}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

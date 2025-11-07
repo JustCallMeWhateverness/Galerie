@@ -12,6 +12,7 @@ import Logout from "../components/Logout";
 import ArtistInfo from "../components/ArtistInfo";
 import { createArtistProfile } from "../api/createArtistProfile";
 import CurrencySettingsModal from "../modals/CurrencySettingsModal";
+import ProfileCard from "../components/ProfileCard";
 
 UserPage.route = {
   path: "/user/:id?",
@@ -131,13 +132,13 @@ export default function UserPage() {
 
   if (loading) {
     return (
-      <Row className="justify-content-center align-items-center user-loading-row">
-        <Col xs="auto">
+      <div className="container-fluid px-3 px-md-4 py-5">
+        <div className="text-center">
           <div className="spinner-border" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-        </Col>
-      </Row>
+        </div>
+      </div>
     );
   }
 
@@ -146,72 +147,62 @@ export default function UserPage() {
   }
 
   return (
-    <div>
-      <Row className="user-profile-row mx-auto">
-        <Col xs={5} className="user-avatar-col">
-          <div className="user-avatar">
-            <i className="bi bi-person-fill"></i>
-          </div>
-          <div className="user-created">
-            Created:{" "}
-            {user.created
-              ? new Date(user.created).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              : "N/A"}
-          </div>
-        </Col>
-
-        <Col>
-          <div>
-            <h4 className="user-name">
-              {user.firstName} {user.lastName}
-            </h4>
-            <div className="username">{user.username}</div>
-            <div className="phone-number">{user.phoneNumber}</div>
-            <div className="user-location">{user.location}</div>
-            <div className="user-email">{user.email}</div>
-
-            <Row className="mt-3">
-              <Col xs="auto" className="d-flex justify-content-between">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setIsEditing(true)}
-                  className="me-2"
-                >
-                  Edit
-                </Button>
-                <Logout />
-              </Col>
-            </Row>
-          </div>
-        </Col>
-      </Row>
+    <div className="container-fluid px-3 px-md-4 py-4">
+      <ProfileCard
+        title={
+          (user.firstName || user.lastName)
+            ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
+            : user.username || 'User'
+        }
+        fields={[
+          ...((user.firstName || user.lastName) && user.username ? [{ value: user.username }] : []),
+          { value: user.phoneNumber },
+          { value: user.location },
+          { value: user.email },
+        ]}
+        dateInfo={{
+          label: "Created",
+          value: user.created
+            ? new Date(user.created).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            : null,
+          position: "avatar",
+        }}
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsEditing(true)}
+              className="me-2"
+            >
+              Edit
+            </Button>
+            <Logout />
+          </>
+        }
+      />
       {successMessage && (
-        <Row>
-          <Col>
-            <Alert variant="success" className="user-alert-success">
-              {successMessage}
-            </Alert>
-          </Col>
-        </Row>
+        <div className="mx-auto" style={{ maxWidth: '600px' }}>
+          <Alert variant="success" className="mb-4">
+            {successMessage}
+          </Alert>
+        </div>
       )}
 
       {errors.length > 0 && (
-        <Row>
-          <Col>
-            <Alert variant="danger" className="user-alert-error">
-              <ul className="mb-0">
-                {errors.map((error: string, index: number) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            </Alert>
-          </Col>
-        </Row>
+        <div className="mx-auto" style={{ maxWidth: '600px' }}>
+          <Alert variant="danger" className="mb-4">
+            <ul className="mb-0">
+              {errors.map((error: string, index: number) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </Alert>
+        </div>
       )}
 
       {artistInfo && (
@@ -222,66 +213,59 @@ export default function UserPage() {
         </Row>
       )}
 
-      <Row className="user-menu-row mx-auto">
-        <Col>
-          <h6 className="user-menu-title">Menu</h6>
-          <div className="list-group list-group-flush user-menu-list">
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="/active-bids"
-                className="text-dark text-decoration-none  d-flex justify-content-between align-items-center"
-              >
-                Active bids
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="/my-purchases"
-                className="text-dark text-decoration-none  d-flex justify-content-between align-items-center"
-              >
-                My purchases
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="/my-sales"
-                className="text-dark text-decoration-none  d-flex justify-content-between align-items-center"
-              >
-                My sales
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="/messages"
-                className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setModalShow(true);
-                }}
-              >
-                Messages
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="#"
-                className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowCurrencyModal(true);
-                }}
-              >
-                Settings
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
-          </div>
-        </Col>
-      </Row>
+      <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
+        <h6 className="fw-bold text-dark mb-3">Menu</h6>
+        <div className="list-group list-group-flush">
+          <Link
+            to="/active-bids"
+            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-dark text-decoration-none"
+            style={{ borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+          >
+            Active bids
+            <i className="bi bi-chevron-right text-muted"></i>
+          </Link>
+          <Link
+            to="/my-purchases"
+            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-dark text-decoration-none"
+            style={{ borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+          >
+            My purchases
+            <i className="bi bi-chevron-right text-muted"></i>
+          </Link>
+          <Link
+            to="/my-sales"
+            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-dark text-decoration-none"
+            style={{ borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+          >
+            My sales
+            <i className="bi bi-chevron-right text-muted"></i>
+          </Link>
+          <Link
+            to="/messages"
+            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-dark text-decoration-none"
+            style={{ borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+            onClick={(e) => {
+              e.preventDefault();
+              setModalShow(true);
+            }}
+          >
+            Messages
+            <i className="bi bi-chevron-right text-muted"></i>
+          </Link>
+          <Link
+            to="#"
+            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-dark text-decoration-none"
+            style={{ borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+            onClick={(e) => {
+              e.preventDefault();
+              setShowCurrencyModal(true);
+            }}
+          >
+            Settings
+            <i className="bi bi-chevron-right text-muted"></i>
+          </Link>
+        </div>
+      </div>
       <ComingSoonModal show={modalShow} onHide={() => setModalShow(false)} />
       <EditProfileModal
         show={isEditing}
