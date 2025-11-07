@@ -70,11 +70,11 @@ public static partial class GetRoutes
             {
                 obj[kvp.Key] = ConvertToObj(nestedDict);  // Recursive for nested objects
             }
-            else if (kvp.Value is List<object> list)
+              else if (kvp.Value is System.Collections.IEnumerable enumerable && kvp.Value is not string)
             {
-                // Handle arrays (if any)
+                // Handle any enumerable (List<object>, List<string>, arrays, etc.) but not strings
                 var arr = Arr();
-                foreach (var item in list)
+                foreach (var item in enumerable)
                 {
                     if (item is Dictionary<string, object> itemDict)
                     {
@@ -191,13 +191,16 @@ public static partial class GetRoutes
 
         for (var j = 0; j < mappedParts.Length; j++)
         {
-            if (j % 4 == 0)
+             if (j % 4 == 0)
             {
-                keys.Push(Regex.Replace((string)mappedParts[j], @"[^A-Za-z0-9_\-,\.]", ""));
+                // Trim whitespace before cleaning
+                var trimmed = ((string)mappedParts[j]).Trim();
+                keys.Push(Regex.Replace(trimmed, @"[^A-Za-z0-9_\-,\.]", ""));
             }
             else if (j % 4 == 2)
             {
-                values.Push(mappedParts[j]);
+                // Trim whitespace from values
+                values.Push(((string)mappedParts[j]).Trim());
             }
             else if (j % 2 == 1 && j % 4 != 3)
             {
@@ -223,14 +226,40 @@ public static partial class GetRoutes
     {
         var keyParts = key.Split('.');
 
-        return data.Filter(item =>
+     return data.Filter(item =>
         {
             var itemValue = GetNestedValue(item, keyParts);
 
             if (itemValue == null) return false;
 
-            var itemStr = itemValue.ToString();
             var valueStr = value?.ToString() ?? "";
+
+            // Handle arrays - check if any element matches
+            if (itemValue is Arr arr)
+            {
+                foreach (var element in arr)
+                {
+                    var elementStr = element?.ToString() ?? "";
+
+                    bool matches = op switch
+                    {
+                        "=" => elementStr == valueStr,
+                        "!=" => elementStr != valueStr,
+                        ">" => CompareNumeric(elementStr, valueStr) > 0,
+                        "<" => CompareNumeric(elementStr, valueStr) < 0,
+                        ">=" => CompareNumeric(elementStr, valueStr) >= 0,
+                        "<=" => CompareNumeric(elementStr, valueStr) <= 0,
+                        "LIKE" => elementStr.ToLower().Contains(valueStr.ToLower()),
+                        _ => false
+                    };
+
+                    if (matches) return true; // Any element matches
+                }
+                return false; // No elements matched
+            }
+
+            // Handle single values
+            var itemStr = itemValue.ToString();
 
             return op switch
             {
@@ -246,7 +275,7 @@ public static partial class GetRoutes
         });
     }
 
-    private static dynamic? GetNestedValue(dynamic obj, string[] keyParts)
+   private static dynamic? GetNestedValue(dynamic obj, string[] keyParts)
     {
         dynamic current = obj;
 
@@ -255,6 +284,29 @@ public static partial class GetRoutes
             if (current is Obj dynObj && dynObj.HasKey(part))
             {
                 current = dynObj[part];
+            }
+            else if (current is Arr dynArr)
+            {
+                // If current is an array, traverse into each object and collect the specified property
+                // This allows filtering on array.property (e.g., customer.id)
+                var results = Arr();
+                foreach (var arrItem in dynArr)
+                {
+                    if (arrItem is Obj arrObj && arrObj.HasKey(part))
+                    {
+                        results.Push(arrObj[part]);
+                    }
+                }
+
+                // If we found any results, continue with those
+                if (results.Length > 0)
+                {
+                    current = results;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
