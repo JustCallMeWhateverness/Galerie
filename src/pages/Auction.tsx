@@ -12,6 +12,7 @@ import { getRemainingTimeMessage } from "../utils/timeHelpers";
 import { useAuth } from "../hooks/useAuth";
 import { useFavorite } from "../hooks/useFavorite";
 import AuthModal from "../modals/AuthModal";
+import { max } from "date-fns";
 
 
 Auction.route = {
@@ -134,12 +135,14 @@ export default function Auction() {
       {!isLoading &&
         <Row>
           <Col>
-            <BackButton className="mb-3" />
+            <BackButton className="mb-3" fallbackTo="/auction" />
             <Image
               src={imageUrl}
               alt={img?.mediaTexts}
+              className="auction-img"
               style={{
                 objectPosition: "center",
+                width: "100%"
               }}
             />
 

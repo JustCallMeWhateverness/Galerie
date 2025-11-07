@@ -62,7 +62,7 @@ export default function CarouselComponent({
             src={imageUrl}
             alt={alt}
             loading="lazy"
-            className="d-block w-100"
+            className="d-block w-100 carousel-img"
             style={{
               height,
               objectFit: "contain",
