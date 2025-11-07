@@ -4,6 +4,7 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 import { useArtistInfo } from "../hooks/useArtistInfo"
 import { addDays } from "date-fns";
+import { useCurrency } from "../context/CurrencyContext";
 import FileUpload from "../components/FileUpload";
 import AuthModal from "../modals/AuthModal";
 import MustBeSellerModal from "../modals/MustBeSellerModal";
@@ -15,6 +16,24 @@ CreateAuction.route = {
   menuLabel: 'Create Auction',
   index: 7
 };
+
+const colorOptions = [
+  { value: "black", label: "Black" },
+  { value: "white", label: "White" },
+  { value: "gold", label: "Gold" },
+  { value: "silver", label: "Silver" },
+  { value: "gray", label: "Gray" },
+  { value: "beige", label: "Beige" },
+  { value: "brown", label: "Brown" },
+  { value: "blue", label: "Blue" },
+  { value: "green", label: "Green" },
+  { value: "red", label: "Red" },
+  { value: "orange", label: "Orange" },
+  { value: "yellow", label: "Yellow" },
+  { value: "pink", label: "Pink" },
+  { value: "purple", label: "Purple" },
+];
+
 
 const minimumAuctionLengthDays = 3;
 
@@ -29,8 +48,10 @@ export default function CreateAuction() {
     description: '',
     Seller: user?.id || '',
     AuctionCategory: '',
+    Color: '',
     PickupEnabled: false,
     FreightEnabled: false,
+    StartBid: 0,
     StartTime: '',
     EndTime: ''
   });
@@ -38,6 +59,7 @@ export default function CreateAuction() {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
+  const { convertToSEK } = useCurrency();
   const navigate = useNavigate();
 
   const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
@@ -72,9 +94,12 @@ export default function CreateAuction() {
 
   function setProperty(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value, type } = event.target;
-    let processedValue: string | boolean = value;
+    let processedValue: string | boolean | number = value;
     if (type === "checkbox") {
       processedValue = (event.target as HTMLInputElement).checked;
+    }
+    else if (type === "number") {
+      processedValue = value === "" ? "" : Number(value);
     }
     setAuction({ ...auction, [name]: processedValue });
   }
@@ -91,6 +116,11 @@ export default function CreateAuction() {
       alert("User ID is missing. Please log in again.");
       return;
     }
+    const startBidNumber = Number(auction.StartBid);
+    if (isNaN(startBidNumber) || startBidNumber <= 0) {
+      alert("Please enter a valid starting bid.");
+      return;
+    }
 
     const newAuction = {
       title: auction.title,
@@ -102,8 +132,10 @@ export default function CreateAuction() {
         }
       ],
       auctionCategoryId: auction.AuctionCategory,
+      color: auction.Color,
       pickupEnabled: auction.PickupEnabled,
       freightEnabled: auction.FreightEnabled,
+      startBid: convertToSEK(startBidNumber),
       imageUpload: imagePaths.length
         ? { paths: imagePaths, mediaTexts: [''] }
         : null,
@@ -223,6 +255,24 @@ export default function CreateAuction() {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-4">
+              <Form.Label>Color</Form.Label>
+              <Form.Select
+                name="Color"
+                required
+                value={auction.Color}
+                onChange={setProperty}
+              >
+                <option value="" disabled>
+                  Pick a color
+                </option>
+                {colorOptions.map((color) => (
+                  <option key={color.value} value={color.value}>
+                    {color.label}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-4">
               <Form.Check
                 type="checkbox"
                 name="PickupEnabled"
@@ -238,7 +288,18 @@ export default function CreateAuction() {
                 onChange={setProperty}
               />
             </Form.Group>
-
+            <Form.Group className='mb-4'>
+              <Form.Label>Starting Bid</Form.Label>
+              <Form.Control
+                name='StartBid'
+                type="number"
+                required
+                placeholder='Starting Bid'
+                onChange={setProperty}
+                autoComplete='off'
+                value={auction.StartBid}
+              />
+            </Form.Group>
             <Form.Group className="mb-4">
               <Form.Label>Image</Form.Label>
               <FileUpload onUploaded={handleImageUploaded}
