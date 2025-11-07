@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import EditArtistModal from "../modals/EditArtistModal";
 import { useArtistInfo } from "../hooks/useArtistInfo";
 import { Row, Col, Button } from "react-bootstrap";
 import { updateArtistProfile } from "../api/editArtistProfile";
 import type InterfaceArtistInfo from "../interfaces/InterfaceArtistInfo";
 
-//TODO: Make the editbutton work
 export default function ArtistInfo() {
   const [show, setShow] = useState(false);
   const { data: artistInfo, loading } = useArtistInfo();
@@ -17,6 +16,8 @@ export default function ArtistInfo() {
     description: "",
     customer: "",
   });
+
+  const [imagePaths, setImagePaths] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   const openModal = () => {
@@ -27,7 +28,9 @@ export default function ArtistInfo() {
       workTitle: artistInfo.workTitle ?? "",
       description: artistInfo.description ?? "",
       customer: artistInfo.customer ?? "",
+      profileImage: artistInfo.profileImage, // behåll ev. befintlig bild
     });
+    setImagePaths(artistInfo.profileImage?.paths ?? []); // initiera paths
     setShow(true);
   };
 
@@ -40,6 +43,10 @@ export default function ArtistInfo() {
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
+    setImagePaths([res.path]); // enkel: en bild
+  };
+
   const handleSave = async () => {
     if (!editForm.id) return;
     setSaving(true);
@@ -48,14 +55,21 @@ export default function ArtistInfo() {
         title: editForm.title,
         workTitle: editForm.workTitle,
         description: editForm.description,
+        // ⬇️ lägg bara med om vi har paths (ren payload)
+        profileImage: imagePaths.length ? { paths: imagePaths, mediaTexts: [""] } : undefined,
       });
       setShow(false);
-
-      window.location.reload();
+      window.location.reload(); // behåll er temporära refresh
     } finally {
       setSaving(false);
     }
   };
+
+  // liten helper för bild-url
+  const resolveMediaUrl = (p?: string) =>
+    !p ? "/images/avatar-placeholder.png"
+      : p.startsWith("http") || p.startsWith("/media/") ? p : `/media/${p}`;
+
   return (
     <>
       <Row className="user-profile-row mx-auto">
@@ -63,10 +77,15 @@ export default function ArtistInfo() {
         <small className="text-muted d-block mb-4">
           This is what other users see on your Artist View.
         </small>
+
         <Row>
-          <Col xs={5} className="user-avatar-col ">
-            <div className="user-avatar">
-              <i className="bi bi-person-fill"></i>
+          <Col xs={5} className="user-avatar-col">
+            <div className="user-avatar d-flex align-items-center justify-content-center">
+              <img
+                src={resolveMediaUrl(artistInfo?.profileImage?.paths?.[0])}
+                alt="Artist avatar"
+                style={{ width: 120, height: 120, objectFit: "cover", borderRadius: "50%" }}
+              />
             </div>
           </Col>
           <Col>
@@ -80,6 +99,7 @@ export default function ArtistInfo() {
             </div>
           </Col>
         </Row>
+
         <Row>
           <Col>
             <div className="mb-3 mt-3">
@@ -88,18 +108,15 @@ export default function ArtistInfo() {
             </div>
           </Col>
         </Row>
+
         <Row className="mt-3">
-          <Col xs="auto" className="d-flex justify-content-between">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={openModal}
-              className="me-2"
-            >
+          <Col xs="auto">
+            <Button variant="secondary" size="sm" onClick={openModal} className="me-2">
               Edit
             </Button>
           </Col>
         </Row>
+
         {artistInfo && (
           <EditArtistModal
             show={show}
@@ -107,6 +124,7 @@ export default function ArtistInfo() {
             onSave={handleSave}
             editForm={editForm}
             onChange={handleEditChange}
+            onImageUploaded={handleImageUploaded}
           />
         )}
       </Row>
