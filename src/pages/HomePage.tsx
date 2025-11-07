@@ -146,8 +146,10 @@ export default function HomePage() {
         {[...auctions]
           .filter((auction) => {
             const days = 7;
-            return Date.now() - auction.startTime.getTime() < days * 24 * 60 * 60 * 1000
+            const isNew = Date.now() - auction.startTime.getTime() < days * 24 * 60 * 60 * 1000
               && Date.now() - auction.startTime.getTime() > 0;
+            const isActive = auction.endTime.getTime() > Date.now();
+            return isNew && isActive;
           })
           .sort(
             (a, b) =>
