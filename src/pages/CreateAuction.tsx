@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
+import { useArtistInfo } from "../hooks/useArtistInfo"
 import { addDays } from "date-fns";
 import FileUpload from "../components/FileUpload";
 import AuthModal from "../modals/AuthModal";
@@ -19,6 +20,7 @@ const minimumAuctionLengthDays = 3;
 export default function CreateAuction() {
   const [showSellerModal, setShowSellerModal] = useState(true);
   const { user, loading } = useAuth();
+  const { data: artistInfo, loading: artistLoading } = useArtistInfo();
   const [imagePaths, setImagePaths] = useState<string[]>([]);
   const [categories, setCategories] = useState<{ id: string, title: string; }[]>([]);
   const [auction, setAuction] = useState({
@@ -136,7 +138,7 @@ export default function CreateAuction() {
     }
   }
 
-  if (loading) {
+  if (loading || artistLoading) {
     return <p>Loading...</p>;
   }
 
@@ -148,7 +150,15 @@ export default function CreateAuction() {
     );
   }
 
-  if (!user.roles || (!user.roles.includes('seller') && !user.roles.includes('Administrator'))) {
+  if (
+    !user.roles ||
+    (
+      !user.roles.includes('Administrator') &&
+      (
+        !artistInfo
+      )
+    )
+  ) {
     return (
       <MustBeSellerModal
         show={showSellerModal}
