@@ -157,7 +157,7 @@ export default function Search() {
 
 
       <Row className="mt-3">
-        <Col md={8} lg={6} className="mx-auto">
+        <Col md={12} className="mx-auto">
           {loading && (
             <div className="d-flex align-items-center gap-2">
               <Spinner animation="border" size="sm" />
@@ -166,7 +166,7 @@ export default function Search() {
           )}
           {error && <Alert variant="danger">{error}</Alert>}
           {!loading && !error && (
-            <div className="d-flex justify-content-between align-items-center mb-1">
+            <div className="d-flex justify-content-between mb-1">
               <div className="fw-semibold">
                 {q ? <>Results for “{q}” ({tab})</> : <>All {tab}</>}
               </div>

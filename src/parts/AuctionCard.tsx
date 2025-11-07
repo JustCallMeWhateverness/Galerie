@@ -34,7 +34,7 @@ export default function AuctionCard(props: Props) {
       <Card
         as={Link}
         to={to}
-        className="mb-4 h-100 d-flex flex-column"
+        className=" h-100 d-flex flex-column"
         style={{
           height: "320px",
           cursor: "pointer"
@@ -55,7 +55,7 @@ export default function AuctionCard(props: Props) {
             <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
           </span>
         </Card.ImgOverlay>
-        <Card.Body>
+        <Card.Body className="d-flex flex-column justify-content-between py-2 px-1">
           <Card.Title className='text-center'>
             {title}
           </Card.Title>
