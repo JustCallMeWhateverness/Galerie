@@ -296,6 +296,7 @@ export default function CreateAuction() {
                 required
                 placeholder='Starting Bid'
                 onChange={setProperty}
+                min={0}
                 autoComplete='off'
                 value={auction.StartBid}
               />
