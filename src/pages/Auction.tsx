@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { getRemainingTimeMessage } from "../utils/timeHelpers";
 import { useAuth } from "../hooks/useAuth";
 import { useFavorite } from "../hooks/useFavorite";
+import AuthModal from "../modals/AuthModal";
 
 
 AuctionListingPage.route = {
@@ -68,6 +69,7 @@ export default function AuctionListingPage() {
   const [bids, setBids] = useState<Bid[]>([])
   const [auctionInformation, setAuctionInformation] = useState<AuctionInfo | null>(null)
   const [img, setImg] = useState<imageUpload | null>(null)
+  const [minimumBid, setMinimumBid] = useState(0)
 
   const { user } = useAuth()
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id)
@@ -100,6 +102,18 @@ export default function AuctionListingPage() {
         setBids(data.items ?? [])
         setImg(data.imageUpload ?? null)
 
+        if (bids.length > 0) {
+          setMinimumBid(Math.max(...bids.map(bid => bid.amount)))
+        }
+        else if (auctionInformation?.startBid) {
+          setMinimumBid(auctionInformation.startBid)
+        }
+        else {
+          setMinimumBid(0)
+        }
+        console.log(data.startBid)
+
+
       }
       catch (error) {
         console.log("Error: ", error)
@@ -109,11 +123,13 @@ export default function AuctionListingPage() {
       }
     }
     fetchData()
+
+
+
   }, [])
 
   const imagePath = img?.paths?.[0]
   const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg"
-
 
   return (
     <>
@@ -135,7 +151,7 @@ export default function AuctionListingPage() {
               <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
             </div>
             <div>
-              <BidInput />
+              <BidInput miniBid={minimumBid} />
             </div>
 
             <div>
@@ -144,6 +160,13 @@ export default function AuctionListingPage() {
 
           </Col>
         </Row>
+      }
+      {
+        showAuthModal && (<AuthModal
+          customTitle="Log in to favourite auctions"
+          show={showAuthModal}
+          onHide={() => setShowAuthModal(false)}
+        ></AuthModal>)
       }
 
     </>
