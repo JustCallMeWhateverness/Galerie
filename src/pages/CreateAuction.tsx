@@ -33,10 +33,18 @@ export default function CreateAuction() {
   });
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
-    setImagePaths([res.path]);
+    if (!res.path) {
+      setImagePaths([]);
+      setSelectedFile(null);
+    } else {
+      setImagePaths([res.path]);
+    }
+    setImageError(null);
   };
 
 
@@ -72,6 +80,10 @@ export default function CreateAuction() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (selectedFile && imagePaths.length === 0) {
+      setImageError("Please click 'Upload image' after selecting an image.");
+      return;
+    }
     if (!user?.id) {
       alert("User ID is missing. Please log in again.");
       return;
@@ -217,8 +229,13 @@ export default function CreateAuction() {
 
             <Form.Group className="mb-4">
               <Form.Label>Image</Form.Label>
-              <FileUpload onUploaded={handleImageUploaded} />
-
+              <FileUpload onUploaded={handleImageUploaded}
+                onFileSelected={file => {
+                  setSelectedFile(file);
+                  setImageError(null);
+                }}
+              />
+              {imageError && <div className="text-danger">{imageError}</div>}
             </Form.Group>
 
             <Row className="mb-4">

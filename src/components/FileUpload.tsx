@@ -5,9 +5,10 @@ import { uploadMedia } from '../utils/mediaUploader';
 type Props = {
   onUploaded?: (payload: { url: string; path: string; fileName: string; }) => void;
   buttonText?: string;
+  onFileSelected?: (file: File | null) => void;
 };
 
-export default function FileUpload({ onUploaded, buttonText = 'Upload image' }: Props) {
+export default function FileUpload({ onUploaded, buttonText = 'Upload image', onFileSelected }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [status, setStatus] = useState<string>('');
@@ -22,6 +23,7 @@ export default function FileUpload({ onUploaded, buttonText = 'Upload image' }: 
     if (!file) return;
 
     setPreviewUrl(URL.createObjectURL(file));
+    onFileSelected?.(file);
   };
 
   const handleUpload = async () => {
@@ -46,6 +48,17 @@ export default function FileUpload({ onUploaded, buttonText = 'Upload image' }: 
     }
   };
 
+  const handleRemove = () => {
+    setPreviewUrl('');
+    setStatus('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    onFileSelected?.(null);
+    onUploaded?.({ url: '', path: '', fileName: '' });
+  };
+
+
   return (
     <div>
       <Form.Control
@@ -63,6 +76,11 @@ export default function FileUpload({ onUploaded, buttonText = 'Upload image' }: 
         <Button variant="primary" type="button" onClick={handleUpload} disabled={isUploading}>
           {isUploading ? (<><Spinner size="sm" animation="border" /> Uploading…</>) : buttonText}
         </Button>
+        {previewUrl && (
+          <Button variant="outline-danger" type="button" onClick={handleRemove} disabled={isUploading}>
+            Remove
+          </Button>
+        )}
       </Stack>
 
       {status && (
