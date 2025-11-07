@@ -4,7 +4,7 @@ using System.Text.Json;
 
 public static partial class GetRoutes
 {
-    private static Dictionary<string, object> CleanObject(
+    public static Dictionary<string, object> CleanObject(
         Dictionary<string, JsonElement> obj,
         string contentType,
         Dictionary<string, JsonElement>? usersDictionary = null)
