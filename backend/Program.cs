@@ -7,11 +7,13 @@ builder.Host.UseNLogHost();
 
 builder.Services.AddOrchardCms();
 
-var app = builder.Build();
-
 // Register SSE services
 builder.Services.AddSingleton<SseConnectionManager>();
 builder.Services.AddHostedService<SseBackgroundService>();
+
+var app = builder.Build();
+
+
 
 if (!app.Environment.IsDevelopment())
 {
