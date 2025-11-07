@@ -265,7 +265,9 @@ export default function ArtistView() {
 
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
-      <BackButton className="mb-3" />
+      <div className="mx-auto mb-3 px-3 px-md-4" style={{ maxWidth: '980px' }}>
+        <BackButton />
+      </div>
       <ProfileCard
         avatar={artist.avatar}
         title={artist.title || artist.username || 'Artist'}
@@ -279,6 +281,7 @@ export default function ArtistView() {
           value: artist.registrationDate || null,
           position: "info",
         }}
+        maxWidth="980px"
       />
 
       <div

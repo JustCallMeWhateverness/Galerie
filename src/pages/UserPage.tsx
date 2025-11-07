@@ -13,6 +13,7 @@ import ArtistInfo from "../components/ArtistInfo";
 import { createArtistProfile } from "../api/createArtistProfile";
 import CurrencySettingsModal from "../modals/CurrencySettingsModal";
 import ProfileCard from "../components/ProfileCard";
+import BackButton from "../components/BackButton";
 
 UserPage.route = {
   path: "/user/:id?",
@@ -148,6 +149,9 @@ export default function UserPage() {
 
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
+      <div className="mx-auto mb-3 px-3 px-md-4" style={{ maxWidth: '600px' }}>
+        <BackButton fallbackTo="/" />
+      </div>
       <ProfileCard
         title={
           (user.firstName || user.lastName)

@@ -15,6 +15,7 @@ type ProfileCardProps = {
     position?: 'avatar' | 'info';
   };
   actions?: ReactNode;
+  maxWidth?: string;
 };
 
 export default function ProfileCard({
@@ -23,9 +24,10 @@ export default function ProfileCard({
   fields = [],
   dateInfo,
   actions,
+  maxWidth = '600px',
 }: ProfileCardProps) {
   return (
-    <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth: '600px' }}>
+    <div className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto" style={{ maxWidth }}>
       <div className="d-flex flex-column flex-sm-row align-items-start">
         <div className="me-sm-4 mb-3 mb-sm-0 text-center text-sm-start">
           <div
@@ -63,7 +65,7 @@ export default function ProfileCard({
             {fields.map((field, index) => (
               field.value && (
                 <div key={index} className="text-dark mb-1">
-                  {field.value}
+                  {field.label && <strong>{field.label}: </strong>}{field.value}
                 </div>
               )
             ))}
