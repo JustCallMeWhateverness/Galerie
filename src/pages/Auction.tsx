@@ -2,6 +2,7 @@ import { Row, Col, Spinner } from "react-bootstrap";
 import Image from "../parts/Image";
 import BidInput from "../components/BidInput";
 import BidHistory from "../components/BidHistory";
+import BackButton from "../components/BackButton";
 import type { Customer } from "../interfaces/Customer"
 import type { AuctionInfo } from "../components/AuctionInformation";
 import { AuctionInformation } from "../components/AuctionInformation";
@@ -123,6 +124,7 @@ export default function AuctionListingPage() {
       {!isLoading &&
         <Row>
           <Col>
+            <BackButton className="mb-3" />
             <Image
               src={imageUrl}
               alt={img?.mediaTexts} />

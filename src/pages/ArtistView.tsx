@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import AuctionCard from "../parts/AuctionCard";
 import type Auction from "../interfaces/Auction";
 import type { ExtendedArtist } from "../parts/ArtistCard";
+import BackButton from "../components/BackButton";
 
 ArtistView.route = {
   path: "/artist-view/:id",
@@ -263,6 +264,7 @@ export default function ArtistView() {
 
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
+      <BackButton className="mb-3" />
       <div
         className="bg-white rounded-3 p-3 p-md-4 mb-4 mx-auto"
         style={{ maxWidth: "600px" }}

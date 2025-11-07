@@ -2,6 +2,7 @@ import { Row, Col } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 import { useCurrency } from "../hooks/useCurrency";
 import AuthModal from "../modals/AuthModal";
+import BackButton from "../components/BackButton";
 
 ActiveBids.route = {
   path: "/active-bids",
@@ -31,6 +32,7 @@ export default function ActiveBids() {
     return (
       <Row className="mt-4">
         <Col>
+          <BackButton className="mb-3" fallbackTo="/user" />
           <h2>Active Bids</h2>
           <p>You have no active bids.</p>
         </Col>
@@ -41,6 +43,7 @@ export default function ActiveBids() {
   return (
     <Row className="mt-4">
       <Col>
+        <BackButton className="mb-3" fallbackTo="/user" />
         <h2>Active Bids</h2>
         <ul>
           {activeBids.map((bid) => (

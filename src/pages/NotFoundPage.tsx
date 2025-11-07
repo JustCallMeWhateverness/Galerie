@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import BackButton from "../components/BackButton";
 
 NotFoundPage.route = {
   path: '*'
@@ -6,6 +7,7 @@ NotFoundPage.route = {
 
 export default function NotFoundPage() {
   return <>
+    <BackButton className="mb-3" />
     <h2>Not Found: 404</h2>
     <p>
       We are sorry, but there doesn't seem to be any page on this
