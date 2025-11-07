@@ -5,4 +5,8 @@ export default interface Artist {
   workTitle?: string;
   favorited: boolean;
   href?: string;
+  profileImage?: {
+    paths: string[];
+    mediaTexts?: string[];
+  };
 };
