@@ -10,8 +10,8 @@ export type AuctionInfo = {
   timeRemaining: string;
   pickupLocation?: string;
   freightPrice?: number;
-  startBid?: number;
-
+  startBid: number;
+  color: string;
 };
 
 export function AuctionInformation({ info }: { info: AuctionInfo }) {
@@ -24,7 +24,8 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
     timeRemaining,
     pickupLocation,
     freightPrice,
-    startBid } = info;
+    startBid,
+    color } = info;
 
   const { formatCurrency } = useCurrency()
 
@@ -37,11 +38,15 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
           <strong>Time remaining:</strong>&nbsp;{timeRemaining}
         </div>
         <div>
-          <strong>Starting Price:</strong>&nbsp;{startBid === undefined ? formatCurrency(399) : formatCurrency(startBid)}
+          <strong>Starting Price:</strong>&nbsp;{formatCurrency(startBid)}
         </div>
 
         <div>
           <strong>Artist:</strong>&nbsp;{seller}
+        </div>
+
+        <div>
+          <strong>Color:</strong>&nbsp;<span className="text-capitalize">{color}</span>
         </div>
 
         {/* Only displays pickup and freight information if they're enabled. */}

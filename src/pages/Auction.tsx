@@ -11,29 +11,14 @@ import { useEffect, useState } from "react";
 import { getRemainingTimeMessage } from "../utils/timeHelpers";
 import { useAuth } from "../hooks/useAuth";
 import { useFavorite } from "../hooks/useFavorite";
+import AuthModal from "../modals/AuthModal";
 
 
-AuctionListingPage.route = {
+Auction.route = {
   path: "/auction/:id",
   index: 2,
   menulabel: "Auction Listing Page"
 };
-
-// TODO: Add timestamp field to Bid in backend
-
-const sampleInfo: AuctionInfo = {
-  title: "Information missing",
-  description: "Information missing",
-  seller: "Information missing",
-  pickupLocation: "Information missing",
-  freightPrice: 0,
-  freightEnabled: true,
-  pickupEnabled: true,
-  timeRemaining: "Information missing",
-  startBid: 30
-};
-
-
 
 interface AuctionResponse {
   id: string,
@@ -46,15 +31,16 @@ interface AuctionResponse {
   seller: [Customer],
   category: string,
   items?: Bid[],
-  startBid?: number,
-  imageUpload?: imageUpload
+  startBid: number,
+  imageUpload?: imageUpload,
+  color: string
 }
 
 export type Bid = {
   customerId: string,
   amount: number,
   contentType: string,
-  timestamp?: string
+  timeStamp: string
 }
 
 type imageUpload = {
@@ -62,13 +48,14 @@ type imageUpload = {
   mediaTexts?: string[]
 }
 
-export default function AuctionListingPage() {
+export default function Auction() {
 
   const { id } = useParams<{ id: string }>()
   const [isLoading, setIsLoading] = useState(true)
   const [bids, setBids] = useState<Bid[]>([])
   const [auctionInformation, setAuctionInformation] = useState<AuctionInfo | null>(null)
   const [img, setImg] = useState<imageUpload | null>(null)
+  const [minimumBid, setMinimumBid] = useState(0)
 
   const { user } = useAuth()
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id)
@@ -79,6 +66,22 @@ export default function AuctionListingPage() {
     e.stopPropagation()
     onFavorite()
 
+
+  }
+
+  async function refreshBid() {
+    try {
+      const response = await fetch(`/api/Auction/${id}`, { method: "GET" })
+      const data: AuctionResponse = await response.json()
+      setBids(data.items ?? [])
+
+      if (data.items && data.items.length > 0) {
+        setMinimumBid(Math.max(...data.items.map(bid => bid.amount)))
+      }
+    }
+    catch (error) {
+      console.log("error refreshing: ", error)
+    }
 
   }
 
@@ -95,12 +98,17 @@ export default function AuctionListingPage() {
           pickupEnabled: data.pickupEnabled,
           freightEnabled: data.freightEnabled,
           timeRemaining: getRemainingTimeMessage(new Date(data.endTime)),
-          startBid: data.startBid
+          startBid: data.startBid,
+          color: data.color
         })
 
         setBids(data.items ?? [])
         setImg(data.imageUpload ?? null)
-
+        if (data.items && data.items.length > 0) {
+          setMinimumBid(Math.max(...data.items.map(bid => bid.amount)))
+        } else {
+          setMinimumBid(data.startBid)
+        }
       }
       catch (error) {
         console.log("Error: ", error)
@@ -110,11 +118,13 @@ export default function AuctionListingPage() {
       }
     }
     fetchData()
+
+
+
   }, [])
 
   const imagePath = img?.paths?.[0]
   const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg"
-
 
   return (
     <>
@@ -134,10 +144,12 @@ export default function AuctionListingPage() {
                 {/* bi-suit-heart must be at the end for the correct logo to be shown */}
                 <i className={`fs-2 mx-2 bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
               </span>
-              <AuctionInformation info={!auctionInformation ? sampleInfo : auctionInformation} />
+              {auctionInformation &&
+                <AuctionInformation info={auctionInformation} />
+              }
             </div>
             <div>
-              <BidInput />
+              <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
             </div>
 
             <div>
@@ -146,6 +158,13 @@ export default function AuctionListingPage() {
 
           </Col>
         </Row>
+      }
+      {
+        showAuthModal && (<AuthModal
+          customTitle="Log in to favourite auctions"
+          show={showAuthModal}
+          onHide={() => setShowAuthModal(false)}
+        ></AuthModal>)
       }
 
     </>
