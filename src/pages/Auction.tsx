@@ -1,4 +1,4 @@
-import { Row, Col, Spinner } from "react-bootstrap";
+import { Row, Col, Spinner, Alert } from "react-bootstrap";
 import Image from "../parts/Image";
 import BidInput from "../components/BidInput";
 import BidHistory from "../components/BidHistory";
@@ -140,13 +140,18 @@ export default function Auction() {
   const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg"
   const now = new Date()
 
-  let activeAuction = false;
-
-
-  if (time) {
-    if (now < time.endTime && now > time.startTime) {
-      activeAuction = true
+  function getBidContent() {
+    if (!time) {
+      return null
     }
+    if (now < time.startTime) {
+      return <Alert variant="warning">This auction starts at {time.startTime.toDateString()}</Alert>
+    }
+    if (now >= time.startTime && now <= time.endTime) {
+      return <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
+    }
+
+    return <Alert variant="warning">This auction ended at {time.endTime.toDateString()}</Alert>
   }
 
   return (
@@ -178,15 +183,18 @@ export default function Auction() {
               }
             </div>
             <div>
-              {
-                activeAuction ?
-                  <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
-                  : <p>This auction can't be bid on { }</p>
-              }
+
+              {getBidContent()}
             </div>
 
+            {/* BidHistory is only visible after auction has started */}
             <div>
-              <BidHistory bids={bids} />
+              {time && time.startTime < now ?
+                (
+                  < BidHistory bids={bids} />
+                )
+                : ""
+              }
             </div>
 
           </Col>
