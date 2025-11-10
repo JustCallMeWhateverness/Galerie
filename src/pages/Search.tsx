@@ -148,13 +148,20 @@ export default function Search() {
     }
 
     if (sort === "low") {
-      filtered = [...filtered].sort((a, b) => a.currentBid - b.currentBid);
+      filtered = filtered
+        .filter(a => a.items && a.items.length > 0 && a.currentBid > a.startBid)
+        .sort((a, b) => a.currentBid - b.currentBid);
     } else if (sort === "high") {
-      filtered = [...filtered].sort((a, b) => b.currentBid - a.currentBid);
+      filtered = filtered
+        .filter(a => a.items && a.items.length > 0 && a.currentBid > a.startBid)
+        .sort((a, b) => b.currentBid - a.currentBid);
     } else if (sort === "newest") {
       filtered = [...filtered].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
     } else if (sort === "time") {
       filtered = [...filtered].sort((a, b) => new Date(a.endTime).getTime() - new Date(b.endTime).getTime());
+    }
+    else if (sort === "nobids") {
+      filtered = filtered.filter(a => !a.items || a.items.length === 0 || a.currentBid === a.startBid);
     }
 
     return filtered;

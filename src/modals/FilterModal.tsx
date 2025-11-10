@@ -11,6 +11,7 @@ const sortOptions: Option[] = [
   { value: "high", label: "Highest current bid" },
   { value: "newest", label: "Newest First" },
   { value: "time", label: "Time remaining" },
+  { value: "nobids", label: "No bids" },
   { value: "distance", label: "Closest to me" },
 ];
 
