@@ -8,6 +8,7 @@ export async function createArtistProfile(userId: string, username: string) {
       workTitle: "",
       description: "",
       customer: [{ id: String(userId), username }],
+      profileImage: { paths: [], mediaTexts: [] },
     }),
   });
 

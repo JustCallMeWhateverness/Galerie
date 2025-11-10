@@ -1,4 +1,4 @@
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import CarouselComponent from "../parts/CarouselComponent";
 import AuctionCard from "../parts/AuctionCard";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ type AuctionDTO = {
   id: string;
   title: string;
   currentBid: number;
+  startBid: number;
   endTime: Date;
   startTime: Date;
   favorited?: boolean;
@@ -20,6 +21,9 @@ type AuctionDTO = {
     paths: string[];
     mediaTexts?: string[];
   };
+  items?: {
+    amount: number;
+  }[];
 };
 
 export default function HomePage() {
@@ -27,6 +31,15 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const now = new Date();
+  const highestCurrentBids = getHighestCurrentBids(auctions);
+
+
+  function getHighestCurrentBids(auctions: Auction[]) {
+    return [...auctions]
+      .filter(a => a.currentBid != null && a.endTime && new Date(a.endTime) > new Date())
+      .sort((a, b) => (b.currentBid ?? 0) - (a.currentBid ?? 0))
+      .slice(0, 5);
+  }
 
   useEffect(() => {
     const abort = new AbortController();
@@ -41,17 +54,23 @@ export default function HomePage() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: AuctionDTO[] = await res.json();
 
-        const mapped: Auction[] = (data ?? []).map((a) => ({
-          id: a.id,
-          title: a.title,
-          currentBid: Number(a.currentBid ?? 0),
-          startTime: new Date(a.startTime),
-          endTime: new Date(a.endTime),
-          favorited: Boolean(a.favorited),
-          favouritesCount: a.favouritesCount ?? 0,
-          imageUpload: a.imageUpload,
+        const mapped: Auction[] = (data ?? []).map((a) => {
+          const highestBid = a.items && a.items.length > 0
+            ? Math.max(...a.items.map(bid => bid.amount))
+            : a.startBid ?? 0;
 
-        }));
+          return {
+            id: a.id,
+            title: a.title,
+            currentBid: highestBid,
+            startBid: a.startBid ?? 0,
+            startTime: new Date(a.startTime),
+            endTime: new Date(a.endTime),
+            favorited: Boolean(a.favorited),
+            favouritesCount: a.favouritesCount ?? 0,
+            imageUpload: a.imageUpload,
+          };
+        });
 
         setAuctions(mapped);
       } catch (e: any) {
@@ -74,6 +93,7 @@ export default function HomePage() {
   const upcomingAuctions = auctions.filter(a => a.startTime > now);
   const carouselAuctions = getRandomAuctions(upcomingAuctions, carouselLimit);
 
+
   return (
     <>
       <Row>
@@ -92,55 +112,6 @@ export default function HomePage() {
         </Col>
       </Row>
 
-      <h4>Popular Auctions</h4>
-      <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
-        {[...auctions]
-          .filter((auction) => auction.favouritesCount >= 50)
-          .sort((a, b) => b.favouritesCount - a.favouritesCount)
-          .map((auction) => (
-            <Col key={auction.id}>
-              <AuctionCard
-                id={auction.id}
-                title={auction.title}
-                currentBid={auction.currentBid}
-                favorited={auction.favorited ?? false}
-                startTime={new Date(auction.startTime)}
-                endTime={new Date(auction.endTime)}
-                favouritesCount={auction.favouritesCount}
-                imageUpload={auction.imageUpload}
-
-              />
-            </Col>
-          ))}
-      </Row>
-
-
-      <h4>Last Chance</h4>
-      <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
-        {[...auctions]
-          .filter((auction) => auction.endTime.getTime() - Date.now() > 0 && auction.endTime.getTime() - Date.now()
-            < 24 * 60 * 60 * 1000)
-          .sort(
-            (a, b) =>
-              new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
-          )
-          .map((auction) => (
-            <Col key={auction.id}>
-              <AuctionCard
-                id={auction.id}
-                title={auction.title}
-                currentBid={auction.currentBid}
-                favorited={auction.favorited ?? false}
-                startTime={new Date(auction.startTime)}
-                endTime={new Date(auction.endTime)}
-                favouritesCount={auction.favouritesCount}
-                imageUpload={auction.imageUpload}
-              />
-            </Col>
-          ))}
-      </Row>
-
-
       <h4>New Auctions</h4>
       <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
         {[...auctions]
@@ -155,12 +126,14 @@ export default function HomePage() {
             (a, b) =>
               new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
           )
+          .slice(0, 5)
           .map((auction) => (
             <Col key={auction.id}>
               <AuctionCard
                 id={auction.id}
                 title={auction.title}
                 currentBid={auction.currentBid}
+                startBid={auction.startBid}
                 favorited={auction.favorited ?? false}
                 startTime={new Date(auction.startTime)}
                 endTime={new Date(auction.endTime)}
@@ -169,6 +142,38 @@ export default function HomePage() {
               />
             </Col>
           ))}
+      </Row>
+
+      <h4>Ending soon</h4>
+      <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
+        {[...auctions]
+          .filter(a => new Date(a.endTime) > now)
+          .sort((a, b) => new Date(a.endTime).getTime() - new Date(b.endTime).getTime())
+          .slice(0, 5)
+          .map((auction) => (
+            <Col key={auction.id}>
+              <AuctionCard
+                id={auction.id}
+                title={auction.title}
+                currentBid={auction.currentBid}
+                startBid={auction.startBid}
+                favorited={auction.favorited ?? false}
+                startTime={new Date(auction.startTime)}
+                endTime={new Date(auction.endTime)}
+                favouritesCount={auction.favouritesCount}
+                imageUpload={auction.imageUpload}
+              />
+            </Col>
+          ))}
+      </Row>
+
+      <h4>Highest Current Bids</h4>
+      <Row xs={2} sm={2} md={3} lg={4} className="g-3 mb-4 flex-nowrap overflow-auto scroll">
+        {highestCurrentBids.map(auction => (
+          <Col key={auction.id}>
+            <AuctionCard {...auction} />
+          </Col>
+        ))}
       </Row>
     </>
   );

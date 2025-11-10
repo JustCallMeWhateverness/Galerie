@@ -23,10 +23,10 @@ export function useArtistInfo() {
 
         const mine = Array.isArray(list)
           ? list.find(
-              (it: any) =>
-                Array.isArray(it.customer) &&
-                it.customer.some((u: any) => u?.id === user?.id)
-            )
+            (it: any) =>
+              Array.isArray(it.customer) &&
+              it.customer.some((u: any) => u?.id === user?.id)
+          )
           : null;
 
         if (mine) {
@@ -34,9 +34,8 @@ export function useArtistInfo() {
 
           const customerName =
             c?.firstName || c?.lastName
-              ? `${c?.firstName ?? ""}${
-                  c?.firstName && c?.lastName ? " " : ""
-                }${c?.lastName ?? ""}`
+              ? `${c?.firstName ?? ""}${c?.firstName && c?.lastName ? " " : ""
+              }${c?.lastName ?? ""}`
               : c?.username ?? "";
 
           setData({
@@ -45,6 +44,7 @@ export function useArtistInfo() {
             customer: customerName,
             description: mine.description ?? "",
             workTitle: mine.workTitle ?? "",
+            profileImage: mine.profileImage,
           });
         } else {
           setData(null);

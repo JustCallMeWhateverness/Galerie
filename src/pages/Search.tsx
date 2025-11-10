@@ -13,6 +13,7 @@ type AuctionDTO = {
   auctionCategoryId?: string;
   artistName?: string;
   currentBid: number;
+  startBid: number;
   endTime: string;
   startTime: string;
   favorited?: boolean;
@@ -22,6 +23,7 @@ type AuctionDTO = {
     paths: string[];
     mediaTexts?: string[];
   };
+  items?: { amount: number }[];
 };
 
 type Tab = "auction" | "artist";
@@ -74,9 +76,19 @@ export default function Search() {
           const res = await fetch(`/api/Auction`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data: AuctionDTO[] = await res.json();
+          const mapped: AuctionDTO[] = (data ?? []).map(a => {
+            const highestBid = a.items && a.items.length > 0
+              ? Math.max(...a.items.map(bid => bid.amount))
+              : a.startBid ?? 0;
+            return {
+              ...a,
+              currentBid: highestBid,
+              startBid: a.startBid ?? 0,
+            };
+          });
 
           const now = new Date();
-          const activeOnly = data.filter(a => {
+          const activeOnly = mapped.filter(a => {
             const start = new Date(a.startTime);
             const end = new Date(a.endTime);
             return start <= now && end >= now;
@@ -234,6 +246,7 @@ export default function Search() {
                 id={a.id}
                 title={a.title}
                 currentBid={a.currentBid}
+                startBid={a.startBid}
                 endTime={new Date(a.endTime)}
                 favorited={a.favorited ?? false}
                 startTime={new Date(a.startTime)}
