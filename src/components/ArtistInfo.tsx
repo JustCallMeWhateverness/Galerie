@@ -10,7 +10,11 @@ export default function ArtistInfo() {
   const { data: artistInfo, loading } = useArtistInfo();
 
   const [editForm, setEditForm] = useState<InterfaceArtistInfo>({
-    id: "", title: "", workTitle: "", description: "", customer: "",
+    id: "",
+    title: "",
+    workTitle: "",
+    description: "",
+    customer: "",
   });
 
   const [imagePaths, setImagePaths] = useState<string[]>([]);
@@ -24,12 +28,9 @@ export default function ArtistInfo() {
       workTitle: artistInfo.workTitle ?? "",
       description: artistInfo.description ?? "",
       customer: artistInfo.customer ?? "",
-      // ta det som finns – samma som i ArtistCard
-      profileImage: artistInfo.profileImage ?? (artistInfo as any).imageUpload,
+      profileImage: artistInfo.profileImage,
     });
-    setImagePaths(
-      artistInfo.profileImage?.paths ?? (artistInfo as any).imageUpload?.paths ?? []
-    );
+    setImagePaths(artistInfo.profileImage?.paths ?? []);
     setShow(true);
   };
 
@@ -42,28 +43,9 @@ export default function ArtistInfo() {
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // exakt som i kortet: spara res.path och bygg /media/<path>
   const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
     setImagePaths([res.path]);
-    setEditForm(prev => ({
-      ...prev,
-      profileImage: { paths: [res.path], mediaTexts: [""] },
-    }));
   };
-
-  // identiskt mönster som ArtistCard + fallback till det du just laddat upp
-  const imagePath =
-    imagePaths[0] ??
-    editForm.profileImage?.paths?.[0] ??
-    artistInfo?.profileImage?.paths?.[0] ??
-    (artistInfo as any)?.imageUpload?.paths?.[0] ??
-    null;
-
-  // Om du kör Vite och backend på annan port, sätt VITE_MEDIA_BASE=http://localhost:5000
-  const MEDIA_BASE = import.meta.env.VITE_MEDIA_BASE ?? "";
-  const imageUrl = imagePath
-    ? `${MEDIA_BASE ? MEDIA_BASE : ""}/media/${imagePath}`
-    : "/images/placeholder.jpg";
 
   const handleSave = async () => {
     if (!editForm.id) return;
@@ -82,6 +64,10 @@ export default function ArtistInfo() {
     }
   };
 
+  const resolveMediaUrl = (p?: string) =>
+    !p ? "/images/avatar-placeholder.png"
+      : p.startsWith("http") || p.startsWith("/media/") ? p : `/media/${p}`;
+
   return (
     <>
       <Row className="user-profile-row mx-auto">
@@ -91,10 +77,10 @@ export default function ArtistInfo() {
         </small>
 
         <Row>
-          <Col xs={5}>
-            <div className="d-flex align-items-center justify-content-center">
+          <Col xs={5} className="user-avatar-col">
+            <div className="user-avatar d-flex align-items-center justify-content-center">
               <img
-                src={imageUrl}
+                src={resolveMediaUrl(artistInfo?.profileImage?.paths?.[0])}
                 alt="Artist avatar"
                 style={{ width: 120, height: 120, objectFit: "cover", borderRadius: "50%" }}
               />
