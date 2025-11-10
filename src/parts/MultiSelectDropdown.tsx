@@ -55,20 +55,38 @@ export default function MultiSelectDropdown({
           aria-labelledby={`${id}-toggle`}
           style={{ minWidth: 260, maxHeight: "50vh", overflowY: "auto" }}
         >
+          <Button
+            variant="link"
+            size="sm"
+            style={{
+              position: "absolute",
+              top: 4,
+              right: 8,
+              zIndex: 2,
+              color: "#888",
+              textDecoration: "none"
+            }}
+            aria-label="Close"
+            onClick={() => setShow(false)}
+            tabIndex={0}
+          >
+            &#10005;
+          </Button>
           <Form className="px-3 py-2 custom-checkbox">
-            {options.map((opt) => (
-              <Form.Check
-                key={opt.value}
-                type="checkbox"
-                id={`${id}-${opt.value}`}
-                label={opt.label}
-                checked={picked.has(opt.value)}
-                onChange={() => toggle(opt.value)}
-                className="mb-1"
-                onMouseDown={(e) => e.stopPropagation()}
-              />
-            ))}
-
+            <div className="d-grid" style={{ gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+              {options.map((opt) => (
+                <Form.Check
+                  key={opt.value}
+                  type="checkbox"
+                  id={`${id}-${opt.value}`}
+                  label={opt.label}
+                  checked={picked.has(opt.value)}
+                  onChange={() => toggle(opt.value)}
+                  className="mb-1"
+                  onMouseDown={(e) => e.stopPropagation()}
+                />
+              ))}
+            </div>
             <div className="d-flex gap-2 mt-2">
               <Button size="sm" variant="outline-secondary" onClick={clear}>
                 Clear
