@@ -1,4 +1,4 @@
-import { Row, Col, Spinner, Alert } from "react-bootstrap";
+import { Row, Col, Spinner, Alert, Card } from "react-bootstrap";
 import Image from "../parts/Image";
 import BidInput from "../components/BidInput";
 import BidHistory from "../components/BidHistory";
@@ -12,7 +12,7 @@ import { getRemainingTimeMessage } from "../utils/timeHelpers";
 import { useAuth } from "../hooks/useAuth";
 import { useFavorite } from "../hooks/useFavorite";
 import AuthModal from "../modals/AuthModal";
-import { max } from "date-fns";
+import WinnerCard from "../parts/WinnerCard";
 
 
 Auction.route = {
@@ -34,11 +34,12 @@ interface AuctionResponse {
   items?: Bid[],
   startBid: number,
   imageUpload?: imageUpload,
-  color: string
+  color: string,
+  hasBeenPaid?: boolean
 }
 
 export type Bid = {
-  customerId: string,
+  customerId: number,
   amount: number,
   contentType: string,
   timeStamp: string
@@ -63,6 +64,7 @@ export default function Auction() {
   const [img, setImg] = useState<imageUpload | null>(null)
   const [minimumBid, setMinimumBid] = useState(0)
   const [time, setTime] = useState<time | null>(null)
+  const [hasBeenPaid, setHasBeenPaid] = useState<boolean | null>(null)
 
   const { user } = useAuth()
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id)
@@ -92,6 +94,39 @@ export default function Auction() {
 
   }
 
+  function whoWon(bids: Bid[]) {
+    if (bids.length === 0)
+      return null
+
+    return bids.reduce((max, current) => current.amount > max.amount ? current : max)
+
+  }
+
+  async function PayTheMan() {
+
+    const body = { hasBeenPaid: true }
+
+    try {
+      const response = await fetch(`/api/Auction/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers:
+          { 'Content-Type': 'application/json' }
+      })
+
+      if (!response.ok) {
+        console.log("Error when trying to pay")
+      }
+      else {
+        setHasBeenPaid(true)
+      }
+
+    }
+    catch (error) {
+      console.log("Error caused by trying to pay the auction", error)
+    }
+  }
+
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true)
@@ -101,7 +136,7 @@ export default function Auction() {
         setAuctionInformation({
           title: data.title,
           description: data.description,
-          seller: data.seller[0].username,
+          seller: data.seller[0],
           pickupEnabled: data.pickupEnabled,
           freightEnabled: data.freightEnabled,
           timeRemaining: getRemainingTimeMessage(new Date(data.endTime)),
@@ -115,6 +150,8 @@ export default function Auction() {
             endTime: new Date(data.endTime)
           }
         )
+
+        setHasBeenPaid(data?.hasBeenPaid ?? null)
 
 
         setBids(data.items ?? [])
@@ -150,6 +187,47 @@ export default function Auction() {
     if (now >= time.startTime && now <= time.endTime) {
       return <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
     }
+
+    // om användare är säljaren
+    // visa vinnande budet och beloppet och ifall det har blivit betalt
+
+    // om inget bud: visa sad face
+
+
+    if (!!user) {
+
+
+      const winningBid = whoWon(bids)
+      if (!!auctionInformation?.seller && user.id === auctionInformation.seller.id) {
+        if (winningBid === null) {
+          return <Alert variant="info">
+            The auction closed without any bids, better luck next time!
+          </Alert>
+        }
+        else {
+
+          return <Card>
+            <Card.Title>Congratulations!</Card.Title>
+            <Card.Text>A bid of {winningBid.amount} SEK won the auction.</Card.Text>
+            <Card.Text></Card.Text>
+          </Card>
+        }
+      }
+
+      // om användaren är vinnande budaren
+      if (winningBid?.customerId === user.id) {
+        // om hasbeenpaid
+        // visa beloppet som betalats
+        <WinnerCard amount={winningBid.amount} hasBeenPaid={hasBeenPaid ?? false} buttonPress={PayTheMan} />
+      }
+
+      // om !hasbeenpaid
+      // visa knapp med belopp som ska betalas
+      // knapp skickar put som sätter hasBeenPaid = true
+    }
+
+
+    // for every other user:
 
     return <Alert variant="warning">This auction ended at {time.endTime.toDateString()}</Alert>
   }
