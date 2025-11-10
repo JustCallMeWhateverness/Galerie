@@ -47,6 +47,7 @@ type AuctionDTO = {
   id: string;
   title: string;
   currentBid?: number;
+  startBid?: number;
   endTime: string;
   startTime: string;
   favorited?: boolean;
@@ -204,6 +205,7 @@ export default function ArtistView() {
               id: a.id,
               title: a.title,
               currentBid: Number(a.currentBid ?? 0),
+              startBid: Number(a.startBid ?? 0),
               startTime: new Date(a.startTime),
               endTime: new Date(a.endTime),
               favorited: Boolean(a.favorited),
@@ -330,7 +332,7 @@ export default function ArtistView() {
         <h6 className="fw-bold text-dark mb-3">Active auctions</h6>
         {auctions.length === 0 ? (
           <div className="text-muted">
-            This artisit has no active auctions.
+            This artist has no active auctions.
           </div>
         ) : (
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
@@ -340,6 +342,7 @@ export default function ArtistView() {
                   id={a.id}
                   title={a.title}
                   currentBid={a.currentBid}
+                  startBid={a.startBid}
                   startTime={a.startTime}
                   endTime={a.endTime}
                   favorited={a.favorited}
