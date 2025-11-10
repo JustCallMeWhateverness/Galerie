@@ -185,13 +185,20 @@ export default function Auction() {
       return <Alert variant="warning">This auction starts at {time.startTime.toDateString()}</Alert>
     }
     if (now >= time.startTime && now <= time.endTime) {
-      return <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
+      const addStep = !!bids.length
+
+      return <BidInput
+        miniBid={minimumBid}
+        auctionId={id ?? "invalid id"}
+        onBidSuccess={refreshBid}
+        addStep={addStep}
+      />
     }
 
     // om användare är säljaren
     // visa vinnande budet och beloppet och ifall det har blivit betalt
 
-    // om inget bud: visa sad face
+    // om inget bud: visa sad face WORKS
 
 
     if (!!user) {
