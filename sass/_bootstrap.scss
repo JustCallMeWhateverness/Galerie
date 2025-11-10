@@ -50,3 +50,14 @@ $enable-negative-margins: true;
   padding-top: 5px;
   margin: -4px;
 }
+
+.auction-img,
+.carousel-img {
+  border: none !important
+}
+
+@media (min-width: 992px) {
+  .auction-img {
+    min-height: 500px;
+  }
+}

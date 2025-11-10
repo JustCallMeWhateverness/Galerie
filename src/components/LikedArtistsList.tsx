@@ -12,7 +12,7 @@ export default function LikedArtistsList({ artists }: Props) {
   return (
     <Row>
       {artists.map(artist => (
-        <Col key={artist.id} xs={6} md={4}>
+        <Col key={artist.id} xs={6} md={3} className="g-3">
           <ArtistCard {...artist} />
         </Col>
       ))}
