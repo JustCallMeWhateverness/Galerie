@@ -3,14 +3,8 @@ import SelectDropdown from "../parts/SelectDropdown";
 import type { Option } from "../interfaces/SelectDropdown";
 import MultiSelectDropdown from "../parts/MultiSelectDropdown";
 import RangeDropdown from "../parts/RangeDropdown";
-import { Row, Col, Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import BackButton from "../components/BackButton";
-
-FilterPage.route = {
-  path: "/filter",
-  menuLabel: "Filter",
-  index: 4,
-};
 
 const sortOptions: Option[] = [
   { value: "low", label: "Lowest current bid" },
@@ -46,11 +40,18 @@ const colorOptions: Option[] = [
   { value: "purple", label: "Purple" },
 ];
 
-export default function FilterPage() {
+interface FilterModalProps {
+  show: boolean;
+  onHide: () => void;
+  onApply: (params: URLSearchParams) => void;
+}
+
+export default function FilterModal({ show, onHide, onApply }: FilterModalProps) {
   const [selected, setSelected] = useState<string>("");
   const [cats, setCats] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
   const [distance, setDistance] = useState<number | null>(null);
+
   const clear = () => {
     setSelected("");
     setCats([]);
@@ -59,49 +60,47 @@ export default function FilterPage() {
   };
 
   return (
-    <>
-      <Row>
-        <Col xs={12} md={4} className="mt-4">
-          <BackButton className="mb-3" fallbackTo="/auction" />
-          <SelectDropdown
-            title="Sort By"
-            value={selected}
-            changeHandler={setSelected}
-            options={sortOptions}
-            className="mb-4"
-          />
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Filter Auctions</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <SelectDropdown
+          title="Sort By"
+          value={selected}
+          changeHandler={setSelected}
+          options={sortOptions}
+          className="mb-4"
+        />
 
-          <MultiSelectDropdown
-            title="Categories"
-            values={cats}
-            onChange={setCats}
-            options={categoryOptions}
-            className="mb-4"
-          />
+        <MultiSelectDropdown
+          title="Categories"
+          values={cats}
+          onChange={setCats}
+          options={categoryOptions}
+          className="mb-4"
+        />
 
+        <MultiSelectDropdown
+          title="Colors"
+          values={colors}
+          onChange={setColors}
+          options={colorOptions}
+          className="mb-4"
+        />
 
-          <MultiSelectDropdown
-            title="Colors"
-            values={colors}
-            onChange={setColors}
-            options={colorOptions}
-            className="mb-4"
-          />
-
-          <RangeDropdown
-            label="Distance"
-            value={distance}
-            onChange={setDistance}
-            min={0}
-            max={100}
-            step={1}
-            className="mb-4"
-          />
-          <Button variant="primary" className="w-100 mb-4">Apply</Button>
-          <Button variant="secondary" onClick={clear} className="w-100 mb-4">Clear All</Button>
-        </Col>
-      </Row>
-    </>
+        <RangeDropdown
+          label="Distance"
+          value={distance}
+          onChange={setDistance}
+          min={0}
+          max={100}
+          step={1}
+          className="mb-4"
+        />
+        <Button variant="primary" className="w-100 mb-3" >Apply</Button>
+        <Button variant="secondary" onClick={clear} className="w-100">Clear All</Button>
+      </Modal.Body>
+    </Modal>
   );
-
 }
