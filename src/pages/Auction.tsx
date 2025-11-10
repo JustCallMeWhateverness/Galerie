@@ -49,6 +49,11 @@ type imageUpload = {
   mediaTexts?: string[]
 }
 
+type time = {
+  startTime: Date,
+  endTime: Date,
+}
+
 export default function Auction() {
 
   const { id } = useParams<{ id: string }>()
@@ -57,6 +62,7 @@ export default function Auction() {
   const [auctionInformation, setAuctionInformation] = useState<AuctionInfo | null>(null)
   const [img, setImg] = useState<imageUpload | null>(null)
   const [minimumBid, setMinimumBid] = useState(0)
+  const [time, setTime] = useState<time | null>(null)
 
   const { user } = useAuth()
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id)
@@ -103,6 +109,14 @@ export default function Auction() {
           color: data.color
         })
 
+        setTime(
+          {
+            startTime: new Date(data.startTime),
+            endTime: new Date(data.endTime)
+          }
+        )
+
+
         setBids(data.items ?? [])
         setImg(data.imageUpload ?? null)
         if (data.items && data.items.length > 0) {
@@ -120,12 +134,20 @@ export default function Auction() {
     }
     fetchData()
 
-
-
   }, [])
 
   const imagePath = img?.paths?.[0]
   const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg"
+  const now = new Date()
+
+  let activeAuction = false;
+
+
+  if (time) {
+    if (now < time.endTime && now > time.startTime) {
+      activeAuction = true
+    }
+  }
 
   return (
     <>
@@ -156,7 +178,11 @@ export default function Auction() {
               }
             </div>
             <div>
-              <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
+              {
+                activeAuction ?
+                  <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
+                  : <p>This auction can't be bid on { }</p>
+              }
             </div>
 
             <div>
