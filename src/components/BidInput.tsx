@@ -23,7 +23,13 @@ export default function BidInput({ miniBid, auctionId, onBidSuccess }: Props) {
 
   }
 
+
   async function sendBid(auctionId: string, amount: number) {
+    if (!user?.id || !user?.username) {
+      alert("You must be logged in to place a bid.");
+      return;
+    }
+
     const body = {
       items: {
         $push: [
