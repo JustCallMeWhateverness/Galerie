@@ -94,7 +94,7 @@ export default function Auction() {
 
   }
 
-  function whoWon(bids: Bid[]) {
+  function FindWinner(bids: Bid[]) {
     if (bids.length === 0)
       return null
 
@@ -194,17 +194,10 @@ export default function Auction() {
         addStep={addStep}
       />
     }
-
-    // om användare är säljaren
-    // visa vinnande budet och beloppet och ifall det har blivit betalt
-
-    // om inget bud: visa sad face WORKS
-
-
+    console.log("inloggad: ", user?.id)
     if (!!user) {
+      const winningBid = FindWinner(bids)
 
-
-      const winningBid = whoWon(bids)
       if (!!auctionInformation?.seller && user.id === auctionInformation.seller.id) {
         if (winningBid === null) {
           return <Alert variant="info">
@@ -216,26 +209,15 @@ export default function Auction() {
           return <Card>
             <Card.Title>Congratulations!</Card.Title>
             <Card.Text>A bid of {winningBid.amount} SEK won the auction.</Card.Text>
-            <Card.Text></Card.Text>
+            <Card.Text>They have {hasBeenPaid ? '' : 'not'} paid</Card.Text>
           </Card>
         }
       }
 
-      // om användaren är vinnande budaren
-      if (winningBid?.customerId === user.id) {
-        // om hasbeenpaid
-        // visa beloppet som betalats
-        <WinnerCard amount={winningBid.amount} hasBeenPaid={hasBeenPaid ?? false} buttonPress={PayTheMan} />
+      if (winningBid && winningBid.customerId === user.id) {
+        return <WinnerCard amount={winningBid.amount} hasBeenPaid={hasBeenPaid ?? false} buttonPress={PayTheMan} />
       }
-
-      // om !hasbeenpaid
-      // visa knapp med belopp som ska betalas
-      // knapp skickar put som sätter hasBeenPaid = true
     }
-
-
-    // for every other user:
-
     return <Alert variant="warning">This auction ended at {time.endTime.toDateString()}</Alert>
   }
 
