@@ -211,10 +211,11 @@ export default function Search() {
               </Button>
             </ButtonGroup>
 
-            <Button variant="none" onClick={() => setShowFilter(true)}
-            >
-              <i className="bi bi-filter fs-4"></i>
-            </Button>
+            {tab === "auction" && (
+              <Button variant="none" onClick={() => setShowFilter(true)}>
+                <i className="bi bi-filter fs-4"></i>
+              </Button>
+            )}
           </div>
         </Col>
       </Row>
@@ -239,6 +240,7 @@ export default function Search() {
           )}
         </Col>
       </Row>
+
       <FilterModal
         show={showFilter}
         onHide={() => setShowFilter(false)}
