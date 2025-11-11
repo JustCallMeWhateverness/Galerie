@@ -37,6 +37,7 @@ export default function ActiveBids() {
   const [auctions, setAuctions] = useState<AuctionDTO[]>([]);
   const [fetching, setFetching] = useState(true);
 
+
   useEffect(() => {
     if (!user) return;
     fetch("/api/Auction", { credentials: "include" })
@@ -101,37 +102,39 @@ export default function ActiveBids() {
 
   return (
     <Row className="mt-4">
-      <Col>
+      <Col >
         <BackButton className="mb-3" fallbackTo="/user" />
         <h2>Active Bids</h2>
-        {myActiveBids.map(auction => {
-          const highestBid = auction.items?.reduce((max, bid) =>
-            bid.amount > max.amount ? bid : max
-          );
-          const myBids = auction.items?.filter(bid => bid.customerId === user.id);
-          const myLatestBid = myBids?.sort((a, b) =>
-            new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime()
-          )[0];
-          const isHighest = highestBid?.customerId === user.id;
 
-          return (
-            <Row key={auction.id} className="align-items-center mb-4">
-              <Col xs={12} md={5} lg={4}>
-                <AuctionCard
-                  id={auction.id}
-                  title={auction.title}
-                  currentBid={auction.currentBid}
-                  startBid={auction.startBid}
-                  endTime={auction.endTime}
-                  startTime={auction.startTime}
-                  favorited={false}
-                  favouritesCount={0}
-                  imageUpload={auction.imageUpload}
-                />
-              </Col>
-              <Col xs={12} md={7} lg={8}>
+        <Row xs={1} xl={2} className="g-4 mt-2">
+          {myActiveBids.map(auction => {
+            const highestBid = auction.items?.reduce((max, bid) =>
+              bid.amount > max.amount ? bid : max
+            );
+            const myBids = auction.items?.filter(bid => bid.customerId === user.id);
+            const myLatestBid = myBids?.sort((a, b) =>
+              new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime()
+            )[0];
+            const isHighest = highestBid?.customerId === user.id;
+            const imagePath = auction.imageUpload?.paths?.[0];
+            const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg";
+
+            return (
+              <Col key={auction.id} className="d-flex justify-content-center" >
                 <table className="table table-borderless mb-0 w-auto">
                   <tbody>
+                    <tr className="border">
+                      <td colSpan={2}>
+                        <a href={`/auction/${auction.id}`} className="fw-bold text-decoration-none text-dark d-flex align-items-center gap-3">
+                          <img
+                            src={imageUrl}
+                            alt={auction.title}
+                            style={{ width: 100, height: 100, objectFit: "cover", objectPosition: "center", borderRadius: 6 }}
+                          />
+                          {auction.title}
+                        </a>
+                      </td>
+                    </tr>
                     <tr>
                       <td>Status:</td>
                       <td>
@@ -157,9 +160,9 @@ export default function ActiveBids() {
                   </tbody>
                 </table>
               </Col>
-            </Row>
-          );
-        })}
+            );
+          })}
+        </Row>
       </Col>
     </Row>
   );
