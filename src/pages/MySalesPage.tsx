@@ -85,14 +85,17 @@ export default function MySalesPage() {
     );
   }
 
-
   const mySales = auctions.filter(a =>
     Array.isArray(a.seller) && a.seller.some(s => String(s.id) === String(user.id))
   );
 
   const now = new Date();
 
-  const activeSales = mySales.filter(a => a.endTime > now);
+  const notYetActiveSales = mySales.filter(a => a.startTime > now);
+
+  const activeSales = mySales.filter(a => a.startTime <= now && a.endTime > now);
+
+
   const finishedSales = mySales.filter(a => a.endTime <= now);
 
   return (
@@ -101,11 +104,71 @@ export default function MySalesPage() {
         <BackButton className="mb-3" fallbackTo="/user" />
         <h2>Your Sales</h2>
 
-        <h5 className="mt-4 mb-3">Active Auctions</h5>
+
+        <h5 className="mt-4 mb-3">Not Yet Active</h5>
+        {notYetActiveSales.length === 0 ? (
+          <div className="text-muted mb-4">You have no auctions scheduled for the future.</div>
+        ) : (
+          <Row xs={1} xl={2} className="g-4 mt-2">
+            {notYetActiveSales.map(auction => {
+              const imagePath = auction.imageUpload?.paths?.[0];
+              const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg";
+              return (
+                <Col key={auction.id} className="d-flex justify-content-center">
+                  <table className="table table-borderless mb-0 w-auto">
+                    <tbody>
+                      <tr className="border">
+                        <td colSpan={2}>
+                          <a
+                            href={`/auction/${auction.id}`}
+                            className="fw-bold text-decoration-none text-dark d-flex align-items-center gap-3"
+                          >
+                            <img
+                              src={imageUrl}
+                              alt={auction.title}
+                              style={{
+                                width: 100,
+                                height: 100,
+                                objectFit: "cover",
+                                objectPosition: "center",
+                                borderRadius: 6,
+                              }}
+                            />
+                            {auction.title}
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Status:</td>
+                        <td>
+                          <Badge bg="secondary">Not yet active</Badge>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Starts:</td>
+                        <td>
+                          {auction.startTime.toLocaleString()}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Ends:</td>
+                        <td>
+                          {auction.endTime.toLocaleString()}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Col>
+              );
+            })}
+          </Row>
+        )}
+
+        <h5 className="mt-5 mb-3">Active Auctions</h5>
         {activeSales.length === 0 ? (
           <div className="text-muted mb-4">You have no active auctions.</div>
         ) : (
-          <Row xs={1} xl={2} className="g-4 mt-2 ">
+          <Row xs={1} xl={2} className="g-4 mt-2">
             {activeSales.map(auction => {
               const hasBids = auction.items && auction.items.length > 0;
               const highestBid = hasBids && auction.items
@@ -148,7 +211,10 @@ export default function MySalesPage() {
                       <tr>
                         <td>Highest bid:</td>
                         <td>
-                          <b>{formatCurrency(highestBid?.amount ?? auction.startBid ?? 0)}</b>
+                          {highestBid
+                            ? <b>{formatCurrency(highestBid.amount)}</b>
+                            : <span className="text-muted">No bids yet</span>
+                          }
                         </td>
                       </tr>
                       <tr>
@@ -165,11 +231,12 @@ export default function MySalesPage() {
           </Row>
         )}
 
+
         <h5 className="mt-5 mb-3">Finished Auctions</h5>
         {finishedSales.length === 0 ? (
           <div className="text-muted">You have no finished auctions.</div>
         ) : (
-          <Row xs={1} xl={2} className="g-4 mt-2 ">
+          <Row xs={1} xl={2} className="g-4 mt-2">
             {finishedSales.map(auction => {
               const hasBids = auction.items && auction.items.length > 0;
               const highestBid = hasBids && auction.items
@@ -220,9 +287,12 @@ export default function MySalesPage() {
                         </td>
                       </tr>
                       <tr>
-                        <td>Highest bid:</td>
+                        <td>Final bid:</td>
                         <td>
-                          <b>{formatCurrency(highestBid?.amount ?? auction.startBid ?? 0)}</b>
+                          {highestBid
+                            ? <b>{formatCurrency(highestBid.amount)}</b>
+                            : <span className="text-muted">No bids</span>
+                          }
                         </td>
                       </tr>
                       <tr>

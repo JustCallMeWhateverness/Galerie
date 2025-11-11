@@ -84,8 +84,9 @@ export default function ActiveBids() {
   }
 
   // Filter auctions where user has placed a bid
+  const now = new Date();
   const myActiveBids = auctions.filter(a =>
-    a.items?.some(bid => bid.customerId === user.id)
+    a.endTime > now && a.items?.some(bid => bid.customerId === user.id)
   );
 
   if (myActiveBids.length === 0) {
