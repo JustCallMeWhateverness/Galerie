@@ -170,10 +170,6 @@ export default function CreateAuction() {
     }
   }
 
-  if (loading || artistLoading) {
-    return <p>Loading...</p>;
-  }
-
   if (!user) {
     return (
       <AuthModal
