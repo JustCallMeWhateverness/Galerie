@@ -1,4 +1,4 @@
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import CarouselComponent from "../parts/CarouselComponent";
 import AuctionCard from "../parts/AuctionCard";
 import { useEffect, useState } from "react";
@@ -104,17 +104,24 @@ export default function HomePage() {
     <>
       <Row>
         <Col className="mb-2">
-          <CarouselComponent
-            items={carouselAuctions.map(a => ({
-              id: a.id,
-              title: a.title,
-              imageUpload: a.imageUpload,
-              alt: a.imageUpload?.mediaTexts?.[0] || a.title,
-              link: `/auction/${a.id}`,
-              startTime: a.startTime,
-              endTime: a.endTime,
-            }))}
-          />
+          <Container fluid className="carousel-container">
+            <div className="carousel-header">
+              <h5>
+                Upcoming Auctions
+              </h5>
+            </div>
+            <CarouselComponent
+              items={carouselAuctions.map(a => ({
+                id: a.id,
+                title: a.title,
+                imageUpload: a.imageUpload,
+                alt: a.imageUpload?.mediaTexts?.[0] || a.title,
+                link: `/auction/${a.id}`,
+                startTime: a.startTime,
+                endTime: a.endTime,
+              }))}
+            />
+          </Container>
         </Col>
       </Row>
 

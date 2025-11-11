@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 /**
  * Extended Artist type - Used for detailed artist profile pages
- * 
+ *
  * Extends the base Artist type with additional fields for detailed views
  * Contains contact information, registration details, and avatar
  * Specifically created for ArtistView page integration
@@ -16,6 +16,7 @@ export type ExtendedArtist = Artist & {
   location?: string;
   email?: string;
   registrationDate?: string;
+  description?: string;
   avatar?: string;
   href?: string;
 };
@@ -23,8 +24,9 @@ export type ExtendedArtist = Artist & {
 export default function ArtistCard(props: Artist) {
   const { id, title, workTitle, href, profileImage } = props;
   const { user } = useAuth();
-  const isFavoritedByUser = !!user?.likedArtists?.some(a => a.id === id);
-  const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } = useFavorite(isFavoritedByUser, undefined, props);
+  const isFavoritedByUser = !!user?.likedArtists?.some((a) => a.id === id);
+  const { isFavorited, showAuthModal, onFavorite, setShowAuthModal } =
+    useFavorite(isFavoritedByUser, undefined, props);
   const to = href ?? `/artist-view/${id}`;
   const onFavClick: React.MouseEventHandler<HTMLSpanElement> = (e) => {
     e.preventDefault();
@@ -33,7 +35,9 @@ export default function ArtistCard(props: Artist) {
   };
 
   const imagePath = profileImage?.paths?.[0];
-  const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg";
+  const imageUrl = imagePath
+    ? `/media/${imagePath}`
+    : "/images/placeholder.jpg";
 
   return (
     <>
@@ -57,19 +61,24 @@ export default function ArtistCard(props: Artist) {
               width: "100%",
             }}
           />
-          <Card.ImgOverlay className='text-center'>
-            <span className='heart-hitbox float-end' role='button' onClick={onFavClick}>
-              <i className={`bi bi-suit-heart${isFavorited ? '-fill' : ''}`}></i>
+          <Card.ImgOverlay className="text-center">
+            <span
+              className="heart-hitbox float-end"
+              role="button"
+              aria-label={
+                isFavorited ? "Remove from favorites" : "Add to favorites"
+              }
+              onClick={onFavClick}
+            >
+              <i
+                className={`bi bi-suit-heart${isFavorited ? "-fill" : ""}`}
+              ></i>
             </span>
           </Card.ImgOverlay>
         </div>
         <Card.Body>
-          <Card.Title className='text-center'>
-            {title}
-          </Card.Title>
-          <Card.Text className='text-center'>
-            {workTitle}
-          </Card.Text>
+          <Card.Title className="text-center">{title}</Card.Title>
+          <Card.Text className="text-center">{workTitle}</Card.Text>
         </Card.Body>
       </Card>
       {showAuthModal && (
