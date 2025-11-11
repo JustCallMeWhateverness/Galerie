@@ -277,15 +277,17 @@ export default function UserPage() {
                 <i className="bi bi-chevron-right text-muted"></i>
               </Link>
             </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="/my-sales"
-                className="text-dark text-decoration-none  d-flex justify-content-between align-items-center"
-              >
-                My sales
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
+            {hasArtistInfo && (
+              <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+                <Link
+                  to="/my-sales"
+                  className="text-dark text-decoration-none  d-flex justify-content-between align-items-center"
+                >
+                  My sales
+                  <i className="bi bi-chevron-right text-muted"></i>
+                </Link>
+              </Row>
+            )}
             <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
               <Link
                 to="/messages"
