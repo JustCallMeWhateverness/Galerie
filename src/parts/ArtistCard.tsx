@@ -16,6 +16,7 @@ export type ExtendedArtist = Artist & {
   location?: string;
   email?: string;
   registrationDate?: string;
+  description?: string;
   avatar?: string;
   href?: string;
 };
