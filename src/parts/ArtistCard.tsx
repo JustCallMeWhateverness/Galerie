@@ -65,6 +65,9 @@ export default function ArtistCard(props: Artist) {
             <span
               className="heart-hitbox float-end"
               role="button"
+              aria-label={
+                isFavorited ? "Remove from favorites" : "Add to favorites"
+              }
               onClick={onFavClick}
             >
               <i
