@@ -18,4 +18,15 @@ main {
     object-position: top left;
   }
 
+  .card {
+    img {
+      //This keep the auctioncards the same size
+      aspect-ratio: 20/9;
+      transition: filter 0.4s;
+    }
+
+    &:hover img {
+      filter: saturate(1.5);
+    }
+  }
 }
