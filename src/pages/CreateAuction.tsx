@@ -37,9 +37,9 @@ const colorOptions = [
 const minimumAuctionLengthDays = 3;
 
 export default function CreateAuction() {
-  const [showSellerModal, setShowSellerModal] = useState(true);
-  const { user, loading } = useAuth();
-  const { data: artistInfo, loading: artistLoading } = useArtistInfo();
+
+  const { user } = useAuth();
+  const { data: artistInfo } = useArtistInfo();
   const [imagePaths, setImagePaths] = useState<string[]>([]);
   const [categories, setCategories] = useState<{ id: string, title: string; }[]>([]);
   const [auction, setAuction] = useState({
@@ -182,22 +182,22 @@ export default function CreateAuction() {
     !user.roles ||
     (
       !user.roles.includes('Administrator') &&
-      (
-        !artistInfo
-      )
+      !artistInfo
     )
   ) {
     return (
-      <MustBeSellerModal
-        show={showSellerModal}
-        onHide={() => {
-          setShowSellerModal(false);
-          navigate('/');
-        }}
-        onUpgrade={() => { }}
-      />
+      <>
+        <MustBeSellerModal
+          show={true}
+          onHide={() => navigate('/')}
+          onUpgrade={() => {
+            navigate('/user?edit=artist');
+          }}
+        />
+      </>
     );
   }
+
 
   return (
     <Container>

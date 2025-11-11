@@ -41,7 +41,12 @@ export default function UserPage() {
   const [createArtist, setCreatingArtist] = useState(false);
   const { data: artistInfo } = useArtistInfo();
   const hasArtistInfo = Boolean(artistInfo);
-
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("edit") === "artist") {
+      setIsEditing(true);
+    }
+  }, []);
   useEffect(() => {
     if (user) {
       setEditForm({
@@ -156,10 +161,10 @@ export default function UserPage() {
             Created:{" "}
             {user.created
               ? new Date(user.created).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
               : "N/A"}
           </div>
         </Col>
