@@ -36,7 +36,13 @@ export default function HomePage() {
 
   function getHighestCurrentBids(auctions: Auction[]) {
     return [...auctions]
-      .filter(a => a.currentBid != null && a.endTime && new Date(a.endTime) > new Date())
+      .filter(
+        a =>
+          a.currentBid != null &&
+          a.endTime &&
+          new Date(a.endTime) > new Date() &&
+          a.currentBid > a.startBid
+      )
       .sort((a, b) => (b.currentBid ?? 0) - (a.currentBid ?? 0))
       .slice(0, 5);
   }
