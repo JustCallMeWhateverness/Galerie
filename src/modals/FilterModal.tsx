@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SelectDropdown from "../parts/SelectDropdown";
 import type { Option } from "../interfaces/SelectDropdown";
 import MultiSelectDropdown from "../parts/MultiSelectDropdown";
@@ -11,16 +11,8 @@ const sortOptions: Option[] = [
   { value: "high", label: "Highest current bid" },
   { value: "newest", label: "Newest First" },
   { value: "time", label: "Time remaining" },
+  { value: "nobids", label: "No bids" },
   { value: "distance", label: "Closest to me" },
-];
-
-const categoryOptions: Option[] = [
-  { value: "art", label: "Art" },
-  { value: "ceramic", label: "Ceramic" },
-  { value: "wood", label: "Wood" },
-  { value: "silver/gold", label: "Silver/Gold" },
-  { value: "furniture", label: "Furniture" },
-  { value: "textile", label: "Textile" },
 ];
 
 const colorOptions: Option[] = [
@@ -51,6 +43,7 @@ export default function FilterModal({ show, onHide, onApply }: FilterModalProps)
   const [cats, setCats] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
   const [distance, setDistance] = useState<number | null>(null);
+  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
 
   const clear = () => {
     setSelected("");
@@ -58,6 +51,24 @@ export default function FilterModal({ show, onHide, onApply }: FilterModalProps)
     setColors([]);
     setDistance(null);
   };
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const response = await fetch('/api/Category', { credentials: 'include' });
+      if (response.ok) {
+        const data = await response.json();
+        setCategoryOptions(
+          data.map((cat: { id: string; title: string }) => ({
+            value: cat.id,
+            label: cat.title,
+          }))
+        );
+      }
+    }
+    fetchCategories();
+  }, []);
+
+
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -98,7 +109,21 @@ export default function FilterModal({ show, onHide, onApply }: FilterModalProps)
           step={1}
           className="mb-4"
         />
-        <Button variant="primary" className="w-100 mb-3" >Apply</Button>
+        <Button
+          variant="primary"
+          className="w-100 mb-3"
+          onClick={() => {
+            const params = new URLSearchParams();
+            if (selected) params.set("sort", selected);
+            if (cats.length) params.set("categories", cats.join(","));
+            if (colors.length) params.set("colors", colors.join(","));
+            if (distance !== null) params.set("distance", distance.toString());
+            onApply(params);
+            onHide();
+          }}
+        >
+          Apply
+        </Button>
         <Button variant="secondary" onClick={clear} className="w-100">Clear All</Button>
       </Modal.Body>
     </Modal>

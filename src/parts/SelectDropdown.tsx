@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import type SelectDropdownProps from "../interfaces/SelectDropdown";
-import { Dropdown, Form } from "react-bootstrap";
+import { Dropdown, Form, Button } from "react-bootstrap";
 
 export default function SelectDropdown({
   label,
@@ -35,6 +35,23 @@ export default function SelectDropdown({
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="w-100" aria-labelledby={`${id}-toggle`}>
+          <Button
+            variant="link"
+            size="sm"
+            style={{
+              position: "absolute",
+              top: 4,
+              right: 8,
+              zIndex: 2,
+              color: "#888",
+              textDecoration: "none"
+            }}
+            aria-label="Close"
+            onClick={() => setShow(false)}
+            tabIndex={0}
+          >
+            &#10005;
+          </Button>
           <Form className="px-3 py-2 custom-checkbox">
             {options.map(option => (
               <Form.Check
@@ -48,6 +65,7 @@ export default function SelectDropdown({
                 className="mb-1"
               />
             ))}
+
           </Form>
         </Dropdown.Menu>
       </Dropdown>
