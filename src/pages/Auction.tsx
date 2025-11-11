@@ -93,7 +93,7 @@ export default function Auction() {
       if (data.items && data.items.length > 0) {
         const maxBid = Math.max(...data.items.map(bid => bid.amount))
         setMinimumBid(maxBid)
-        
+
         setAuction(prevAuction => {
           if (prevAuction) {
             return { ...prevAuction, currentBid: maxBid }
@@ -173,11 +173,11 @@ export default function Auction() {
 
         setBids(data.items ?? [])
         setImg(data.imageUpload ?? null)
-        
+
         const currentBid = data.items && data.items.length > 0
           ? Math.max(...data.items.map(bid => bid.amount))
           : data.startBid
-        
+
         if (data.items && data.items.length > 0) {
           setMinimumBid(Math.max(...data.items.map(bid => bid.amount)))
         } else {
@@ -241,11 +241,24 @@ export default function Auction() {
         }
         else {
 
-          return <Card>
-            <Card.Title>Congratulations!</Card.Title>
-            <Card.Text>A bid of {winningBid.amount} SEK won the auction.</Card.Text>
-            <Card.Text>They have {hasBeenPaid ? '' : 'not'} paid</Card.Text>
-          </Card>
+          return (
+            <Card className="text-center" >
+              <Card.Body>
+                <Card.Title className="mb-3">Auction Finished</Card.Title>
+                <Card.Text className="mb-3">
+                  A bid of <b>{winningBid.amount} SEK</b> won the auction.
+                </Card.Text>
+                <Card.Text className="text-center">
+                  <span
+                    className={`border rounded px-2 py-1 ${hasBeenPaid ? "text-success border-success" : "text-warning border-warning"}`}
+                    style={{ display: "inline-block" }}
+                  >
+                    They have {hasBeenPaid ? "" : "not "}paid
+                  </span>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          );
         }
       }
 
