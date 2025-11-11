@@ -39,26 +39,8 @@ export default function CarouselComponent({
         controls={showControls}
         prevIcon={<i className="bi bi-chevron-left text-secondary fs-2"></i>}
         nextIcon={<i className="bi bi-chevron-right text-secondary fs-2"></i>}
-        style={{ position: 'relative' }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            top: '10px',
-            left: '10px',
-            zIndex: 10,
-            color: 'black',
-            // fontSize: '24px',
-            // fontWeight: 'bold',
-            backgroundColor: 'rgba(255,255,255,0.75',
-            padding: '5px 10px',
-            borderRadius: '5px'
-          }}
-        >
-          <h5>
-            Upcoming Auctions
-          </h5>
-        </div>
+
 
         {items.map((item) => {
           const imagePath = item.imageUpload?.paths?.[0];
@@ -82,7 +64,7 @@ export default function CarouselComponent({
             <Image
               src={imageUrl}
               alt={alt}
-              // loading="lazy"
+              loading="lazy"
               className="d-block w-100 carousel-img"
               style={{
                 height,
