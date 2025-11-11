@@ -6,13 +6,15 @@ import { useAuth } from "../hooks/useAuth";
 interface Props {
   miniBid: number,
   auctionId: string,
-  onBidSuccess?: () => void
+  onBidSuccess?: () => void,
+  addStep: boolean
 }
 
-export default function BidInput({ miniBid, auctionId, onBidSuccess }: Props) {
+export default function BidInput({ miniBid, auctionId, onBidSuccess, addStep }: Props) {
   const [value, setValue] = useState("");
   const { getCurrencySymbol, convertToSEK } = useCurrency();
   const { user } = useAuth()
+  const STEP = 25
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,6 +71,10 @@ export default function BidInput({ miniBid, auctionId, onBidSuccess }: Props) {
     setValue(e.target.value);
   };
 
+  // if the miminum bid is the starting bid you can bid the actual starting price
+  // else you need to add 25 sek
+  const minimumBid = addStep ? miniBid + STEP : miniBid
+
   return (
     <Form className="mt-4" onSubmit={handleSubmit}>
       <div className="position-relative mb-3">
@@ -77,8 +83,8 @@ export default function BidInput({ miniBid, auctionId, onBidSuccess }: Props) {
         <InputGroup>
           <Form.Control
             type="number"
-            min={miniBid}
-            placeholder={`Enter your bid, minimum ${miniBid}`}
+            min={minimumBid}
+            placeholder={`Enter your bid, minimum ${minimumBid}`}
             value={value}
             onChange={handleChange}
             required

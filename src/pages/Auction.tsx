@@ -1,4 +1,4 @@
-import { Row, Col, Spinner } from "react-bootstrap";
+import { Row, Col, Spinner, Alert, Card } from "react-bootstrap";
 import Image from "../parts/Image";
 import BidInput from "../components/BidInput";
 import BidHistory from "../components/BidHistory";
@@ -13,6 +13,14 @@ import { useAuth } from "../hooks/useAuth";
 import { useFavorite } from "../hooks/useFavorite";
 import AuthModal from "../modals/AuthModal";
 import type { default as AuctionData } from "../interfaces/Auction";
+import WinnerCard from "../parts/WinnerCard";
+
+
+Auction.route = {
+  path: "/auction/:id",
+  index: 2,
+  menulabel: "Auction Listing Page"
+};
 
 interface AuctionResponse {
   id: string,
@@ -30,10 +38,11 @@ interface AuctionResponse {
   color: string,
   favorited?: boolean,
   favouritesCount?: number
+  hasBeenPaid?: boolean
 }
 
 export type Bid = {
-  customerId: string,
+  customerId: number,
   amount: number,
   contentType: string,
   timeStamp: string
@@ -44,7 +53,12 @@ type imageUpload = {
   mediaTexts?: string[]
 }
 
-function Auction() {
+type time = {
+  startTime: Date,
+  endTime: Date,
+}
+
+export default function Auction() {
 
   const { id } = useParams<{ id: string }>()
   const [isLoading, setIsLoading] = useState(true)
@@ -53,6 +67,8 @@ function Auction() {
   const [img, setImg] = useState<imageUpload | null>(null)
   const [minimumBid, setMinimumBid] = useState(0)
   const [auction, setAuction] = useState<AuctionData | undefined>(undefined)
+  const [time, setTime] = useState<time | null>(null)
+  const [hasBeenPaid, setHasBeenPaid] = useState<boolean | null>(null)
 
   const { user } = useAuth()
   const isFavoritedByUser = !!user?.likedAuctions?.some(a => a.id === id)
@@ -91,6 +107,39 @@ function Auction() {
     }
   }
 
+  function FindWinner(bids: Bid[]) {
+    if (bids.length === 0)
+      return null
+
+    return bids.reduce((max, current) => current.amount > max.amount ? current : max)
+
+  }
+
+  async function PayTheMan() {
+
+    const body = { hasBeenPaid: true }
+
+    try {
+      const response = await fetch(`/api/Auction/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers:
+          { 'Content-Type': 'application/json' }
+      })
+
+      if (!response.ok) {
+        console.log("Error when trying to pay")
+      }
+      else {
+        setHasBeenPaid(true)
+      }
+
+    }
+    catch (error) {
+      console.log("Error caused by trying to pay the auction", error)
+    }
+  }
+
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true)
@@ -104,13 +153,23 @@ function Auction() {
         setAuctionInformation({
           title: data.title,
           description: data.description,
-          seller: data.seller && data.seller.length > 0 ? data.seller[0].username : "Unknown",
+          seller: data.seller && data.seller.length > 0 ? data.seller[0] : { username: "Unknown" } as Customer,
           pickupEnabled: data.pickupEnabled,
           freightEnabled: data.freightEnabled,
           timeRemaining: getRemainingTimeMessage(new Date(data.endTime)),
           startBid: data.startBid,
           color: data.color
         })
+
+        setTime(
+          {
+            startTime: new Date(data.startTime),
+            endTime: new Date(data.endTime)
+          }
+        )
+
+        setHasBeenPaid(data?.hasBeenPaid ?? null)
+
 
         setBids(data.items ?? [])
         setImg(data.imageUpload ?? null)
@@ -150,6 +209,51 @@ function Auction() {
 
   const imagePath = img?.paths?.[0]
   const imageUrl = imagePath ? `/media/${imagePath}` : "/images/placeholder.jpg"
+  const now = new Date()
+
+  function getBidContent() {
+    if (!time) {
+      return null
+    }
+    if (now < time.startTime) {
+      return <Alert variant="warning">This auction starts at {time.startTime.toDateString()}</Alert>
+    }
+    if (now >= time.startTime && now <= time.endTime) {
+      const addStep = !!bids.length
+
+      return <BidInput
+        miniBid={minimumBid}
+        auctionId={id ?? "invalid id"}
+        onBidSuccess={refreshBid}
+        addStep={addStep}
+      />
+    }
+    console.log("inloggad: ", user?.id)
+    if (!!user) {
+      const winningBid = FindWinner(bids)
+
+      if (!!auctionInformation?.seller && user.id === auctionInformation.seller.id) {
+        if (winningBid === null) {
+          return <Alert variant="info">
+            The auction closed without any bids, better luck next time!
+          </Alert>
+        }
+        else {
+
+          return <Card>
+            <Card.Title>Congratulations!</Card.Title>
+            <Card.Text>A bid of {winningBid.amount} SEK won the auction.</Card.Text>
+            <Card.Text>They have {hasBeenPaid ? '' : 'not'} paid</Card.Text>
+          </Card>
+        }
+      }
+
+      if (winningBid && winningBid.customerId === user.id) {
+        return <WinnerCard amount={winningBid.amount} hasBeenPaid={hasBeenPaid ?? false} buttonPress={PayTheMan} />
+      }
+    }
+    return <Alert variant="warning">This auction ended at {time.endTime.toDateString()}</Alert>
+  }
 
   return (
     <>
@@ -180,10 +284,18 @@ function Auction() {
               }
             </div>
             <div>
-              <BidInput miniBid={minimumBid} auctionId={id ?? "invalid id"} onBidSuccess={refreshBid} />
+
+              {getBidContent()}
             </div>
+
+            {/* BidHistory is only visible after auction has started */}
             <div>
-              <BidHistory bids={bids} />
+              {time && time.startTime < now ?
+                (
+                  < BidHistory bids={bids} />
+                )
+                : ""
+              }
             </div>
 
           </Col>
@@ -200,10 +312,4 @@ function Auction() {
   );
 }
 
-Auction.route = {
-  path: "/auction/:id",
-  index: 2,
-  menulabel: "Auction Listing Page"
-};
 
-export default Auction;

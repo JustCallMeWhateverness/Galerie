@@ -1,10 +1,12 @@
 import { Stack } from "react-bootstrap";
 import { useCurrency } from "../context/CurrencyContext";
+import type { Customer } from "../interfaces/Customer";
+
 
 export type AuctionInfo = {
   title: string;
   description: string;
-  seller: string;
+  seller: Customer;
   pickupEnabled: boolean;
   freightEnabled: boolean;
   timeRemaining: string;
@@ -13,6 +15,7 @@ export type AuctionInfo = {
   startBid: number;
   color: string;
 };
+
 
 export function AuctionInformation({ info }: { info: AuctionInfo }) {
   const {
@@ -42,7 +45,7 @@ export function AuctionInformation({ info }: { info: AuctionInfo }) {
         </div>
 
         <div>
-          <strong>Artist:</strong>&nbsp;{seller}
+          <strong>Artist:</strong>&nbsp;{seller.username}
         </div>
 
         <div>
