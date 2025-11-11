@@ -191,7 +191,7 @@ export default function CreateAuction() {
           show={true}
           onHide={() => navigate('/')}
           onUpgrade={() => {
-            navigate('/user?edit=artist');
+            navigate('/user?createArtist=1');
           }}
         />
       </>
