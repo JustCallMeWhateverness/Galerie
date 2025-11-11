@@ -5,7 +5,11 @@ $line-height-base: 1.4;
 $navbar-dark-color: rgba(white, 0.8) !default;
 $navbar-dark-hover-color: rgba(white, 0.9) !default;
 $primary: #f2eee9;
-$secondary: #087990;
+//$secondary: #b09c81; //LightBrown
+//$secondary: #a32b36; //Red
+//$secondary: #191a19; //Black
+//$secondary: #087990; //Original blue
+$secondary: #3a2b28;
 $enable-negative-margins: true;
 
 // color suggestions :taupe D8D3CC, light greige: edeceb, light beige: F2EEE9
@@ -31,9 +35,12 @@ $enable-negative-margins: true;
   max-width: 970px;
 }
 
-.custom-checkbox .form-check-input:checked {
-  background-color: $secondary;
-  border-color: $secondary;
+.form-check-input:checked {
+  background-color: var(--bs-secondary);
+  border-color: var(--bs-secondary);
+}
+.form-check-input:focus {
+  box-shadow: none !important;
 }
 
 .carousel-indicators [data-bs-target] {
@@ -53,7 +60,7 @@ $enable-negative-margins: true;
 
 .auction-img,
 .carousel-img {
-  border: none !important
+  border: none !important;
 }
 
 @media (min-width: 992px) {
