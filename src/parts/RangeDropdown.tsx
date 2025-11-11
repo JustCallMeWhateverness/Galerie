@@ -48,6 +48,23 @@ export default function RangeDropdown({
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="w-100 p-3" aria-labelledby={`${id}-toggle`}>
+          <Button
+            variant="link"
+            size="sm"
+            style={{
+              position: "absolute",
+              top: 4,
+              right: 8,
+              zIndex: 2,
+              color: "#888",
+              textDecoration: "none"
+            }}
+            aria-label="Close"
+            onClick={() => setShow(false)}
+            tabIndex={0}
+          >
+            &#10005;
+          </Button>
           <Form.Group>
             <Form.Label className="fw-semibold">{label}</Form.Label>
             <Form.Range

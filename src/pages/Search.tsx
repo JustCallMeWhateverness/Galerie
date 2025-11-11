@@ -10,7 +10,7 @@ import FilterModal from "../modals/FilterModal";
 type AuctionDTO = {
   id: string;
   title: string;
-  category?: string;
+  auctionCategoryId?: string;
   artistName?: string;
   currentBid: number;
   startBid: number;
@@ -18,6 +18,7 @@ type AuctionDTO = {
   startTime: string;
   favorited?: boolean;
   favoritesCount: number;
+  color?: string;
   imageUpload?: {
     paths: string[];
     mediaTexts?: string[];
@@ -47,6 +48,12 @@ export default function Search() {
   const navigate = useNavigate();
   const q = useQueryParam("q", "");
   const tab = useQueryParam("tab", "auction") as Tab;
+  const params = useQuery();
+  const sort = params.get("sort");
+  const categories = params.get("categories")?.split(",").filter(Boolean) ?? [];
+  const colors = params.get("colors")?.split(",").filter(Boolean) ?? [];
+  const distance = params.get("distance");
+  const [categoriesList, setCategoriesList] = useState<{ id: string; title: string }[]>([]);
 
   const [auction, setAuction] = useState<AuctionDTO[]>([]);
   const [artist, setArtist] = useState<Artist[]>([]);
@@ -107,15 +114,58 @@ export default function Search() {
     return () => abort.abort();
   }, [tab]);
 
+  useEffect(() => {
+    async function fetchCategories() {
+      const res = await fetch('/api/Category', { credentials: 'include' });
+      if (res.ok) {
+        setCategoriesList(await res.json());
+      }
+    }
+    fetchCategories();
+
+  }, []);
+
   const auctionFiltered = useMemo(() => {
+    let filtered = auction;
+
     const s = q.trim().toLowerCase();
-    if (!s) return auction;
-    return auction.filter(a =>
-      a.title?.toLowerCase().includes(s) ||
-      a.category?.toLowerCase().includes(s) ||
-      a.artistName?.toLowerCase().includes(s)
-    );
-  }, [auction, q]);
+    if (s) {
+      filtered = filtered.filter(a =>
+        a.title?.toLowerCase().includes(s) ||
+        a.auctionCategoryId?.toLowerCase().includes(s) ||
+        a.artistName?.toLowerCase().includes(s)
+      );
+    }
+
+    if (categories.length > 0) {
+      if (categories.length > 0) {
+        filtered = filtered.filter(a => categories.includes(a.auctionCategoryId ?? ""));
+      }
+    }
+
+    if (colors.length > 0) {
+      filtered = filtered.filter(a => colors.includes(a.color ?? ""));
+    }
+
+    if (sort === "low") {
+      filtered = filtered
+        .filter(a => a.items && a.items.length > 0 && a.currentBid > a.startBid)
+        .sort((a, b) => a.currentBid - b.currentBid);
+    } else if (sort === "high") {
+      filtered = filtered
+        .filter(a => a.items && a.items.length > 0 && a.currentBid > a.startBid)
+        .sort((a, b) => b.currentBid - a.currentBid);
+    } else if (sort === "newest") {
+      filtered = [...filtered].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+    } else if (sort === "time") {
+      filtered = [...filtered].sort((a, b) => new Date(a.endTime).getTime() - new Date(b.endTime).getTime());
+    }
+    else if (sort === "nobids") {
+      filtered = filtered.filter(a => !a.items || a.items.length === 0 || a.currentBid === a.startBid);
+    }
+
+    return filtered;
+  }, [auction, q, categories, colors, sort]);
 
   const artistFiltered = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -161,10 +211,11 @@ export default function Search() {
               </Button>
             </ButtonGroup>
 
-            <Button variant="none" onClick={() => setShowFilter(true)}
-            >
-              <i className="bi bi-filter fs-4"></i>
-            </Button>
+            {tab === "auction" && (
+              <Button variant="none" onClick={() => setShowFilter(true)}>
+                <i className="bi bi-filter fs-4"></i>
+              </Button>
+            )}
           </div>
         </Col>
       </Row>
@@ -189,6 +240,7 @@ export default function Search() {
           )}
         </Col>
       </Row>
+
       <FilterModal
         show={showFilter}
         onHide={() => setShowFilter(false)}
