@@ -15,28 +15,29 @@ export function useArtistInfo() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/expand/ArtistInfo", {
+        const qs = new URLSearchParams({ where: `customer.id=${user!.id}` });
+        const res = await fetch(`/api/expand/ArtistInfo?${qs.toString()}`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("Failed to fetch ArtistInfo");
-        const list = await res.json();
 
-        const mine = Array.isArray(list)
-          ? list.find(
-            (it: any) =>
-              Array.isArray(it.customer) &&
-              it.customer.some((u: any) => u?.id === user?.id)
-          )
-          : null;
+        if (!res.ok)
+          throw new Error(`Failed to fetch ArtistInfo (HTTP ${res.status})`);
+        const json = await res.json();
+
+        const list = Array.isArray(json) ? json : json ? [json] : [];
+        const mine = list[0] ?? null;
 
         if (mine) {
-          const c = Array.isArray(mine.customer) ? mine.customer[0] : null;
-
+          const c = Array.isArray(mine.customer)
+            ? mine.customer[0]
+            : mine.customer;
+          const firstName = c?.firstName ?? "";
+          const lastName = c?.lastName ?? "";
+          const username = c?.username ?? "";
           const customerName =
-            c?.firstName || c?.lastName
-              ? `${c?.firstName ?? ""}${c?.firstName && c?.lastName ? " " : ""
-              }${c?.lastName ?? ""}`
-              : c?.username ?? "";
+            firstName || lastName
+              ? `${firstName}${firstName && lastName ? " " : ""}${lastName}`
+              : username;
 
           setData({
             id: mine.id ?? "",
@@ -52,6 +53,7 @@ export function useArtistInfo() {
       } catch (e: any) {
         console.error("Error fetching ArtistInfo:", e);
         setError(e.message ?? "Unknown error");
+        setData(null);
       } finally {
         setLoading(false);
       }
