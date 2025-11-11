@@ -24,11 +24,6 @@ export default function EditProfileModal({
   onSave,
   onCancel,
   isSaving,
-  isArtistChecked,
-  creatingArtist,
-  onToggleArtist,
-  onCreateArtist,
-  hasArtistInfo,
 }: EditProfileModalProps) {
   return (
     <Modal show={show} onHide={onHide} centered className="editprofile-modal">
@@ -109,27 +104,11 @@ export default function EditProfileModal({
               placeholder="Phone Number"
             />
           </Form.Group>
-          <Form.Group className="mb-2"> </Form.Group>
-          <Form.Label>I am an artist</Form.Label>
-          <Form.Check
-            type="checkbox"
-            id="artist-toggle"
-            label="Create my Artist profile"
-            checked={isArtistChecked}
-            onChange={(e) => onToggleArtist(e.target.checked)}
-            disabled={hasArtistInfo}
-          />
+
         </Form>
       </Modal.Body>
 
       <Modal.Footer>
-        <Button
-          variant="primary"
-          onClick={onCreateArtist}
-          disabled={hasArtistInfo || !isArtistChecked || creatingArtist}
-        >
-          {creatingArtist ? "Creating..." : "Create Artist Profile"}
-        </Button>
         <Button variant="secondary" onClick={onCancel}>
           Cancel
         </Button>

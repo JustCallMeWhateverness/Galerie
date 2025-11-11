@@ -9,7 +9,6 @@ import FileUpload from "../components/FileUpload";
 import AuthModal from "../modals/AuthModal";
 import MustBeSellerModal from "../modals/MustBeSellerModal";
 import DatePickerInput from "../parts/DatePickerInput";
-import BackButton from "../components/BackButton";
 
 CreateAuction.route = {
   path: "/create",
@@ -35,9 +34,9 @@ const colorOptions = [
 const minimumAuctionLengthDays = 3;
 
 export default function CreateAuction() {
-  const [showSellerModal, setShowSellerModal] = useState(true);
-  const { user, loading } = useAuth();
-  const { data: artistInfo, loading: artistLoading } = useArtistInfo();
+
+  const { user } = useAuth();
+  const { data: artistInfo } = useArtistInfo();
   const [imagePaths, setImagePaths] = useState<string[]>([]);
   const [categories, setCategories] = useState<{ id: string; title: string }[]>(
     []
@@ -165,7 +164,7 @@ export default function CreateAuction() {
         try {
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.error || errorJson.message || errorText;
-        } catch {}
+        } catch { }
         console.error("Failed to create auction:", errorMessage);
       }
     } catch (error) {
@@ -173,32 +172,35 @@ export default function CreateAuction() {
     }
   }
 
-  if (loading || artistLoading) {
-    return <p>Loading...</p>;
-  }
-
   if (!user) {
     return <AuthModal customTitle="Log in to create an auction" />;
   }
 
-  if (!user.roles || (!user.roles.includes("Administrator") && !artistInfo)) {
+  if (
+    !user.roles ||
+    (
+      !user.roles.includes('Administrator') &&
+      !artistInfo
+    )
+  ) {
     return (
-      <MustBeSellerModal
-        show={showSellerModal}
-        onHide={() => {
-          setShowSellerModal(false);
-          navigate("/");
-        }}
-        onUpgrade={() => {}}
-      />
+      <>
+        <MustBeSellerModal
+          show={true}
+          onHide={() => navigate('/')}
+          onUpgrade={() => {
+            navigate('/user?createArtist=1');
+          }}
+        />
+      </>
     );
   }
+
 
   return (
     <Container>
       <Row>
         <Col>
-          <BackButton className="mb-3" />
           <h2>Create an Auction</h2>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-4">

@@ -228,6 +228,7 @@ export default function Auction() {
           auctionId={id ?? "invalid id"}
           onBidSuccess={refreshBid}
           addStep={addStep}
+          onRequireLogin={() => setShowAuthModal(true)}
         />
       );
     }
@@ -240,19 +241,28 @@ export default function Auction() {
         user.id === auctionInformation.seller.id
       ) {
         if (winningBid === null) {
+          return <Alert variant="info">
+            The auction closed without any bids, better luck next time!
+          </Alert>
+        }
+        else {
+
           return (
-            <Alert variant="info">
-              The auction closed without any bids, better luck next time!
-            </Alert>
-          );
-        } else {
-          return (
-            <Card>
-              <Card.Title>Congratulations!</Card.Title>
-              <Card.Text>
-                A bid of {winningBid.amount} SEK won the auction.
-              </Card.Text>
-              <Card.Text>They have {hasBeenPaid ? "" : "not"} paid</Card.Text>
+            <Card className="text-center" >
+              <Card.Body>
+                <Card.Title className="mb-3">Auction Finished</Card.Title>
+                <Card.Text className="mb-3">
+                  A bid of <b>{winningBid.amount} SEK</b> won the auction.
+                </Card.Text>
+                <Card.Text className="text-center">
+                  <span
+                    className={`border rounded px-2 py-1 ${hasBeenPaid ? "text-success border-success" : "text-warning border-warning"}`}
+                    style={{ display: "inline-block" }}
+                  >
+                    They have {hasBeenPaid ? "" : "not "}paid
+                  </span>
+                </Card.Text>
+              </Card.Body>
             </Card>
           );
         }
@@ -307,9 +317,8 @@ export default function Auction() {
               >
                 {/* bi-suit-heart must be at the end for the correct logo to be shown */}
                 <i
-                  className={`fs-2 mx-2 bi bi-suit-heart${
-                    isFavorited ? "-fill" : ""
-                  }`}
+                  className={`fs-2 mx-2 bi bi-suit-heart${isFavorited ? "-fill" : ""
+                    }`}
                 ></i>
               </span>
               {auctionInformation && (
@@ -327,7 +336,7 @@ export default function Auction() {
       )}
       {showAuthModal && (
         <AuthModal
-          customTitle="Log in to favourite auctions"
+          customTitle="Log in to continue"
           show={showAuthModal}
           onHide={() => setShowAuthModal(false)}
         ></AuthModal>

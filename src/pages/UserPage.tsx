@@ -12,6 +12,7 @@ import Logout from "../components/Logout";
 import ArtistInfo from "../components/ArtistInfo";
 import { createArtistProfile } from "../api/createArtistProfile";
 import CurrencySettingsModal from "../modals/CurrencySettingsModal";
+import { CreateArtistConfirmModal } from "../modals/CreateArtistConfirmModal";
 
 UserPage.route = {
   path: "/user/:id?",
@@ -40,7 +41,15 @@ export default function UserPage() {
   const [isArtistChecked, setIsArtistChecked] = useState(false);
   const [createArtist, setCreatingArtist] = useState(false);
   const { data: artistInfo } = useArtistInfo();
+  const [showCreateArtistConfirm, setShowCreateArtistConfirm] = useState(false);
   const hasArtistInfo = Boolean(artistInfo);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("createArtist") === "1") {
+      setShowCreateArtistConfirm(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -123,6 +132,9 @@ export default function UserPage() {
     setCreatingArtist(true);
     try {
       await createArtistProfile(String(user.id), user.username);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("createArtist");
+      window.history.replaceState({}, '', url);
       window.location.reload(); // Temporary quick fix: reload to update UI after creating ArtistInfo
     } finally {
       setCreatingArtist(false);
@@ -156,10 +168,10 @@ export default function UserPage() {
             Created:{" "}
             {user.created
               ? new Date(user.created).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
               : "N/A"}
           </div>
         </Col>
@@ -199,6 +211,27 @@ export default function UserPage() {
           </Col>
         </Row>
       )}
+      {!hasArtistInfo && (
+        <Row className="justify-content-center">
+          <Col xs="auto" className="d-flex flex-column align-items-center">
+            <div className="text-center mb-2" style={{ maxWidth: 500 }}>
+              <small>
+                Want to sell your art? Set up your artist profile to get started.
+              </small>
+            </div>
+            <Button
+              variant="primary"
+              onClick={() => setShowCreateArtistConfirm(true)}
+              disabled={createArtist}
+              size="sm"
+              className="mb-3"
+            >
+              {createArtist ? "Creating..." : "Create Artist Profile"}
+            </Button>
+          </Col>
+        </Row>
+      )}
+
 
       {errors.length > 0 && (
         <Row>
@@ -244,15 +277,17 @@ export default function UserPage() {
                 <i className="bi bi-chevron-right text-muted"></i>
               </Link>
             </Row>
-            <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
-              <Link
-                to="/my-sales"
-                className="text-dark text-decoration-none  d-flex justify-content-between align-items-center"
-              >
-                My sales
-                <i className="bi bi-chevron-right text-muted"></i>
-              </Link>
-            </Row>
+            {hasArtistInfo && (
+              <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
+                <Link
+                  to="/my-sales"
+                  className="text-dark text-decoration-none  d-flex justify-content-between align-items-center"
+                >
+                  My sales
+                  <i className="bi bi-chevron-right text-muted"></i>
+                </Link>
+              </Row>
+            )}
             <Row className="list-group-item d-flex justify-content-between align-items-center user-menu-item">
               <Link
                 to="/messages"
@@ -300,6 +335,12 @@ export default function UserPage() {
       <CurrencySettingsModal
         show={showCurrencyModal}
         onHide={() => setShowCurrencyModal(false)}
+      />
+      <CreateArtistConfirmModal
+        showCreateArtistConfirm={showCreateArtistConfirm}
+        setShowCreateArtistConfirm={setShowCreateArtistConfirm}
+        handleCreateArtist={handleCreateArtist}
+        createArtist={createArtist}
       />
     </div>
   );
