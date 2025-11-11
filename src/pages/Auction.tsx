@@ -192,6 +192,7 @@ export default function Auction() {
         auctionId={id ?? "invalid id"}
         onBidSuccess={refreshBid}
         addStep={addStep}
+        onRequireLogin={() => setShowAuthModal(true)}
       />
     }
     console.log("inloggad: ", user?.id)
@@ -269,7 +270,7 @@ export default function Auction() {
       }
       {
         showAuthModal && (<AuthModal
-          customTitle="Log in to favourite auctions"
+          customTitle="Log in to continue"
           show={showAuthModal}
           onHide={() => setShowAuthModal(false)}
         ></AuthModal>)

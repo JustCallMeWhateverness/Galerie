@@ -8,9 +8,10 @@ interface Props {
   auctionId: string,
   onBidSuccess?: () => void,
   addStep: boolean
+  onRequireLogin?: () => void
 }
 
-export default function BidInput({ miniBid, auctionId, onBidSuccess, addStep }: Props) {
+export default function BidInput({ miniBid, auctionId, onBidSuccess, addStep, onRequireLogin }: Props) {
   const [value, setValue] = useState("");
   const { getCurrencySymbol, convertToSEK } = useCurrency();
   const { user } = useAuth()
@@ -28,9 +29,14 @@ export default function BidInput({ miniBid, auctionId, onBidSuccess, addStep }: 
 
   async function sendBid(auctionId: string, amount: number) {
     if (!user?.id || !user?.username) {
-      alert("You must be logged in to place a bid.");
+      if (onRequireLogin) {
+        onRequireLogin();
+      } else {
+        alert("You must be logged in to place a bid.");
+      }
       return;
     }
+
 
     const body = {
       items: {
