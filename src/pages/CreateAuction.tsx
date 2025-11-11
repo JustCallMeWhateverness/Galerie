@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
-import { useArtistInfo } from "../hooks/useArtistInfo"
+import { useArtistInfo } from "../hooks/useArtistInfo";
 import { addDays } from "date-fns";
 import { useCurrency } from "../context/CurrencyContext";
 import FileUpload from "../components/FileUpload";
@@ -12,9 +12,7 @@ import DatePickerInput from "../parts/DatePickerInput";
 import BackButton from "../components/BackButton";
 
 CreateAuction.route = {
-  path: '/create',
-  menuLabel: 'Create Auction',
-  index: 7
+  path: "/create",
 };
 
 const colorOptions = [
@@ -34,7 +32,6 @@ const colorOptions = [
   { value: "purple", label: "Purple" },
 ];
 
-
 const minimumAuctionLengthDays = 3;
 
 export default function CreateAuction() {
@@ -42,18 +39,20 @@ export default function CreateAuction() {
   const { user, loading } = useAuth();
   const { data: artistInfo, loading: artistLoading } = useArtistInfo();
   const [imagePaths, setImagePaths] = useState<string[]>([]);
-  const [categories, setCategories] = useState<{ id: string, title: string; }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; title: string }[]>(
+    []
+  );
   const [auction, setAuction] = useState({
-    title: '',
-    description: '',
-    Seller: user?.id || '',
-    AuctionCategory: '',
-    Color: '',
+    title: "",
+    description: "",
+    Seller: user?.id || "",
+    AuctionCategory: "",
+    Color: "",
     PickupEnabled: false,
     FreightEnabled: false,
     StartBid: 0,
-    StartTime: '',
-    EndTime: ''
+    StartTime: "",
+    EndTime: "",
   });
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -62,7 +61,11 @@ export default function CreateAuction() {
   const { convertToSEK } = useCurrency();
   const navigate = useNavigate();
 
-  const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
+  const handleImageUploaded = (res: {
+    url: string;
+    fileName: string;
+    path: string;
+  }) => {
     if (!res.path) {
       setImagePaths([]);
       setSelectedFile(null);
@@ -72,10 +75,9 @@ export default function CreateAuction() {
     setImageError(null);
   };
 
-
   useEffect(() => {
     async function fetchCategories() {
-      const response = await fetch('/api/Category', { credentials: 'include' });
+      const response = await fetch("/api/Category", { credentials: "include" });
       if (response.ok) {
         const data = await response.json();
         console.log("Fetched categories:", data);
@@ -85,26 +87,26 @@ export default function CreateAuction() {
     fetchCategories();
   }, []);
 
-
   useEffect(() => {
     if (user) {
-      setAuction(a => ({ ...a, Seller: user.id }));
+      setAuction((a) => ({ ...a, Seller: user.id }));
     }
   }, [user]);
 
-  function setProperty(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function setProperty(
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) {
     const { name, value, type } = event.target;
     let processedValue: string | boolean | number = value;
     if (type === "checkbox") {
       processedValue = (event.target as HTMLInputElement).checked;
-    }
-    else if (type === "number") {
+    } else if (type === "number") {
       processedValue = value === "" ? "" : Number(value);
     }
     setAuction({ ...auction, [name]: processedValue });
   }
-
-
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -128,8 +130,8 @@ export default function CreateAuction() {
       seller: [
         {
           id: user.id,
-          username: user.username
-        }
+          username: user.username,
+        },
       ],
       auctionCategoryId: auction.AuctionCategory,
       color: auction.Color,
@@ -137,20 +139,20 @@ export default function CreateAuction() {
       freightEnabled: auction.FreightEnabled,
       startBid: convertToSEK(startBidNumber),
       imageUpload: imagePaths.length
-        ? { paths: imagePaths, mediaTexts: [''] }
+        ? { paths: imagePaths, mediaTexts: [""] }
         : null,
       startTime: startDate?.toISOString(),
       endTime: endDate?.toISOString(),
     };
     console.log("Auction POST body:", newAuction);
     try {
-      const response = await fetch('/api/Auction', {
-        method: 'POST',
+      const response = await fetch("/api/Auction", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newAuction),
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (response.ok) {
@@ -163,7 +165,7 @@ export default function CreateAuction() {
         try {
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.error || errorJson.message || errorText;
-        } catch { }
+        } catch {}
         console.error("Failed to create auction:", errorMessage);
       }
     } catch (error) {
@@ -176,30 +178,18 @@ export default function CreateAuction() {
   }
 
   if (!user) {
-    return (
-      <AuthModal
-        customTitle="Log in to create an auction"
-      />
-    );
+    return <AuthModal customTitle="Log in to create an auction" />;
   }
 
-  if (
-    !user.roles ||
-    (
-      !user.roles.includes('Administrator') &&
-      (
-        !artistInfo
-      )
-    )
-  ) {
+  if (!user.roles || (!user.roles.includes("Administrator") && !artistInfo)) {
     return (
       <MustBeSellerModal
         show={showSellerModal}
         onHide={() => {
           setShowSellerModal(false);
-          navigate('/');
+          navigate("/");
         }}
-        onUpgrade={() => { }}
+        onUpgrade={() => {}}
       />
     );
   }
@@ -211,32 +201,32 @@ export default function CreateAuction() {
           <BackButton className="mb-3" />
           <h2>Create an Auction</h2>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className='mb-4'>
+            <Form.Group className="mb-4">
               <Form.Label>Title</Form.Label>
               <Form.Control
-                name='title'
+                name="title"
                 type="text"
                 required
-                placeholder='Title for your auction'
+                placeholder="Title for your auction"
                 onChange={setProperty}
-                autoComplete='off'
+                autoComplete="off"
                 value={auction.title}
               />
             </Form.Group>
-            <Form.Group className='mb-4'>
+            <Form.Group className="mb-4">
               <Form.Label>Description</Form.Label>
               <Form.Control
-                name='description'
+                name="description"
                 as="textarea"
                 rows={5}
                 required
-                placeholder='Description'
+                placeholder="Description"
                 onChange={setProperty}
-                autoComplete='off'
+                autoComplete="off"
                 value={auction.description}
               />
             </Form.Group>
-            <Form.Group className="mb-4">
+            <Form.Group className="mb-4" controlId="Category">
               <Form.Label>Category</Form.Label>
               <Form.Select
                 name="AuctionCategory"
@@ -254,7 +244,7 @@ export default function CreateAuction() {
                 ))}
               </Form.Select>
             </Form.Group>
-            <Form.Group className="mb-4">
+            <Form.Group className="mb-4" controlId="Color">
               <Form.Label>Color</Form.Label>
               <Form.Select
                 name="Color"
@@ -275,6 +265,7 @@ export default function CreateAuction() {
             <Form.Group className="mb-4">
               <Form.Check
                 type="checkbox"
+                id="pickupEnabled"
                 name="PickupEnabled"
                 label="Pickup enabled"
                 checked={auction.PickupEnabled}
@@ -282,29 +273,31 @@ export default function CreateAuction() {
               />
               <Form.Check
                 type="checkbox"
+                id="freightEnabled"
                 name="FreightEnabled"
                 label="Freight enabled"
                 checked={auction.FreightEnabled}
                 onChange={setProperty}
               />
             </Form.Group>
-            <Form.Group className='mb-4'>
+            <Form.Group className="mb-4">
               <Form.Label>Starting Bid</Form.Label>
               <Form.Control
-                name='StartBid'
+                name="StartBid"
                 type="number"
                 required
-                placeholder='Starting Bid'
+                placeholder="Starting Bid"
                 onChange={setProperty}
                 min={0}
-                autoComplete='off'
+                autoComplete="off"
                 value={auction.StartBid}
               />
             </Form.Group>
             <Form.Group className="mb-4">
               <Form.Label>Image</Form.Label>
-              <FileUpload onUploaded={handleImageUploaded}
-                onFileSelected={file => {
+              <FileUpload
+                onUploaded={handleImageUploaded}
+                onFileSelected={(file) => {
                   setSelectedFile(file);
                   setImageError(null);
                 }}
@@ -330,13 +323,19 @@ export default function CreateAuction() {
                   <DatePickerInput
                     value={endDate}
                     onChange={setEndDate}
-                    minimumDate={startDate ? addDays(startDate, minimumAuctionLengthDays) : undefined}
+                    minimumDate={
+                      startDate
+                        ? addDays(startDate, minimumAuctionLengthDays)
+                        : undefined
+                    }
                     placeholder="Select end date"
                   />
                 </Form.Group>
               </Col>
             </Row>
-            <Button type='submit' className='mt-4 w-full'>Create Auction</Button>
+            <Button type="submit" className="mt-4 w-full">
+              Create Auction
+            </Button>
           </Form>
         </Col>
       </Row>
