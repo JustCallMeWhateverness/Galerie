@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Row, Col, Spinner, Alert, ButtonGroup, Button } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import AuctionCard from "../parts/AuctionCard";
 import ArtistCard from "../parts/ArtistCard";
@@ -30,8 +30,6 @@ type Tab = "auction" | "artist";
 
 Search.route = {
   path: "/auction",
-  menuLabel: "Search",
-  index: 2,
 };
 
 function useQuery() {
@@ -53,7 +51,9 @@ export default function Search() {
   const categories = params.get("categories")?.split(",").filter(Boolean) ?? [];
   const colors = params.get("colors")?.split(",").filter(Boolean) ?? [];
   const distance = params.get("distance");
-  const [categoriesList, setCategoriesList] = useState<{ id: string; title: string }[]>([]);
+  const [categoriesList, setCategoriesList] = useState<
+    { id: string; title: string }[]
+  >([]);
 
   const [auction, setAuction] = useState<AuctionDTO[]>([]);
   const [artist, setArtist] = useState<Artist[]>([]);
@@ -76,10 +76,11 @@ export default function Search() {
           const res = await fetch(`/api/Auction`, { signal: abort.signal });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data: AuctionDTO[] = await res.json();
-          const mapped: AuctionDTO[] = (data ?? []).map(a => {
-            const highestBid = a.items && a.items.length > 0
-              ? Math.max(...a.items.map(bid => bid.amount))
-              : a.startBid ?? 0;
+          const mapped: AuctionDTO[] = (data ?? []).map((a) => {
+            const highestBid =
+              a.items && a.items.length > 0
+                ? Math.max(...a.items.map((bid) => bid.amount))
+                : a.startBid ?? 0;
             return {
               ...a,
               currentBid: highestBid,
@@ -88,7 +89,7 @@ export default function Search() {
           });
 
           const now = new Date();
-          const activeOnly = mapped.filter(a => {
+          const activeOnly = mapped.filter((a) => {
             const start = new Date(a.startTime);
             const end = new Date(a.endTime);
             return start <= now && end >= now;
@@ -116,13 +117,12 @@ export default function Search() {
 
   useEffect(() => {
     async function fetchCategories() {
-      const res = await fetch('/api/Category', { credentials: 'include' });
+      const res = await fetch("/api/Category", { credentials: "include" });
       if (res.ok) {
         setCategoriesList(await res.json());
       }
     }
     fetchCategories();
-
   }, []);
 
   const auctionFiltered = useMemo(() => {
@@ -130,38 +130,51 @@ export default function Search() {
 
     const s = q.trim().toLowerCase();
     if (s) {
-      filtered = filtered.filter(a =>
-        a.title?.toLowerCase().includes(s) ||
-        a.auctionCategoryId?.toLowerCase().includes(s) ||
-        a.artistName?.toLowerCase().includes(s)
+      filtered = filtered.filter(
+        (a) =>
+          a.title?.toLowerCase().includes(s) ||
+          a.auctionCategoryId?.toLowerCase().includes(s) ||
+          a.artistName?.toLowerCase().includes(s)
       );
     }
 
     if (categories.length > 0) {
       if (categories.length > 0) {
-        filtered = filtered.filter(a => categories.includes(a.auctionCategoryId ?? ""));
+        filtered = filtered.filter((a) =>
+          categories.includes(a.auctionCategoryId ?? "")
+        );
       }
     }
 
     if (colors.length > 0) {
-      filtered = filtered.filter(a => colors.includes(a.color ?? ""));
+      filtered = filtered.filter((a) => colors.includes(a.color ?? ""));
     }
 
     if (sort === "low") {
       filtered = filtered
-        .filter(a => a.items && a.items.length > 0 && a.currentBid > a.startBid)
+        .filter(
+          (a) => a.items && a.items.length > 0 && a.currentBid > a.startBid
+        )
         .sort((a, b) => a.currentBid - b.currentBid);
     } else if (sort === "high") {
       filtered = filtered
-        .filter(a => a.items && a.items.length > 0 && a.currentBid > a.startBid)
+        .filter(
+          (a) => a.items && a.items.length > 0 && a.currentBid > a.startBid
+        )
         .sort((a, b) => b.currentBid - a.currentBid);
     } else if (sort === "newest") {
-      filtered = [...filtered].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+      filtered = [...filtered].sort(
+        (a, b) =>
+          new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+      );
     } else if (sort === "time") {
-      filtered = [...filtered].sort((a, b) => new Date(a.endTime).getTime() - new Date(b.endTime).getTime());
-    }
-    else if (sort === "nobids") {
-      filtered = filtered.filter(a => !a.items || a.items.length === 0 || a.currentBid === a.startBid);
+      filtered = [...filtered].sort(
+        (a, b) => new Date(a.endTime).getTime() - new Date(b.endTime).getTime()
+      );
+    } else if (sort === "nobids") {
+      filtered = filtered.filter(
+        (a) => !a.items || a.items.length === 0 || a.currentBid === a.startBid
+      );
     }
 
     return filtered;
@@ -170,9 +183,10 @@ export default function Search() {
   const artistFiltered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return artist;
-    return artist.filter(x =>
-      x.title?.toLowerCase().includes(s) ||
-      (x.workTitle?.toLowerCase().includes(s) ?? false)
+    return artist.filter(
+      (x) =>
+        x.title?.toLowerCase().includes(s) ||
+        (x.workTitle?.toLowerCase().includes(s) ?? false)
     );
   }, [artist, q]);
 
@@ -212,14 +226,17 @@ export default function Search() {
             </ButtonGroup>
 
             {tab === "auction" && (
-              <Button variant="none" onClick={() => setShowFilter(true)}>
+              <Button
+                variant="none"
+                aria-label="Filter and Sorting"
+                onClick={() => setShowFilter(true)}
+              >
                 <i className="bi bi-filter fs-4"></i>
               </Button>
             )}
           </div>
         </Col>
       </Row>
-
 
       <Row className="mt-3">
         <Col md={12} className="mx-auto">
@@ -233,7 +250,13 @@ export default function Search() {
           {!loading && !error && (
             <div className="d-flex justify-content-between mb-1">
               <div className="fw-semibold">
-                {q ? <>Results for “{q}” ({tab})</> : <>All {tab}</>}
+                {q ? (
+                  <>
+                    Results for “{q}” ({tab})
+                  </>
+                ) : (
+                  <>All {tab}</>
+                )}
               </div>
               <div className="text-muted small">{list.length} found</div>
             </div>
@@ -263,15 +286,13 @@ export default function Search() {
                 imageUpload={a.imageUpload}
               />
             </Col>
-          ))
-        }
+          ))}
         {tab === "artist" &&
           artistFiltered.map((s, i) => (
             <Col key={s.id ?? `artist-${i}`}>
               <ArtistCard {...s} />
             </Col>
-          ))
-        }
+          ))}
       </Row>
 
       {!loading && !error && list.length === 0 && (
