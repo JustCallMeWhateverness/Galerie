@@ -79,11 +79,7 @@ export default function CarouselComponent({
             <Carousel.Item key={item.id}>
               {item.link ? <Link to={item.link}>{Img}</Link> : Img}
               {(item.title || item.startTime) && (
-                <Carousel.Caption
-                  style={{
-                    textShadow: '4px 4px 6px rgba(0,0,0,0.8)'
-                  }}
-                >
+                <Carousel.Caption className="carousel-caption">
                   {item.title && <h3>{item.title}</h3>}
                 </Carousel.Caption>
               )}

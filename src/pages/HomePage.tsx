@@ -98,19 +98,8 @@ export default function HomePage() {
     <>
       <Row>
         <Col className="mb-2">
-          <Container fluid style={{ position: 'relative' }}>
-            <div
-              style={{
-                position: 'absolute',
-                top: '10px',
-                left: '10px',
-                zIndex: 10,
-                color: 'black',
-                backgroundColor: 'rgba(255,255,255,0.75',
-                padding: '5px 10px',
-                borderRadius: '5px'
-              }}
-            >
+          <Container fluid className="carousel-container">
+            <div className="carousel-header">
               <h5>
                 Upcoming Auctions
               </h5>
