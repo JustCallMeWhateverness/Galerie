@@ -32,57 +32,60 @@ export default function CarouselComponent({
   if (!items?.length) return null;
 
   return (
-    <Carousel
-      fade
-      indicators={showIndicators}
-      controls={showControls}
-      prevIcon={<i className="bi bi-chevron-left text-secondary fs-2"></i>}
-      nextIcon={<i className="bi bi-chevron-right text-secondary fs-2"></i>}
-    >
-      {items.map((item) => {
-        const imagePath = item.imageUpload?.paths?.[0];
+    <>
+      <Carousel
+        fade
+        indicators={showIndicators}
+        controls={showControls}
+        prevIcon={<i className="bi bi-chevron-left text-secondary fs-2"></i>}
+        nextIcon={<i className="bi bi-chevron-right text-secondary fs-2"></i>}
+      >
 
-        let imageUrl: string;
-        if (!imagePath) {
-          imageUrl = "/images/placeholder.jpg";
-        } else if (
-          imagePath.startsWith("http://") ||
-          imagePath.startsWith("https://") ||
-          imagePath.startsWith("/media/")
-        ) {
-          imageUrl = imagePath;
-        } else {
-          imageUrl = `/media/${imagePath}`;
-        }
 
-        const alt = item.alt || item.imageUpload?.mediaTexts?.[0] || item.title || "";
+        {items.map((item) => {
+          const imagePath = item.imageUpload?.paths?.[0];
 
-        const Img = (
-          <Image
-            src={imageUrl}
-            alt={alt}
-            loading="lazy"
-            className="d-block w-100 carousel-img"
-            style={{
-              height,
-              objectFit: "contain",
-              objectPosition: "center",
-              cursor: item.link ? "pointer" : "default",
-            }}
-          />
-        );
+          let imageUrl: string;
+          if (!imagePath) {
+            imageUrl = "/images/placeholder.jpg";
+          } else if (
+            imagePath.startsWith("http://") ||
+            imagePath.startsWith("https://") ||
+            imagePath.startsWith("/media/")
+          ) {
+            imageUrl = imagePath;
+          } else {
+            imageUrl = `/media/${imagePath}`;
+          }
 
-        return (
-          <Carousel.Item key={item.id}>
-            {item.link ? <Link to={item.link}>{Img}</Link> : Img}
-            {(item.title || item.startTime) && (
-              <Carousel.Caption>
-                {item.title && <h3>{item.title}</h3>}
-              </Carousel.Caption>
-            )}
-          </Carousel.Item>
-        );
-      })}
-    </Carousel>
-  );
+          const alt = item.alt || item.imageUpload?.mediaTexts?.[0] || item.title || "";
+
+          const Img = (
+            <Image
+              src={imageUrl}
+              alt={alt}
+              loading="lazy"
+              className="d-block w-100 carousel-img"
+              style={{
+                height,
+                objectFit: "contain",
+                objectPosition: "center",
+                cursor: item.link ? "pointer" : "default",
+              }}
+            />
+          );
+
+          return (
+            <Carousel.Item key={item.id}>
+              {item.link ? <Link to={item.link}>{Img}</Link> : Img}
+              {(item.title || item.startTime) && (
+                <Carousel.Caption className="carousel-caption">
+                  {item.title && <h3>{item.title}</h3>}
+                </Carousel.Caption>
+              )}
+            </Carousel.Item>
+          );
+        })}
+      </Carousel>
+    </>);
 }

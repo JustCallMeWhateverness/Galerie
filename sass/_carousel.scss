@@ -1,0 +1,17 @@
+.carousel-container {
+  position: relative;
+}
+
+.carousel-header {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.carousel-caption {
+  text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.8);
+}
