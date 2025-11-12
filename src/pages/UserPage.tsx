@@ -134,7 +134,7 @@ export default function UserPage() {
       await createArtistProfile(String(user.id), user.username);
       const url = new URL(window.location.href);
       url.searchParams.delete("createArtist");
-      window.history.replaceState({}, '', url);
+      window.history.replaceState({}, "", url);
       window.location.reload(); // Temporary quick fix: reload to update UI after creating ArtistInfo
     } finally {
       setCreatingArtist(false);
@@ -168,10 +168,10 @@ export default function UserPage() {
             Created:{" "}
             {user.created
               ? new Date(user.created).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
               : "N/A"}
           </div>
         </Col>
@@ -214,9 +214,10 @@ export default function UserPage() {
       {!hasArtistInfo && (
         <Row className="justify-content-center">
           <Col xs="auto" className="d-flex flex-column align-items-center">
-            <div className="text-center mb-2" style={{ maxWidth: 500 }}>
+            <div className="text-center my-2" style={{ maxWidth: 500 }}>
               <small>
-                Want to sell your art? Set up your artist profile to get started.
+                Want to sell your art? <br></br> Set up your artist profile to
+                get started.
               </small>
             </div>
             <Button
@@ -231,7 +232,6 @@ export default function UserPage() {
           </Col>
         </Row>
       )}
-
 
       {errors.length > 0 && (
         <Row>

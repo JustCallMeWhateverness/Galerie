@@ -227,6 +227,7 @@ export default function Search() {
 
             {tab === "auction" && (
               <Button
+                className="py-0"
                 variant="none"
                 aria-label="Filter and Sorting"
                 onClick={() => setShowFilter(true)}
