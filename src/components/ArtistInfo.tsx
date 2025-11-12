@@ -43,7 +43,11 @@ export default function ArtistInfo() {
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUploaded = (res: { url: string; fileName: string; path: string; }) => {
+  const handleImageUploaded = (res: {
+    url: string;
+    fileName: string;
+    path: string;
+  }) => {
     setImagePaths([res.path]);
   };
 
@@ -55,7 +59,9 @@ export default function ArtistInfo() {
         title: editForm.title,
         workTitle: editForm.workTitle,
         description: editForm.description,
-        profileImage: imagePaths.length ? { paths: imagePaths, mediaTexts: [""] } : undefined,
+        profileImage: imagePaths.length
+          ? { paths: imagePaths, mediaTexts: [""] }
+          : undefined,
       });
       setShow(false);
       window.location.reload();
@@ -65,12 +71,15 @@ export default function ArtistInfo() {
   };
 
   const resolveMediaUrl = (p?: string) =>
-    !p ? "/images/avatar-placeholder.png"
-      : p.startsWith("http") || p.startsWith("/media/") ? p : `/media/${p}`;
+    !p
+      ? "/images/avatar-placeholder.png"
+      : p.startsWith("http") || p.startsWith("/media/")
+      ? p
+      : `/media/${p}`;
 
   return (
     <>
-      <Row className="user-profile-row mx-auto">
+      <Row className="user-profile-row mx-auto my-3">
         <h4 className="user-name">Artist Information</h4>
         <small className="text-muted d-block mb-4">
           This is what other users see on your Artist View.
@@ -82,7 +91,12 @@ export default function ArtistInfo() {
               <img
                 src={resolveMediaUrl(artistInfo?.profileImage?.paths?.[0])}
                 alt="Artist avatar"
-                style={{ width: 120, height: 120, objectFit: "cover", borderRadius: "50%" }}
+                style={{
+                  width: 120,
+                  height: 120,
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
               />
             </div>
           </Col>
@@ -109,7 +123,12 @@ export default function ArtistInfo() {
 
         <Row className="mt-3">
           <Col xs="auto">
-            <Button variant="secondary" size="sm" onClick={openModal} className="me-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={openModal}
+              className="me-2"
+            >
               Edit
             </Button>
           </Col>
