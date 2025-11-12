@@ -46,8 +46,11 @@ export default function UserPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    if (params.get("edit") === "1") {
+      setIsEditing(true);
+    }
     if (params.get("createArtist") === "1") {
-      setShowCreateArtistConfirm(true);
+      setIsArtistChecked(true);
     }
   }, []);
 
@@ -134,6 +137,7 @@ export default function UserPage() {
       await createArtistProfile(String(user.id), user.username);
       const url = new URL(window.location.href);
       url.searchParams.delete("createArtist");
+      url.searchParams.delete("edit");
       window.history.replaceState({}, '', url);
       window.location.reload(); // Temporary quick fix: reload to update UI after creating ArtistInfo
     } finally {
@@ -208,26 +212,6 @@ export default function UserPage() {
             <Alert variant="success" className="user-alert-success">
               {successMessage}
             </Alert>
-          </Col>
-        </Row>
-      )}
-      {!hasArtistInfo && (
-        <Row className="justify-content-center">
-          <Col xs="auto" className="d-flex flex-column align-items-center">
-            <div className="text-center mb-2" style={{ maxWidth: 500 }}>
-              <small>
-                Want to sell your art? Set up your artist profile to get started.
-              </small>
-            </div>
-            <Button
-              variant="primary"
-              onClick={() => setShowCreateArtistConfirm(true)}
-              disabled={createArtist}
-              size="sm"
-              className="mb-3"
-            >
-              {createArtist ? "Creating..." : "Create Artist Profile"}
-            </Button>
           </Col>
         </Row>
       )}
@@ -336,12 +320,7 @@ export default function UserPage() {
         show={showCurrencyModal}
         onHide={() => setShowCurrencyModal(false)}
       />
-      <CreateArtistConfirmModal
-        showCreateArtistConfirm={showCreateArtistConfirm}
-        setShowCreateArtistConfirm={setShowCreateArtistConfirm}
-        handleCreateArtist={handleCreateArtist}
-        createArtist={createArtist}
-      />
+
     </div>
   );
 }

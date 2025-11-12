@@ -1,5 +1,7 @@
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import type User from "../interfaces/User";
+import { useState } from "react";
+import { CreateArtistConfirmModal } from "./CreateArtistConfirmModal";
 
 interface EditProfileModalProps {
   show: boolean;
@@ -12,7 +14,7 @@ interface EditProfileModalProps {
   isArtistChecked: boolean;
   creatingArtist: boolean;
   onToggleArtist: (checked: boolean) => void;
-  onCreateArtist: () => void;
+  onCreateArtist: () => Promise<void>;
   hasArtistInfo: boolean;
 }
 
@@ -24,98 +26,129 @@ export default function EditProfileModal({
   onSave,
   onCancel,
   isSaving,
+  isArtistChecked,
+  creatingArtist,
+  onToggleArtist,
+  onCreateArtist,
+  hasArtistInfo,
 }: EditProfileModalProps) {
+  const [showCreateArtistConfirm, setShowCreateArtistConfirm] = useState(false);
+
   return (
-    <Modal show={show} onHide={onHide} centered className="editprofile-modal">
-      <Modal.Header closeButton>
-        <Modal.Title>Edit Profile</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Row>
-            <Col xs={6}>
-              <Form.Group className="mb-2">
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="firstName"
-                  value={editForm.firstName}
-                  onChange={onChange}
-                  placeholder="First Name"
-                />
-              </Form.Group>
-            </Col>
-            <Col xs={6}>
-              <Form.Group className="mb-2">
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="lastName"
-                  value={editForm.lastName}
-                  onChange={onChange}
-                  placeholder="Last Name"
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={6}>
-              <Form.Group className="mb-2">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="username"
-                  value={editForm.username}
-                  onChange={onChange}
-                  placeholder="Username"
-                />
-              </Form.Group>
-            </Col>
-            <Col xs={6}>
-              <Form.Group className="mb-2">
-                <Form.Label>Location</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="location"
-                  value={editForm.location}
-                  onChange={onChange}
-                  placeholder="Location"
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Form.Group className="mb-2">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              value={editForm.email}
-              onChange={onChange}
-              placeholder="Email"
+    <>
+      <Modal show={show} onHide={onHide} centered className="editprofile-modal">
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Profile</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Row>
+              <Col xs={6}>
+                <Form.Group className="mb-2">
+                  <Form.Label>First Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="firstName"
+                    value={editForm.firstName}
+                    onChange={onChange}
+                    placeholder="First Name"
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={6}>
+                <Form.Group className="mb-2">
+                  <Form.Label>Last Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="lastName"
+                    value={editForm.lastName}
+                    onChange={onChange}
+                    placeholder="Last Name"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={6}>
+                <Form.Group className="mb-2">
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="username"
+                    value={editForm.username}
+                    onChange={onChange}
+                    placeholder="Username"
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={6}>
+                <Form.Group className="mb-2">
+                  <Form.Label>Location</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="location"
+                    value={editForm.location}
+                    onChange={onChange}
+                    placeholder="Location"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Form.Group className="mb-2">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={editForm.email}
+                onChange={onChange}
+                placeholder="Email"
+              />
+            </Form.Group>
+            <Form.Group className="mb-2">
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control
+                type="text"
+                name="phoneNumber"
+                value={editForm.phoneNumber}
+                onChange={onChange}
+                placeholder="Phone Number"
+              />
+            </Form.Group>
+            <Form.Group className="mb-2"></Form.Group>
+            <Form.Label>I am an artist</Form.Label>
+            <Form.Check
+              type="checkbox"
+              id="artist-toggle"
+              label="Create my Artist profile"
+              checked={isArtistChecked}
+              onChange={(e) => onToggleArtist(e.target.checked)}
+              disabled={hasArtistInfo}
             />
-          </Form.Group>
-          <Form.Group className="mb-2">
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type="text"
-              name="phoneNumber"
-              value={editForm.phoneNumber}
-              onChange={onChange}
-              placeholder="Phone Number"
-            />
-          </Form.Group>
+          </Form>
+        </Modal.Body>
 
-        </Form>
-      </Modal.Body>
-
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={onSave} disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save"}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={() => setShowCreateArtistConfirm(true)}
+            disabled={hasArtistInfo || !isArtistChecked || creatingArtist}
+          >
+            {creatingArtist ? "Creating..." : "Create Artist Profile"}
+          </Button>
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={onSave} disabled={isSaving}>
+            {isSaving ? "Saving..." : "Save"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <CreateArtistConfirmModal
+        showCreateArtistConfirm={showCreateArtistConfirm}
+        setShowCreateArtistConfirm={setShowCreateArtistConfirm}
+        handleCreateArtist={onCreateArtist}
+        createArtist={creatingArtist}
+      />
+    </>
   );
 }
