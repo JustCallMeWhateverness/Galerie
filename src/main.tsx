@@ -7,6 +7,9 @@ import '../sass/index.scss';
 import routes from './routes';
 import App from './App';
 
+import { AuthProvider } from './context/AuthContext';
+import { CurrencyProvider } from './context/CurrencyContext';
+
 // Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
   {
@@ -20,6 +23,10 @@ const router = createBrowserRouter([
 // Create the React root element
 createRoot(document.querySelector('#root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <CurrencyProvider>
+        <RouterProvider router={router} />
+      </CurrencyProvider>
+    </AuthProvider>
   </StrictMode>
 );

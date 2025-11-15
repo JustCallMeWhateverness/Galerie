@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# Galerie
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern auction marketplace for discovering artists and bidding on unique artworks and collectibles. 
+Built with React and TypeScript on the frontend, powered by Orchard Core (.NET) on the backend.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User authentication (sign up, login, logout)
+- Browse auctions and artists
+- Search and filtering
+- Save favorites
+- Become an artist and create auctions
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Frontend: React, TypeScript, Vite, SCSS
+- Backend: Orchard Core (.NET)
+- Database: SQLite
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Demo accounts for testing
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Admin for Orchard backend:**  
+  Username: `Tom`  
+  Password: `Abcd1234!`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Customer:**  
+  Username: `Mats`  
+  Password: `Aaaa1111!`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Artist:**  
+  Username: `Tindra`  
+  Password: `Aaaa1111!`
+
+## Screenshots
+
+### Home Page
+ ![homePage](public/HomePage.png)
+### Search Page Auction and Artist
+ ![searchPage](public/SearchPage.png) 
+ ![searchPageArtist](public/SearchPageArtist.png)
+### Favourites Page
+ ![FavouritesPage](public/FavouritesPage.png)
+
+## Installation
+
+**Requirements:**
+- Node.js 18+
+- .NET SDK
+- Git
+
+**Setup:**
+```bash
+npm install
+npm run restore
+npm start
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The application will be available at:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5001
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Press `Ctrl + C` to stop the application.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Available Scripts
+
+```bash
+npm run restore  # Restore Orchard Core dependencies and seed data
+npm run save     # Save Orchard Core configuration/state
 ```
+
+## Troubleshooting
+
+If you encounter issues after pulling updates, rerun the setup commands from the Installation section above.
+
+## Planned Features
+- Q&A for auctions
+- Payment integration (Stripe)
+- Live bidding with real-time updates
+- Distance-based features (filtering by location, pickup locations, etc.)

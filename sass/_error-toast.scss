@@ -1,0 +1,6 @@
+$toast-max-width: 200px;
+$toast-background-color: #e7a894;
+.toast {
+  background-color: $toast-background-color;
+  max-width: $toast-max-width;
+}

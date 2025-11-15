@@ -1,9 +1,14 @@
-@use 'bootstrap-breakpoints';
-@use 'bootstrap';
-@use 'card-colors';
-@use 'buttons';
-@use 'images';
-@use 'sticky-footer';
+@use "bootstrap-breakpoints";
+@use "bootstrap";
+@use "card-colors";
+@use "buttons";
+@use "images";
+@use "scrollbars";
+@use "error-toast";
+@use "carousel";
+@use "user-page";
+@use "layout";
 
 // Import fonts from Google Fonts
-@import url('https://fonts.googleapis.com/css2?family=Chewy&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Chewy&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Passions+Conflict&family=Tangerine:wght@400;700&display=swap");

@@ -1,21 +1,33 @@
-import type Route from './interfaces/Route.ts';
-import { createElement } from 'react';
+import type Route from "./interfaces/Route.ts";
+import { createElement } from "react";
 
 // page components
-import AboutPage from './pages/AboutPage.tsx';
-import NotFoundPage from './pages/NotFoundPage.tsx';
-import OurVisionPage from './pages/OurVisionPage.tsx';
-import ProductDetailsPage from './pages/ProductDetailsPage.tsx';
-import ProductsPage from './pages/ProductsPage.tsx';
+import NotFoundPage from "./pages/NotFoundPage.tsx";
+import UserPage from "./pages/UserPage.tsx";
+import AuthModal from "./modals/AuthModal.tsx";
+import HomePage from "./pages/HomePage.tsx";
+import FavouritesPage from "./pages/FavouritesPage.tsx";
+import Search from "./pages/Search.tsx";
+import ArtistView from "./pages/ArtistView.tsx";
+import CreateAuction from "./pages/CreateAuction.tsx";
+import Auction from "./pages/Auction.tsx";
+import ActiveBids from "./pages/ActiveBid.tsx";
+import MySalesPage from "./pages/MySalesPage.tsx";
+import MyPurchases from "./pages/MyPurchases.tsx";
 
 export default [
-  AboutPage,
   NotFoundPage,
-  OurVisionPage,
-  ProductDetailsPage,
-  ProductsPage
+  UserPage,
+  AuthModal,
+  HomePage,
+  FavouritesPage,
+  Search,
+  ArtistView,
+  CreateAuction,
+  Auction,
+  ActiveBids,
+  MySalesPage,
+  MyPurchases,
 ]
-  // map the route property of each page component to a Route
-  .map(x => (({ element: createElement(x), ...x.route }) as Route))
-  // sort by index (and if an item has no index, sort as index 0)
+  .map((x) => ({ element: createElement(x), ...x.route } as Route))
   .sort((a, b) => (a.index || 0) - (b.index || 0));
